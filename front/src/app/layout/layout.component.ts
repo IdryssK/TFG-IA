@@ -9,7 +9,6 @@ import { combineLatest, filter, map, Subject, takeUntil } from 'rxjs';
 import { SettingsComponent } from './common/settings/settings.component';
 import { ModernLayoutComponent } from './layouts/horizontal/modern/modern.component';
 import { EmptyLayoutComponent } from './layouts/empty/empty.component';
-import { FuturisticLayoutComponent } from './layouts/futuristic/futuristic.component';
 
 @Component({
     selector     : 'layout',
@@ -17,7 +16,7 @@ import { FuturisticLayoutComponent } from './layouts/futuristic/futuristic.compo
     styleUrls    : ['./layout.component.scss'],
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [NgIf, EmptyLayoutComponent, ModernLayoutComponent, FuturisticLayoutComponent, SettingsComponent],
+    imports      : [NgIf, EmptyLayoutComponent, ModernLayoutComponent, SettingsComponent],
 })
 export class LayoutComponent implements OnInit, OnDestroy
 {

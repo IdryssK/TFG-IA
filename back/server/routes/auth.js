@@ -20,8 +20,8 @@ router.post('/', [
     validateFields
 ], login);
 
-router.get('/token', [
-    check('x-token', 'El campo x-token es obligatorio').notEmpty(),
+router.post('/token', [
+    check('accessToken', 'El campo x-token es obligatorio').notEmpty(),
     validateFields
 ], token);
 

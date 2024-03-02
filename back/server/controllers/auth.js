@@ -45,7 +45,7 @@ const login = async( req , res = response ) => {
         }
         
         // Genera un token
-        const token = await generateJWT( user.User_Idx , user.role );
+        const token = await generateJWT( user.User_Idx , user.User_Rol );
 
         res.status( 200 ).json( {
             user: user,
@@ -54,7 +54,7 @@ const login = async( req , res = response ) => {
 
         return;
     } catch( error ){
-        console.error( error );
+        console.log( error );
 
         res.status(500).json({
             msg: 'Error al realizar el login'
@@ -71,9 +71,10 @@ const login = async( req , res = response ) => {
  */
 const token = async( req , res = response ) => {
     // Se extrae el token de la cabecera
-    const token = req.headers['x-token'];
-
+    console.log(req.body.accessToken);
+    const token = req.headers['accesstoken'] ? req.headers['accesstoken'] : req.body.accessToken ;
     try{
+        
         // Se comprueba si el token es correcto
         const { uid, role } = jwt.verify(token, process.env.JWTSECRET);
 
@@ -92,12 +93,13 @@ const token = async( req , res = response ) => {
 
         res.status( 200 ).json({
             msg: 'token',
-            token: nuevotoken
+            accessToken: nuevotoken,
+            user
         });
 
         return;
     } catch( error ){
-
+        console.log( error );   
         res.status(403).json({
             msg: 'token no válido'
         });

@@ -28,7 +28,7 @@ export class AuthUnlockSessionComponent implements OnInit
         type   : 'success',
         message: '',
     };
-    name: string;
+    name: number;
     showAlert: boolean = false;
     unlockSessionForm: UntypedFormGroup;
     private _email: string;
@@ -58,8 +58,8 @@ export class AuthUnlockSessionComponent implements OnInit
         // Get the user's name
         this._userService.user$.subscribe((user) =>
         {
-            this.name = user.name;
-            this._email = user.email;
+            this.name = user.User_Idx;
+            this._email = user.User_Email;
         });
 
         // Create the form

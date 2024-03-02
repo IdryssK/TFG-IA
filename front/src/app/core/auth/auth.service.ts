@@ -78,8 +78,9 @@ export class AuthService
                 this._authenticated = true;
 
                 // Store the user on the user service
+                console.log(response.user);
                 this._userService.user = response.user;
-
+                console.log(this._userService.user);
                 // Return a new observable with the response
                 return of(response);
             }),
@@ -95,7 +96,8 @@ export class AuthService
         return this._httpClient.post(`${environment.apiUrl}/login/token`, {
             accessToken: this.accessToken,
         }).pipe(
-            catchError(() =>
+            catchError(() => 
+                
 
                 // Return false
                 of(false),
@@ -117,7 +119,7 @@ export class AuthService
                 // Set the authenticated flag to true
                 this._authenticated = true;
 
-                // Store the user on the user service
+                // Store the user on the user service 
                 this._userService.user = response.user;
 
                 // Return true
