@@ -5,7 +5,7 @@
 // === Importar
 const { response } = require('express'); // Response de Express
 const bcrypt = require('bcryptjs'); // BcryptJS
-const { userById, userList, userByEmail, userDelete, userCreate, userUpdate, getHash } = require('../dao/user');
+const { userById, userList, userByUser_Email, userDelete, userCreate, userUpdate, getHash } = require('../dao/user');
 const passwordValidator = require('password-validator');
 
 
@@ -119,15 +119,15 @@ const createUsers = async( req , res = response ) => {
 
     try {
         // Solo los usuarios administrador pueden crear nuevos usuarios
-        if(req.role !== 1){
-            res.status(403).json({
-                msg: 'Solo los administradores pueden crear usuarios'
-            });
-            return;
-        }
+        // if(req.role !== 1){
+        //     res.status(403).json({
+        //         msg: 'Solo los administradores pueden crear usuarios'
+        //     });
+        //     return;
+        // }
 
         // Comprueba si el email ya esta en uso
-        const existeEmail = await userByEmail(object.email);
+        const existeEmail = await userByUser_Email(object.email);
         if( existeEmail !== null ){
             res.status(400).json({
                 msg: 'El email ya existe'
@@ -144,17 +144,16 @@ const createUsers = async( req , res = response ) => {
         }
 
         let data = {
-            email: object.email,
-            password: object.password,
-            role: ( object.role === 0 || object.role === 1 ? object.role : 0 ),
-            lim_consult: ( object.lim_consult >= 0 ? object.lim_consult : 10 )
+            User_Email: object.email,
+            User_Password: object.password,
+            User_Rol: ( object.role === 0 || object.role === 1 ? object.role : 0 )
         }
-
+        console.log(data)
         // Genera una cadena aleatoria.
         const salt = bcrypt.genSaltSync();
 
         // Cifra la contrasena con la cadena.
-        data.password = bcrypt.hashSync(data.password, salt);
+        data.User_Password = bcrypt.hashSync(data.User_Password, salt);
 
         await userCreate(data);
 

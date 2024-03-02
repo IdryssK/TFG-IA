@@ -2,11 +2,11 @@
 
 const { dbConsult } = require("../database/db");
 
-const userByEmail = async(email) => {
+const userByUser_Email = async(User_Email) => {
     try {
-        const query = `SELECT idUser, email, role, lim_consult FROM ${process.env.USERTABLE} WHERE email= ?`;
+        const query = `SELECT User_Idx, User_Email, User_Rol FROM ${process.env.USERTABLE} WHERE User_Email= ?`;
 
-        const paramsQuery = [email];
+        const paramsQuery = [User_Email];
         const [user] = await dbConsult(query, paramsQuery);
 
         return user.length === 0 ? null : user[0];
@@ -18,10 +18,10 @@ const userByEmail = async(email) => {
 const userList = async(data) => {
     try {
         let paramsQuery = [];
-        let query = `SELECT idUser, email, role, lim_consult FROM ${process.env.USERTABLE}`;
+        let query = `SELECT User_Idx, User_Email, User_Rol FROM ${process.env.USERTABLE}`;
 
         if(data.querySearch){
-            query += ` WHERE email LIKE ?`;
+            query += ` WHERE User_Email LIKE ?`;
             paramsQuery.push(data.querySearch);
         }
 
@@ -43,7 +43,7 @@ const userList = async(data) => {
 
 const userById = async(id) => {
     try {
-        const query = `SELECT idUser, email, role, lim_consult FROM ${process.env.USERTABLE} WHERE idUser = ? LIMIT 1`;
+        const query = `SELECT User_Idx, User_Email, User_Rol FROM ${process.env.USERTABLE} WHERE User_Idx = ? LIMIT 1`;
 
         const paramsQuery = [id];
         const [user] = await dbConsult(query, paramsQuery);
@@ -69,8 +69,8 @@ const userCreate = async(data) => {
 const userUpdate = async(data) =>  {
     try {
 
-        const query = `UPDATE ${process.env.USERTABLE} SET ? WHERE idUser = ?`;
-        const paramsQuery = [data, data.idUser]
+        const query = `UPDATE ${process.env.USERTABLE} SET ? WHERE User_Idx = ?`;
+        const paramsQuery = [data, data.User_Idx]
         await dbConsult(query, paramsQuery);
 
     } catch (error) {
@@ -81,7 +81,7 @@ const userUpdate = async(data) =>  {
 const userDelete = async(id) => {
     try {
         
-        const query = `DELETE FROM ${process.env.USERTABLE} WHERE idUser= ?`;
+        const query = `DELETE FROM ${process.env.USERTABLE} WHERE User_Idx= ?`;
         const paramsQuery = [id];
         await dbConsult(query, paramsQuery);
 
@@ -94,7 +94,7 @@ const userDelete = async(id) => {
 const getHash = async(id) => {
     try {
         
-        const query = `SELECT password FROM ${process.env.USERTABLE} WHERE idUser = ? LIMIT 1`;
+        const query = `SELECT User_Password FROM ${process.env.USERTABLE} WHERE User_Idx = ? LIMIT 1`;
         const paramsQuery = [id];
         const [pass] = await dbConsult(query, paramsQuery);
 
@@ -104,4 +104,4 @@ const getHash = async(id) => {
     }
 }
 
-module.exports = {userByEmail, userList, userById, userCreate, userUpdate, userDelete, getHash}
+module.exports = {userByUser_Email, userList, userById, userCreate, userUpdate, userDelete, getHash}

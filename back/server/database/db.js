@@ -9,7 +9,7 @@ async function connectDb(){
             user: process.env.USER,
             password: process.env.PASSWORD
         });
-
+        console.log('DB is Connected');
         return connection;
     }
     catch (error){

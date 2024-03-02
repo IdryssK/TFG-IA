@@ -13,7 +13,7 @@ const generateJWT = ( uid , role ) => {
             role
         }
         jwt.sign( payload , process.env.JWTSECRET , {
-            expiresIn: process.env.JWTEXPIRE
+            expiresIn: '1y'
         } , ( err , token ) => {
             if( err ){
                 console.error( err );

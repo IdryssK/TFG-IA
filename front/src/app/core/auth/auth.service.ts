@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
+import { environment } from 'environments/environment.development';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
@@ -57,6 +58,8 @@ export class AuthService
      *
      * @param credentials
      */
+
+
     signIn(credentials: { email: string; password: string }): Observable<any>
     {
         // Throw error, if the user is already logged in
@@ -64,8 +67,8 @@ export class AuthService
         {
             return throwError('User is already logged in.');
         }
-
-        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
+        console.log(credentials);
+        return this._httpClient.post(`${environment.apiUrl}/login`, credentials).pipe(
             switchMap((response: any) =>
             {
                 // Store the access token in the local storage
@@ -83,13 +86,13 @@ export class AuthService
         );
     }
 
-    /**
+    /** 
      * Sign in using the access token
      */
     signInUsingToken(): Observable<any>
     {
         // Sign in using the token
-        return this._httpClient.post('api/auth/sign-in-with-token', {
+        return this._httpClient.post(`${environment.apiUrl}/login/token`, {
             accessToken: this.accessToken,
         }).pipe(
             catchError(() =>
