@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation} from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -9,16 +9,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
+import {CommonModule} from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
     selector     : 'crear-dataset',
     templateUrl  : './crear-dataset.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [MatIconModule, FormsModule, ReactiveFormsModule, MatStepperModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatCheckboxModule, MatRadioModule],
+    imports      : [MatIconModule, MatTabsModule, FormsModule, ReactiveFormsModule, MatStepperModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatCheckboxModule, MatRadioModule, CommonModule],
 })
 export class CrearDatasetComponent implements OnInit
 {
+
     horizontalStepperForm: UntypedFormGroup;
     verticalStepperForm: UntypedFormGroup;
 
@@ -85,5 +88,10 @@ export class CrearDatasetComponent implements OnInit
                 pushNotifications: ['everything', Validators.required],
             }),
         });
+    }
+    isHidden = false;
+
+    toggleContainers() {
+        this.isHidden = !this.isHidden;
     }
 }
