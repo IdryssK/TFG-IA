@@ -16,13 +16,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { environment } from 'environments/environment';
 import { ApiSmartUaService } from 'app/core/smartUa/api-smart-ua.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector     : 'crear-dataset',
     templateUrl  : './crear-dataset.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [MatIconModule, MatDividerModule, MatDatepickerModule, MatChipsModule, MatTabsModule, FormsModule, ReactiveFormsModule, MatStepperModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatCheckboxModule, MatRadioModule, CommonModule],
+    imports      : [MatIconModule, RouterModule, MatDividerModule, MatDatepickerModule, MatChipsModule, MatTabsModule, FormsModule, ReactiveFormsModule, MatStepperModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatCheckboxModule, MatRadioModule, CommonModule],
 })
 export class CrearDatasetComponent implements OnInit
 {
@@ -66,11 +67,12 @@ export class CrearDatasetComponent implements OnInit
         this.tags = environment.filters;
     }
     
-
+    //agrandar contenedor derecha
     toggleContainers() {
         this.isHidden = !this.isHidden;
     }
 
+    //añadir el input
     addInput() {
         
         let tag = this.tags.find((input: any) => !this.inputs.includes(input));
@@ -78,24 +80,20 @@ export class CrearDatasetComponent implements OnInit
         this.getValueTag(this.tags[this.tags.indexOf(tag)]);
 
     }
-    // funcion que borre el input
+
+    //borrar el input
     deleteInput(index: any) {
         this.inputs.splice(index, 1);
         console.log('borro');
     }
-    //funcion que al cambiar el valor del input, lo actualice en el array de filtros
+   
+    //actualizar el valor del input
     onChange(index: any, event: any) {
         console.log('estoy cambiando?');
         const newInput = event.target.value;
         console.log(newInput);
         this.inputs[index] = newInput;
     }
-
-
-
-    //funcion que llame a apiTagSmartUA para que nos devuelva los valores de los tags
-
-
 
     //recoger token del formulario
     get token() {
@@ -105,26 +103,12 @@ export class CrearDatasetComponent implements OnInit
     c
     getValueTag(tag: string) {
         console.log(this.token);    
-        this.apiSmartUaService.getTagSmartUa(this.token, tag).subscribe((response) => {
+        this.apiSmartUaService.getTagSmartUa(this.token, tag)
+        .subscribe((response) => {
             console.log(response);
         });
     }
 
-
-
-
-
-    //funcion que recoja los valores que nos devuelva la apiSmartUA
-    // getValues() {
-    //     console.log(this.inputs);
-    //     console.log(this.tags);
-    //     this.tags = this.inputs;
-
-    // }
-
-
-    //funcion que en funcion del valor del select, muestre los nombres[] correspondientes gracias a la llamada a la apiSmartUA
- 
 
 
 
