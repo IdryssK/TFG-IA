@@ -30,10 +30,162 @@
 <div class="flex flex-auto justify-between">
     <!-- Contenedor izquierdo -->
     <div  id="leftContainer" [ngClass]="{'hidden': isHidden}" class="flex-auto w-1/2 border border-red">
-        <!-- Contenido izquierdo -->
+        <!-- Pestañas -->
         <mat-tab-group>
+            <!-- Filtros -->
             <mat-tab label="Filtros">
-                <!-- <mat-form-field class="fuse-mat-emphasized-affix"><input type="text"></mat-form-field> -->
+                <!-- <form class="flex flex-col mt-8 p-8 pb-4 bg-card rounded-2xl shadow overflow-hidden">
+                    
+                </form> -->
+                <form class="flex flex-col mt-4  bg-card shadow rounded overflow-hidden" [formGroup]="primerForm">
+                    <div class="bg-gray-50 dark:bg-gray-700 p-4 mb-8 border-b">
+                        <p class="text-lg font-medium">Datos de información</p>
+                    </div>
+                    <div class="flex px-8">
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="flex-auto">
+                            <mat-label>Nombre</mat-label>
+                            <input
+                                matInput
+                                formControlName="nombre"
+                                [placeholder]="'Mi nuevo dataset'">
+                            <mat-hint>Nombre de la colección</mat-hint>
+                            <mat-error *ngIf="primerForm.get('nombre').hasError('required')">
+                                Nombre es obligatorio
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex px-8">
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="flex-auto">
+                            <mat-label>Token</mat-label>
+                            <input
+                                matInput
+                                formControlName="token"
+                                [placeholder]="'Token de la colección'">
+                            <mat-hint>Token de la colección</mat-hint>
+                            <mat-error *ngIf="primerForm.get('token').hasError('required')">
+                                Token es obligatorio
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <!-- <mat-divider class="mt-4 mb-2"></mat-divider> -->
+                    <div class="bg-gray-50 dark:bg-gray-700 p-4 my-8 border-b">
+                        <p class="text-lg font-medium">Fechas</p>
+                    </div>
+                    <div class="flex px-8">
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="flex-auto mr-2">
+                            <mat-label>Desde</mat-label>
+                            <input
+                                matInput
+                                [matDatepicker]="picker1"
+                                [placeholder]="'DD/MM/AAAA --:--'">
+                                
+                            <mat-datepicker-toggle
+                                matSuffix
+                                [for]="picker1"></mat-datepicker-toggle>
+                            <mat-datepicker #picker1></mat-datepicker>
+                            
+                        </mat-form-field>
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="flex-auto">
+                            <mat-label>Hasta</mat-label>
+                            <input
+                                matInput
+                                [matDatepicker]="picker2"
+                                [placeholder]="'DD/MM/AAAA --:--'">
+                            <mat-datepicker-toggle
+                                matSuffix
+                                [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                            
+                        </mat-form-field>
+                    </div>
+                    <div class="flex px-8">
+                        <mat-form-field  [ngClass]="formFieldHelpers"
+                        class="flex-auto">
+                            <mat-label>Desde - Hasta</mat-label>
+                            <mat-date-range-input [formGroup]="primerForm" [rangePicker]="picker">
+                              <input matStartDate formControlName="start" placeholder="Start date">
+                              <input matEndDate formControlName="end" placeholder="End date">
+                              
+                            </mat-date-range-input>
+                            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                            <mat-error *ngIf="primerForm.get('start').hasError('matStartDateInvalid')">
+                                Token es obligatorio
+                            </mat-error>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                          
+                            @if (primerForm.controls.start.hasError('matStartDateInvalid')) {
+                              <mat-error>Invalid start date</mat-error>
+                            }
+                            @if (primerForm.controls.end.hasError('matEndDateInvalid')) {
+                              <mat-error>Invalid end date</mat-error>
+                            }
+                          </mat-form-field>
+                          
+                        </div>
+                        <p>Selected range: {{primerForm.value | json}}</p>
+                    
+                    <div class=" flex items-center bg-gray-50 dark:bg-gray-700 p-4 my-8 border-b">
+                        <h1 class="text-lg font-medium">Filtros</h1>
+                        <button mat-icon-button matTooltip="Basic" (click)="addInput()">
+                            <mat-icon
+                            class="icon-size-7 text-primary-500"
+                            [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                        </button>
+                        
+                    </div>
+                    <div class="max-h-64 overflow-y-auto" [formGroup]="filterForm">
+                        <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
+                            <!-- KEYS -->
+                            <mat-form-field
+                                [ngClass]="formFieldHelpers"
+                                class="flex-auto mr-2">
+                                <mat-label>Filtro {{i+1}}</mat-label>
+                                <mat-select 
+                                    [value]="input"
+                                    (ngModelChange)="onChange(i, $event)">
+                                    <mat-option [value]="tag" *ngFor="let tag of tags" [selected]="tag === inputs[i]"
+                                                [disabled]="inputs.includes(tag) && tag !== inputs[i]">{{tag}}</mat-option>
+                                </mat-select>
+                                
+                            </mat-form-field>
+                            <!-- VALUES -->
+                            <mat-form-field
+                                [ngClass]="formFieldHelpers"
+                                class="flex-auto">
+                                <mat-label></mat-label>
+                                <mat-select >
+                                    <mat-option value="{{value}}" *ngFor="let value of values">{{value}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <button mat-icon-button matTooltip="Basic" (click)="deleteInput(i)">
+                                <mat-icon
+                                class="text-red-600 icon-size-5"
+                                [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <div class="flex items-center justify-end border-t -mx-8 mt-8 px-8 py-5 bg-gray-50 dark:bg-gray-700">
+                        <button mat-button>
+                            Cancel
+                        </button>
+                        <button
+                            class="px-6 ml-3"
+                            mat-flat-button
+                            [color]="'primary'">
+                            Save
+                        </button>
+                    </div>
+                </form>
             </mat-tab>
             <mat-tab label="Selección de caracteristicas "> Selección de caracteristicas </mat-tab>
             <mat-tab label="Tratamiento de fechas"> Tratamiento de fechas </mat-tab>
