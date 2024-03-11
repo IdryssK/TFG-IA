@@ -5,11 +5,8 @@ export const environment = {
     filters: [
         "uid",
         "description_origin",
-        "lat",
-        "lon",
         "organizationid",
         "alias",
-        "cota",
         "description",
         "metric",
         "name",

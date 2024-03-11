@@ -11,9 +11,8 @@ export class ApiSmartUaService {
   private _httpClient = inject(HttpClient);
   
   constructor(private http: HttpClient) { }
-  //function to get the data from the API y recoger errores
 
-
+  body: any;
   getTagSmartUa(token: string, tag: string): Observable<any> {
     console.log(`${environment.apiSmartUA}/tag/${token}/${tag}`)
     return this._httpClient.get(`${environment.apiSmartUA}/tag/${token}/${tag}`).pipe(
@@ -23,9 +22,31 @@ export class ApiSmartUaService {
       }),
       catchError((error) => { 
         console.log(error.url);
-        return of(error); // Devuelve el error como un Observable
+        return of(error); 
       })
     );
   }
 
+  getDataSmartUa(token: string, tag: string[], selectedValues: string[]): Observable<any> {
+    console.log('tag: ', tag, 'values: ', selectedValues)
+    console.log(`${environment.apiSmartUA}/data/${token}`);
+    this.body = {
+
+        "time_start": "2023-05-18T05:18:38Z", //start
+        "time_end": "2023-05-19T05:18:38Z", //end
+        "filters": [
+          {
+            "filter": tag[0], //abra que hacer un for para recorrer todos los tags??
+            "values": selectedValues
+            
+          }
+        ], //{"filter": tag, "values": [selectedValues[0], selectedValues[1], selectedValues[2]},
+        "limit": 100, // limit
+        "count": false // tiene que ser false si queremos ver los datos | true si queremos ver el numero total de datos
+    }
+    console.log(this.body)
+    return this._httpClient.post(`${environment.apiSmartUA}/data/${token}`, this.body);
+  }
+
 }
+
