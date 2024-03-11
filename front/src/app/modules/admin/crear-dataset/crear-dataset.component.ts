@@ -115,18 +115,19 @@ export class CrearDatasetComponent implements OnInit
             let tag = this.tags.find((input: any) => !this.inputs.includes(input));
             console.log(this.tags.length, this.inputs.length);
             if(this.tags.length > this.inputs.length){
+                console.log('Meto en inptus = ', this.tags[this.tags.indexOf(tag)]);
                 this.inputs.push(this.tags[this.tags.indexOf(tag)]);
                 this.getValueTag(this.tags[this.tags.indexOf(tag)]);
 
             }
         }
-
+        console.log(this.inputs);
     }
 
     //borrar el input
     deleteInput(index: any) {
+        console.log('borro de inputs = ', this.inputs[index]);
         this.inputs.splice(index, 1);
-        console.log('borro');
     }
    
     //actualizar el valor del input
