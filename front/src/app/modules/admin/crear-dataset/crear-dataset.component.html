@@ -122,7 +122,7 @@
                    
                     <div class="max-h-64 overflow-y-auto" [formGroup]="filterForm">
                         <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
-                            <!-- KEYS -->
+                            <!-- TAG -->
                             <mat-form-field
                                 [ngClass]="formFieldHelpers"
                                 class="flex-auto mr-2">
@@ -130,9 +130,16 @@
                                 
                                 <mat-select 
                                     [value]="input"
-                                    (ngModelChange)="onChange(i, $event)">
-                                    <mat-option [value]="tag" *ngFor="let tag of tags" [selected]="tag === inputs[i]"
-                                                [disabled]="inputs.includes(tag) && tag !== inputs[i]">{{tag}}</mat-option>
+                                    >
+                                    <mat-option
+                                        (onSelectionChange)="onSelectChangeTag($event, i)"
+                                        *ngFor="let tag of tags"
+                                        [value]="tag"
+                                        [selected]="tag === inputs[i]"
+                                        [disabled]="inputs.includes(tag) && tag !== inputs[i]"
+                                            >
+                                            {{ tag }}
+                                            </mat-option>
                                 </mat-select>
                                 
                             </mat-form-field>
@@ -142,11 +149,11 @@
                                 class="flex-auto">
                                 <mat-label></mat-label>
                                 <mat-select #select [value]="value" placeholder="uid1"  data-filter multiple [formControl]="selectedValues">
-                                    <mat-select-trigger>{{ selectedValues.value.length + ' seleccionados' }}</mat-select-trigger>
+                                    <mat-select-trigger>{{ selectedValueByTag[inputs[i]]?.length + ' seleccionados' }}</mat-select-trigger>
                                     <mat-checkbox [(ngModel)]="allSelected"
                                                 [ngModelOptions]="{standalone: true}"
-                                                (change)="seleccionarTodo()">-- Seleccionar todo --</mat-checkbox>
-                                    <mat-option  (click)="seleccionarClick()" value="{{value}}" *ngFor="let value of values">{{value}}</mat-option>
+                                                (change)="seleccionarTodo(inputs[i])">-- Seleccionar todo --</mat-checkbox>
+                                    <mat-option  (click)="seleccionarClick(inputs[i])" value="{{value}}" *ngFor="let value of allValueByTag[inputs[i]]">{{value}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
                             
@@ -165,7 +172,8 @@
                         <button
                             class="px-6 ml-3"
                             mat-flat-button
-                            [color]="'primary'">
+                            [color]="'primary'"
+                            (click)="filtroGuardados()">
                             Save
                         </button>
                     </div>

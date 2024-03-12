@@ -63,6 +63,8 @@ export class CrearDatasetComponent implements OnInit
     
     filteredItems: string[] = this.values.slice();
     selectedValues = new FormControl([]);
+    selectedValueByTag: {[tag: string]: any[]} = {};
+    allValueByTag: {[tag: string]: any[]} = {};
 
     //tabla
     dataSource: MatTableDataSource<any>;
@@ -89,7 +91,7 @@ export class CrearDatasetComponent implements OnInit
      */
     ngOnInit(): void
     {
-        
+        console.log('------------------------------------');
         this.tags = environment.filters;
     }
     
@@ -100,9 +102,6 @@ export class CrearDatasetComponent implements OnInit
 
     //añadir el input
     addInput() {
-        
-        
-        console.log(this.primerForm.get('token')?.value !== '');
         if(!this.getToken()) {
             this.alert = {
                 type   : 'error',
@@ -113,30 +112,46 @@ export class CrearDatasetComponent implements OnInit
         else {
             this.showAlert = false;
             let tag = this.tags.find((input: any) => !this.inputs.includes(input));
-            console.log(this.tags.length, this.inputs.length);
             if(this.tags.length > this.inputs.length){
                 console.log('Meto en inptus = ', this.tags[this.tags.indexOf(tag)]);
                 this.inputs.push(this.tags[this.tags.indexOf(tag)]);
                 this.getValueTag(this.tags[this.tags.indexOf(tag)]);
-
+                this.allValueByTag[this.tags[this.tags.indexOf(tag)]] = this.values;
             }
         }
-        console.log(this.inputs);
+        console.log(this.allValueByTag);
+        // console.log(this.inputs);
+        // console.log(this.values);
+    }
+
+    //actualizar el valor del input
+    onSelectChangeTag(event, index: any) {
+        
+        if (event.isUserInput) {
+            if (this.inputs.includes(event.source.value)) {
+                console.log('Already added');
+            } else {
+                console.log('Adding new input and removing the previous one');
+                const newInput = event.source.value;
+                console.log(newInput);
+                this.inputs[index] = newInput;
+                this.getValueTag(this.tags[this.tags.indexOf(newInput)]);
+            }
+            console.log(event.source.value, event.source.selected);
+            console.log(this.inputs);
+        }
+
     }
 
     //borrar el input
     deleteInput(index: any) {
         console.log('borro de inputs = ', this.inputs[index]);
+        delete this.selectedValueByTag[this.inputs[index]];
+        delete this.allValueByTag[this.inputs[index]];
         this.inputs.splice(index, 1);
     }
    
-    //actualizar el valor del input
-    onChange(index: any, event: any) {
-        console.log('estoy cambiando?');
-        const newInput = event.target.value;
-        console.log(newInput);
-        this.inputs[index] = newInput;
-    }
+
 
     //recoger token del formulario
     get token() {
@@ -153,12 +168,11 @@ export class CrearDatasetComponent implements OnInit
 
     //recogemos los distintos valores de los tags del token
     getValueTag(tag: string) {
-        console.log(this.token);
-       this.values = [];
+        this.values = [];
         this.addFilter=false;   
         this.apiSmartUaService.getTagSmartUa(this.token, tag)
         .subscribe((response) => {
-            console.log(response.result.values.length);
+            // console.log(response.result.values.length);
             for(let i = 0; i < response.result.values.length; i++) {
                 this.values.push(response.result.values[i][1]);
                 //console.log(response.result.values[i][1]);
@@ -191,22 +205,32 @@ export class CrearDatasetComponent implements OnInit
     }
     
     //seleccionar todos los valores del select
-    seleccionarTodo() {
+    seleccionarTodo(index: any) {
         if (this.allSelected) {
-            this.select.options.forEach((item: MatOption) => item.select());
+            this.select.options.forEach((item: MatOption) => {
+                item.select();
+            });
         } else {
             this.select.options.forEach((item: MatOption) => item.deselect());
         }
+        this.selectedValueByTag[index] = this.selectedValues.value;
+        console.log(this.selectedValueByTag);
+        
     }
     //seleccionar el value del select
-    seleccionarClick() {
+    seleccionarClick(index: any) {
         let newStatus = true;
+        console.log(index);
+        this.selectedValueByTag[index] = this.selectedValues.value;
+        console.log(this.selectedValueByTag);
         this.select.options.forEach((item: MatOption) => {
-            if (!item.selected) {
-            newStatus = false;
+            if (item.selected) {
+                newStatus = false;
             }
         });
         this.allSelected = newStatus;
     }
-
+    filtroGuardados(){
+        console.log(this.selectedValueByTag);
+    }
 }

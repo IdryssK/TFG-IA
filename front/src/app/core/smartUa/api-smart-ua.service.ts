@@ -14,10 +14,9 @@ export class ApiSmartUaService {
 
   body: any;
   getTagSmartUa(token: string, tag: string): Observable<any> {
-    console.log(`${environment.apiSmartUA}/tag/${token}/${tag}`)
+
     return this._httpClient.get(`${environment.apiSmartUA}/tag/${token}/${tag}`).pipe(
       map((response) => {
-        console.log(response); 
         return response;
       }),
       catchError((error) => { 
