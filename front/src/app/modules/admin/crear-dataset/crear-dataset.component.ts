@@ -20,6 +20,7 @@ import { RouterModule } from '@angular/router';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { fuseAnimations } from '@fuse/animations';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import {NativeDateAdapter} from '@angular/material/core';
 
 @Component({
     selector     : 'crear-dataset',
@@ -27,6 +28,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
     encapsulation: ViewEncapsulation.None,
     animations   : fuseAnimations,
     standalone   : true,
+    providers: [NativeDateAdapter],
     imports      : [MatIconModule, MatTableModule, FuseAlertComponent, RouterModule, MatDividerModule, MatDatepickerModule, MatChipsModule, MatTabsModule, FormsModule, ReactiveFormsModule, MatStepperModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatCheckboxModule, MatRadioModule, CommonModule],
 })
 export class CrearDatasetComponent implements OnInit
@@ -69,13 +71,16 @@ export class CrearDatasetComponent implements OnInit
     //tabla
     dataSource: MatTableDataSource<any>;
     displayedColumns: string[];
+    allColumns: string[]; 
+    columnStates: { [key: string]: boolean } = {};
+
 
     primerForm: FormGroup = this.fb.group({
-        nombre: ['', Validators.required],
+        nombre: ['Test', Validators.required],
         token: ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDYyNzI4NDV9.gCMcKrWdKzECFpHckZhBayNtyS6RBbrF1YD5Ig8afZ4', Validators.required],
-        start: new FormControl<Date | null>(null),
-        end: new FormControl<Date | null>(null),
-        tags: [''],
+        start: ['2024-03-09T23:00:00.000Z', new FormControl<Date | null>(null), Validators.required],
+        end: ['2024-03-11T23:00:00.000Z', new FormControl<Date | null>(null)],
+        limit: ['', Validators.required]
         //selectedValues : this.selectedValues,
     });
 
@@ -137,8 +142,6 @@ export class CrearDatasetComponent implements OnInit
                 this.inputs[index] = newInput;
                 this.getValueTag(this.tags[this.tags.indexOf(newInput)]);
             }
-            console.log(event.source.value, event.source.selected);
-            console.log(this.inputs);
         }
 
     }
@@ -182,19 +185,33 @@ export class CrearDatasetComponent implements OnInit
 
     //recoger los datos del token con los filtros
     cargarTabla() {
-        this.apiSmartUaService.getDataSmartUa(this.token, this.inputs, this.selectedValues.value)
+        let limite = this.primerForm.get('limit')?.value
+        limite = limite === '' ? 100 : limite;
+
+        this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
         .subscribe((response) => {
             console.log(response); 
             const data = response.result;
             this.displayedColumns = data.columns;
+            this.allColumns = this.displayedColumns.slice();
+            this.allColumns.forEach(column => {
+                this.columnStates[column] = true; // Todas las columnas inicialmente marcadas como mostradas
+              });
             this.dataSource = new MatTableDataSource(data.values);
-            console.log(response.result.values[0][1]); 
-            this.count_value = response.result.values[0][1];
             this.cdr.detectChanges();
+            
         },
         (error) => {
             console.log(error);
         });
+
+        this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
+        .subscribe((response) => {
+            console.log(response);
+            this.count_value = response.result.values[0][1];
+            this.cdr.detectChanges();
+        });
+        console.log(this.count_value);
     }
 
     //aplicar el filtro
@@ -233,4 +250,29 @@ export class CrearDatasetComponent implements OnInit
     filtroGuardados(){
         console.log(this.selectedValueByTag);
     }
+
+    toggleColumn(event: any, column: string) {
+        console.log(this.columnStates[column]);
+        if (event.target.checked) {
+          // Marcar la columna como mostrada
+          //que posicion tenia la columna
+          const originalIndex = this.allColumns.indexOf(column);
+          if (originalIndex !== -1) {
+            console.log(this.displayedColumns);
+            // meto la columna en la posición original en la que estaba (pos, noBorrar, nombreColumna)
+            this.displayedColumns.splice(originalIndex, 0, column);
+            console.log(this.displayedColumns);
+          }
+          this.columnStates[column] = true; // Actualizar el estado de la columna a mostrada
+          console.log('marco y añado columna');
+        } else {
+          // Desmarcar la columna como no mostrada
+          const index = this.displayedColumns.indexOf(column);
+          if (index !== -1) {
+            this.displayedColumns.splice(index, 1);
+          }
+          this.columnStates[column] = false; // Actualizar el estado de la columna a no mostrada
+        }
+      }
+
 }

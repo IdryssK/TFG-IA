@@ -1,8 +1,8 @@
 <div class="flex flex-col flex-auto min-w-0">
 
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
-        <div class="flex-1 min-w-0">
+    <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-2 sm:px-12 bg-card dark:bg-transparent">
+        <div class="flex space-between">
             <!-- Breadcrumbs -->
             <div class="flex flex-wrap items-center font-medium">
                 <div>
@@ -15,202 +15,260 @@
                     <a class="ml-1 text-primary-500">Añadir</a>
                 </div>
             </div>
-            <!-- Title -->
-            <div class="mt-2">
-                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
-                    Añadir un dataset
-                </h2>
-            </div>
+            
         </div>
     </div>
+    <form  [formGroup]="primerForm">
+
+    <div class="flex flex-row">
+        <!-- Primera columna - Mitad de la pantalla -->
+        <div class="w-1/2">
+          
+        </div>
+        
+        <!-- Segunda columna - Mitad de la pantalla -->
+        <div class="w-1/2">
+          <!-- Dividir en 3 columnas -->
+          <div class="grid grid-cols-3">
+            <!-- Primera columna de la segunda columna -->
+            <div class="col-span-1 px-2 py-1 mr-2">
+              <!-- Contenido de la primera columna -->
+              <button class="py-2 px-4" 
+                    mat-flat-button
+                    (click)="cargarTabla()">
+                Cargar
+              </button>
+              <span *ngIf="count_value !== 0" class="ml-2 text-gray-600">
+                Resultados: <strong>{{ count_value }}</strong>
+              </span>
+            </div>
+            
+            <!-- Segunda columna de la segunda columna -->
+            <div class="col-span-1  flex justify-center items-center">
+              <!-- Contenido de la segunda columna -->
+              <label for="limite">Limite:
+              <input id="limite" type="number" class="border rounded px-2 py-1 mr-2" placeholder="100" formControlName="limit"> </label>
+              <!-- <mat-form-field
+                                [ngClass]="formFieldHelpers2"
+                                class="">
+                                <mat-label>Limite</mat-label>
+                                <input
+                                    matInput
+                                    formControlName="limit"
+                                    [placeholder]="'100'">
+                                <mat-error *ngIf="primerForm.get('limit').hasError('required')">
+                                    Limite es obligatorio
+                                </mat-error>
+                            </mat-form-field> -->
+            </div>
+      
+            <!-- Tercera columna de la segunda columna -->
+            <div class="col-span-1 flex justify-end items-end">
+              <!-- Contenido de la tercera columna -->
+              <button (click)="toggleContainers()" class="px-2 rounded">
+                <mat-icon [svgIcon]="'heroicons_outline:arrows-pointing-out'"></mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+    </div>
+      
+
 
     <!-- Main -->
 
-<!-- Main -->
-<div class="flex flex-auto justify-between">
-    <!-- Contenedor izquierdo -->
-    <div  id="leftContainer" [ngClass]="{'hidden': isHidden}" class="flex-auto w-1/2 border border-red">
-        <!-- Pestañas -->
-        <mat-tab-group>
-            <!-- Filtros -->
-            <mat-tab label="Filtros">
-                <!-- <form class="flex flex-col mt-8 p-8 pb-4 bg-card rounded-2xl shadow overflow-hidden">
-                    
-                </form> -->
-                <form class="flex flex-col mt-4  bg-card shadow rounded overflow-hidden" [formGroup]="primerForm">
-                    <div class="bg-gray-50 dark:bg-gray-700 p-4 mb-8 border-b">
-                        <p class="text-lg font-medium">Datos de información</p>
-                    </div>
-                    <div class="flex px-8">
-                        <mat-form-field
-                            [ngClass]="formFieldHelpers"
-                            class="flex-auto">
-                            <mat-label>Nombre</mat-label>
-                            <input
-                                matInput
-                                formControlName="nombre"
-                                [placeholder]="'Mi nuevo dataset'">
-                            <mat-hint>Nombre de la colección</mat-hint>
-                            <mat-error *ngIf="primerForm.get('nombre').hasError('required')">
-                                Nombre es obligatorio
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                    <div class="flex px-8">
-                        <mat-form-field
-                            [ngClass]="formFieldHelpers"
-                            class="flex-auto">
-                            <mat-label>Token</mat-label>
-                            <input
-                                matInput
-                                formControlName="token"
-                                [placeholder]="'Token de la colección'">
-                            <mat-hint>Token de la colección</mat-hint>
-                            <mat-error *ngIf="primerForm.get('token').hasError('required')">
-                                Token es obligatorio
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                    <!-- <mat-divider class="mt-4 mb-2"></mat-divider> -->
-                    <div class="bg-gray-50 dark:bg-gray-700 p-4 my-8 border-b">
-                        <p class="text-lg font-medium">Fechas</p>
-                    </div>
-                    <div class="flex px-8">
-                        <mat-form-field  [ngClass]="formFieldHelpers"
-                        class="flex-auto">
-                            <mat-label>Desde - Hasta</mat-label>
-                            <mat-date-range-input [formGroup]="primerForm" [rangePicker]="picker">
-                              <input matStartDate formControlName="start" placeholder="Start date">
-                              <input matEndDate formControlName="end" placeholder="End date">
-                              
-                            </mat-date-range-input>
-                            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                            <mat-error *ngIf="primerForm.get('start').hasError('matStartDateInvalid')">
-                                Token es obligatorio
-                            </mat-error>
-                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #picker></mat-date-range-picker>
-                          
-                            @if (primerForm.controls.start.hasError('matStartDateInvalid')) {
-                              <mat-error>Invalid start date</mat-error>
-                            }
-                            @if (primerForm.controls.end.hasError('matEndDateInvalid')) {
-                              <mat-error>Invalid end date</mat-error>
-                            }
-                          </mat-form-field>
-                          
+    <!-- Main -->
+    <div class="flex flex-auto justify-between">
+        <!-- Contenedor izquierdo -->
+        <div  id="leftContainer" [ngClass]="{'hidden': isHidden}" class="flex-auto w-1/2 border border-red">
+            <!-- Pestañas -->
+            <mat-tab-group>
+                <!-- Filtros -->
+                <mat-tab label="Filtros">
+                    <div class="flex flex-col  bg-card shadow rounded overflow-hidden">
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 mb-4 border-b">
+                            <p class="text-lg font-medium">Datos de información</p>
                         </div>
-                        <p>Selected range: {{primerForm.value.start | json}}-{{primerForm.value.end | json}}</p>
-
-                    <div class=" flex items-center bg-gray-50 dark:bg-gray-700 p-4 my-8 border-b">
-                        <h1 class="text-lg font-medium">Filtros</h1>
-                        <button mat-icon-button matTooltip="Basic" (click)="addInput()">
-                            <mat-icon
-                            class="icon-size-7 text-primary-500"
-                            [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
-                        </button>
-                        <fuse-alert
-                            class=""
-                            *ngIf="showAlert"
-                            [appearance]="'outline'"
-                            [showIcon]="false"
-                            [type]="alert.type"
-                            [@shake]="alert.type === 'error'">
-                            {{alert.message}}
-                        </fuse-alert>
-                    </div>
-                   
-                    <div class="max-h-64 overflow-y-auto" [formGroup]="filterForm">
-                        <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
-                            <!-- TAG -->
+                        <div class="flex px-8">
                             <mat-form-field
                                 [ngClass]="formFieldHelpers"
                                 class="flex-auto mr-2">
-                                <mat-label>Filtro {{i+1}}</mat-label>
-                                
-                                <mat-select 
-                                    [value]="input"
-                                    >
-                                    <mat-option
-                                        (onSelectionChange)="onSelectChangeTag($event, i)"
-                                        *ngFor="let tag of tags"
-                                        [value]="tag"
-                                        [selected]="tag === inputs[i]"
-                                        [disabled]="inputs.includes(tag) && tag !== inputs[i]"
-                                            >
-                                            {{ tag }}
-                                            </mat-option>
-                                </mat-select>
-                                
+                                <mat-label>Nombre</mat-label>
+                                <input
+                                    matInput
+                                    formControlName="nombre"
+                                    [placeholder]="'Mi nuevo dataset'">
+                                <mat-hint>Nombre de la colección</mat-hint>
+                                <mat-error *ngIf="primerForm.get('nombre').hasError('required')">
+                                    Nombre es obligatorio
+                                </mat-error>
                             </mat-form-field>
-                            <!-- VALUES -->
                             <mat-form-field
                                 [ngClass]="formFieldHelpers"
                                 class="flex-auto">
-                                <mat-label></mat-label>
-                                <mat-select #select [value]="value" placeholder="uid1"  data-filter multiple [formControl]="selectedValues">
-                                    <mat-select-trigger>{{ selectedValueByTag[inputs[i]]?.length + ' seleccionados' }}</mat-select-trigger>
-                                    <mat-checkbox [(ngModel)]="allSelected"
-                                                [ngModelOptions]="{standalone: true}"
-                                                (change)="seleccionarTodo(inputs[i])">-- Seleccionar todo --</mat-checkbox>
-                                    <mat-option  (click)="seleccionarClick(inputs[i])" value="{{value}}" *ngFor="let value of allValueByTag[inputs[i]]">{{value}}</mat-option>
-                                </mat-select>
+                                <mat-label>Token</mat-label>
+                                <input
+                                    matInput
+                                    formControlName="token"
+                                    [placeholder]="'Token de la colección'">
+                                <mat-hint>Token de la colección</mat-hint>
+                                <mat-error *ngIf="primerForm.get('token').hasError('required')">
+                                    Token es obligatorio
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        
+                        <div class="flex px-8">
+                            <mat-form-field  [ngClass]="formFieldHelpers"
+                            class="flex-auto">
+                                <mat-label>Desde - Hasta</mat-label>
+                                <mat-date-range-input [formGroup]="primerForm" [rangePicker]="picker">
+                                <input matStartDate formControlName="start" placeholder="Start date">
+                                <input matEndDate formControlName="end" placeholder="End date">
+                                
+                                </mat-date-range-input>
+                                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                                <!-- <mat-error *ngIf="primerForm.get('start').hasError('matStartDateInvalid')">
+                                    Token es obligatorio
+                                </mat-error> -->
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #picker></mat-date-range-picker>
+                            
+                                @if (primerForm.controls.start.hasError('matStartDateInvalid')) {
+                                <mat-error>Invalid start date</mat-error>
+                                }
+                                @if (primerForm.controls.end.hasError('matEndDateInvalid')) {
+                                <mat-error>Invalid end date</mat-error>
+                                }
                             </mat-form-field>
                             
-                            <button mat-icon-button matTooltip="Basic" (click)="deleteInput(i)">
+                            </div>
+                        
+
+                        <div class="flex items-center bg-gray-50 dark:bg-gray-700 py-2 px-4 my-4 border-b">    
+                            <h1 class="text-lg font-medium">Filtros</h1>
+                            <button mat-icon-button matTooltip="Basic" (click)="addInput()">
                                 <mat-icon
-                                class="text-red-600 icon-size-5"
-                                [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                class="icon-size-6 text-primary-500"
+                                [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+                            </button>
+                            <fuse-alert
+                                class=""
+                                *ngIf="showAlert"
+                                [appearance]="'outline'"
+                                [showIcon]="false"
+                                [type]="alert.type"
+                                [@shake]="alert.type === 'error'">
+                                {{alert.message}}
+                            </fuse-alert>
+                        </div>
+                    
+                        <div class="max-h-32 overflow-y-auto" [formGroup]="filterForm">
+                            <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
+                                <!-- TAG -->
+                                <mat-form-field
+                                    [ngClass]="formFieldHelpers"
+                                    class="flex-auto mr-2">
+                                    <mat-label>Filtro {{i+1}}</mat-label>
+                                    
+                                    <mat-select 
+                                        [value]="input"
+                                        >
+                                        <mat-option
+                                            (onSelectionChange)="onSelectChangeTag($event, i)"
+                                            *ngFor="let tag of tags"
+                                            [value]="tag"
+                                            [selected]="tag === inputs[i]"
+                                            [disabled]="inputs.includes(tag) && tag !== inputs[i]"
+                                                >
+                                                {{ tag }}
+                                                </mat-option>
+                                    </mat-select>
+                                    
+                                </mat-form-field>
+                                <!-- VALUES -->
+                                <mat-form-field
+                                    [ngClass]="formFieldHelpers"
+                                    class="flex-auto">
+                                    <mat-label></mat-label>
+                                    <mat-select #select [value]="value" placeholder="uid1"  data-filter multiple [formControl]="selectedValues">
+                                        <mat-select-trigger>{{ selectedValueByTag[inputs[i]]?.length + ' seleccionados' }}</mat-select-trigger>
+                                        <mat-checkbox [(ngModel)]="allSelected"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    (change)="seleccionarTodo(inputs[i])">-- Seleccionar todo --</mat-checkbox>
+                                        <mat-option  (click)="seleccionarClick(inputs[i])" value="{{value}}" *ngFor="let value of allValueByTag[inputs[i]]">{{value}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                
+                                <button mat-icon-button matTooltip="Basic" (click)="deleteInput(i)">
+                                    <mat-icon
+                                    class="text-red-600 icon-size-5"
+                                    [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+        
+                        <div class="flex items-center justify-end border-t -mx-8 mt-8 px-8 py-5 bg-gray-50 dark:bg-gray-700">
+                            <button mat-button>
+                                Cancel
+                            </button>
+                            <button
+                                class="px-6 mx-3"
+                                mat-flat-button
+                                [color]="'primary'"
+                                (click)="filtroGuardados()">
+                                Save
                             </button>
                         </div>
                     </div>
-    
-                    <div class="flex items-center justify-end border-t -mx-8 mt-8 px-8 py-5 bg-gray-50 dark:bg-gray-700">
-                        <button mat-button>
-                            Cancel
-                        </button>
-                        <button
-                            class="px-6 ml-3"
-                            mat-flat-button
-                            [color]="'primary'"
-                            (click)="filtroGuardados()">
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </mat-tab>
-            <mat-tab label="Selección de caracteristicas "> Selección de caracteristicas </mat-tab>
-            <mat-tab label="Tratamiento de fechas"> Tratamiento de fechas </mat-tab>
-            <mat-tab label="Tratamiento de datos"> Tratamiento de datos </mat-tab>
-          </mat-tab-group>
-    </div>
-    <!-- Contenedor derecho -->
-    <div id="rightContainer" [ngClass]="{'w-full': isHidden}" class="flex-auto w-1/2 border border-grey">
-        <!-- Contenido derecho -->
-        <button (click)="toggleContainers()" class="absolute top-39 right-2 px-4 py-2 rounded">
-            <mat-icon [svgIcon]="'heroicons_outline:arrows-pointing-out'"></mat-icon>
-        </button>
-        <button (click)="cargarTabla()" class="items-center">Cargar tabla<mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon></button>
-        <!-- un texto donde ponga el valor de una variable del ts -->
-        <p>N Resultados: {{count_value}}</p>
-        <div class="flex flex-col items-center justify-center h-full max-h-230 m-2">
-            <div class="w-full overflow-x-auto">
-                <table mat-table [dataSource]="dataSource" class="w-full rounded-sm">
-                    <!-- Agregar columnas -->
-                    <ng-container *ngFor="let column of displayedColumns; let i = index" [matColumnDef]="column">
-                        <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
-                        <td mat-cell *matCellDef="let element">{{ element[i] }}</td>
-                    </ng-container>
-    
-                    <!-- Definir las filas -->
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                </table>
-            </div>
+                </mat-tab>
+                <mat-tab label="Selección de caracteristicas ">
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center" *ngFor="let column of allColumns">
+                          <input type="checkbox" [checked]="allColumns.indexOf(column) !== -1" (change)="toggleColumn($event, column)">
+                          <label class="ml-2">{{ column }}</label>
+                        </div>
+                      </div>
+                      
+                      
+                      
+                </mat-tab>
+                <mat-tab label="Tratamiento de fechas"> Tratamiento de fechas </mat-tab>
+                <mat-tab label="Tratamiento de datos"> Tratamiento de datos </mat-tab>
+            </mat-tab-group>
         </div>
+        <!-- Contenedor derecho -->
+        <div id="rightContainer" [ngClass]="{'w-full': isHidden}" class="flex-auto w-1/2 border border-grey">
+            <!-- Contenido derecho -->
+            
+            <mat-tab-group>
+                <!-- Filtros -->
+                <mat-tab label="Filtros">
+                    <div class="flex flex-col items-center justify-center h-full max-h-230 ">
+                        <div class="w-full overflow-y-auto max-h-140 rounded">
+                            <table mat-table [dataSource]="dataSource" class="rounded-sm">
+                                <!-- Agregar columnas -->
+                                <ng-container *ngFor="let column of displayedColumns; let i = index" [matColumnDef]="column">
+                                    <th mat-header-cell *matHeaderCellDef class="sticky text-primary-400">{{ column }}</th>
+                                    <td mat-cell *matCellDef="let element" >{{ element[i] }}</td>
+                                </ng-container>
+                
+                                <!-- Definir las filas -->
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Selección de caracteristicas "> Selección de caracteristicas </mat-tab>
+                <mat-tab label="Tratamiento de fechas"> Tratamiento de fechas </mat-tab>
+                <mat-tab label="Tratamiento de datos"> Tratamiento de datos </mat-tab>
+            </mat-tab-group>
+            
+            
+        </div>
+        
     </div>
-    
-</div>
 
-
+</form>
 </div>

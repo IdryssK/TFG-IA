@@ -26,26 +26,67 @@ export class ApiSmartUaService {
     );
   }
 
-  getDataSmartUa(token: string, tag: string[], selectedValues: string[]): Observable<any> {
-    console.log('tag: ', tag, 'values: ', selectedValues)
-    console.log(`${environment.apiSmartUA}/data/${token}`);
+  getDataSmartUa(token: string, limite: number, selectedValuesByTag: {[tag: string]: any[]}, start: Date, end: Date): Observable<any> {
+    
+    //forrmateamos las fechas a 2023-05-02T14:00:00Z
+    start = new Date(start);
+    end = new Date(end);
+
+    // Creamos un array de filtros
+    let filters = [];
+    for (let tag in selectedValuesByTag) {
+      filters.push({
+        "filter": tag,
+        "values": selectedValuesByTag[tag]
+      });
+    }
+
+    //craemos el body
     this.body = {
 
-        "time_start": "2023-05-18T05:18:38Z", //start
-        "time_end": "2023-05-19T05:18:38Z", //end
-        "filters": [
-          {
-            "filter": tag[0], //abra que hacer un for para recorrer todos los tags??
-            "values": selectedValues
-            
-          }
-        ], //{"filter": tag, "values": [selectedValues[0], selectedValues[1], selectedValues[2]},
-        "limit": 100, // limit
+        "time_start": start.toJSON(), //start
+        "time_end": end.toJSON(), //end
+        "filters": filters, //{"filter": tag, "values": [selectedValues[0], selectedValues[1], selectedValues[2]},
+        "limit": limite, // limit
         "count": false // tiene que ser false si queremos ver los datos | true si queremos ver el numero total de datos
     }
     console.log(this.body)
     return this._httpClient.post(`${environment.apiSmartUA}/data/${token}`, this.body);
   }
 
+  // recogemos el numero total de datos
+  getTotalDataCount(token: string, selectedValuesByTag: {[tag: string]: any[]}, start: Date, end: Date): Observable<any> {
+    //forrmateamos las fechas a 2023-05-02T14:00:00Z
+    start = new Date(start);
+    end = new Date(end);
+
+    // Creamos un array de filtros
+    let filters = [];
+    for (let tag in selectedValuesByTag) {
+      filters.push({
+        "filter": tag,
+        "values": selectedValuesByTag[tag]
+      });
+    }
+
+    //craemos el body
+    this.body = {
+
+        "time_start": start.toJSON(), //start
+        "time_end": end.toJSON(), //end
+        "filters": filters, //{"filter": tag, "values": [selectedValues[0], selectedValues[1], selectedValues[2]},
+        "limit": 100, // limit
+        "count": true // tiene que ser false si queremos ver los datos | true si queremos ver el numero total de datos
+    }
+  
+    return this._httpClient.post(`${environment.apiSmartUA}/data/${token}`, this.body);
+  }
 }
+
+
+// funcion que llame a la api de smartua/data/token pero que me ponga el count a true
+// y que me devuelva el numero de datos que hay en el token
+
+// funcion que llame a la api de smartua/data/token pero que me ponga el count a false
+
 
