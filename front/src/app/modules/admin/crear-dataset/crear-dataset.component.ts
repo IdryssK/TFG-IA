@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOption, MatOptionModule } from '@angular/material/core';
@@ -21,15 +21,77 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { fuseAnimations } from '@fuse/animations';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import {NativeDateAdapter} from '@angular/material/core';
-
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
+import { MtxMomentDatetimeModule, provideMomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import { MatCardModule } from '@angular/material/card';
+import { provideNativeDatetimeAdapter } from '@ng-matero/extensions/core';
+import { MtxCalendar } from '@ng-matero/extensions/datetimepicker';
+import {
+    MtxCalendarView,
+    MtxDatetimepicker,
+    MtxDatetimepickerInput,
+    MtxDatetimepickerMode,
+    MtxDatetimepickerToggle,
+    MtxDatetimepickerType,
+  } from '@ng-matero/extensions/datetimepicker';
+import { DateTime } from 'luxon';
+  
 @Component({
     selector     : 'crear-dataset',
     templateUrl  : './crear-dataset.component.html',
     encapsulation: ViewEncapsulation.None,
     animations   : fuseAnimations,
     standalone   : true,
-    providers: [NativeDateAdapter],
-    imports      : [MatIconModule, MatTableModule, FuseAlertComponent, RouterModule, MatDividerModule, MatDatepickerModule, MatChipsModule, MatTabsModule, FormsModule, ReactiveFormsModule, MatStepperModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatCheckboxModule, MatRadioModule, CommonModule],
+    providers: [provideMomentDatetimeAdapter({
+                                                parse: {
+                                                dateInput: 'YYYY-MM-DD',
+                                                monthInput: 'MMMM',
+                                                yearInput: 'YYYY',
+                                                timeInput: 'HH:mm',
+                                                datetimeInput: 'YYYY-MM-DD HH:mm',
+                                                },
+                                                display: {
+                                                dateInput: 'YYYY-MM-DD',
+                                                monthInput: 'MMMM',
+                                                yearInput: 'YYYY',
+                                                timeInput: 'HH:mm',
+                                                datetimeInput: 'YYYY-MM-DD HH:mm',
+                                                monthYearLabel: 'YYYY MMMM',
+                                                dateA11yLabel: 'LL',
+                                                monthYearA11yLabel: 'MMMM YYYY',
+                                                popupHeaderDateLabel: 'MMM DD, ddd',
+                                                },
+                                                }),
+                ],
+    imports      : [MatIconModule, 
+                    MatTableModule, 
+                    FuseAlertComponent, 
+                    RouterModule, 
+                    MatDividerModule, 
+                    MatDatepickerModule, 
+                    MatChipsModule, 
+                    MatTabsModule,
+                    FormsModule,
+                    ReactiveFormsModule,
+                    MatStepperModule,
+                    MatFormFieldModule,
+                    MatInputModule,
+                    MatSelectModule,
+                    MatOptionModule,
+                    MatButtonModule,
+                    MatCheckboxModule,
+                    MatRadioModule,
+                    CommonModule,
+                    NgxMatTimepickerModule,
+                    NgxMaterialTimepickerModule,
+                    MtxMomentDatetimeModule,
+                    MatCardModule,
+                    MtxCalendar,
+                    MtxDatetimepicker,
+                    MtxDatetimepickerInput,
+                    MtxDatetimepickerToggle,
+                 ],
 })
 export class CrearDatasetComponent implements OnInit
 {
@@ -50,7 +112,7 @@ export class CrearDatasetComponent implements OnInit
     };
 
     
-    
+    selectedTime: Date | null = null;
     filterForm: FormGroup = this.fb.group({
     });
 
@@ -67,6 +129,7 @@ export class CrearDatasetComponent implements OnInit
     selectedValues = new FormControl([]);
     selectedValueByTag: {[tag: string]: any[]} = {};
     allValueByTag: {[tag: string]: any[]} = {};
+    filteredValues: string[] = [];
 
     //tabla
     dataSource: MatTableDataSource<any>;
@@ -78,12 +141,12 @@ export class CrearDatasetComponent implements OnInit
     primerForm: FormGroup = this.fb.group({
         nombre: ['Test', Validators.required],
         token: ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDYyNzI4NDV9.gCMcKrWdKzECFpHckZhBayNtyS6RBbrF1YD5Ig8afZ4', Validators.required],
-        start: ['2024-03-09T23:00:00.000Z', new FormControl<Date | null>(null), Validators.required],
-        end: ['2024-03-11T23:00:00.000Z', new FormControl<Date | null>(null)],
-        limit: ['', Validators.required]
+        start: ['', new UntypedFormControl()],
+        end: ['', new UntypedFormControl()],
+        limit: ['', Validators.required],
         //selectedValues : this.selectedValues,
     });
-
+    
     @ViewChild('select') select: MatSelect;
 
     allSelected=false;
@@ -185,6 +248,10 @@ export class CrearDatasetComponent implements OnInit
 
     //recoger los datos del token con los filtros
     cargarTabla() {
+
+        console.log(this.primerForm.get('start')?.value);
+        console.log(this.primerForm.get('end')?.value);
+
         let limite = this.primerForm.get('limit')?.value
         limite = limite === '' ? 100 : limite;
 
@@ -215,10 +282,17 @@ export class CrearDatasetComponent implements OnInit
     }
 
     //aplicar el filtro
-    applyFilter(value: string) {
-        this.filteredItems = this.values.filter(item =>
-            item.toLowerCase().includes(value.toLowerCase())
-        );
+// Modifica el método applyFilter para filtrar los elementos según el valor del filtro
+    filterOptions(tag: string, searchText: string) {
+        if (!this.allValueByTag[tag]) {
+            return [];
+        }
+        if (!searchText) {
+            return this.allValueByTag[tag];
+        }
+        const hola = this.allValueByTag[tag].filter(option => option.toLowerCase().includes(searchText.toLowerCase()));
+        console.log(hola);
+        return hola;
     }
     
     //seleccionar todos los valores del select

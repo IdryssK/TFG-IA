@@ -1,24 +1,6 @@
 <div class="flex flex-col flex-auto min-w-0">
 
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-2 sm:px-12 bg-card dark:bg-transparent">
-        <div class="flex space-between">
-            <!-- Breadcrumbs -->
-            <div class="flex flex-wrap items-center font-medium">
-                <div>
-                    <a routerLink ="/dataset/lista" class="whitespace-nowrap text-primary-500">Dataset</a>
-                </div>
-                <div class="flex items-center ml-1 whitespace-nowrap">
-                    <mat-icon
-                        class="icon-size-5 text-secondary"
-                        [svgIcon]="'heroicons_mini:chevron-right'"></mat-icon>
-                    <a class="ml-1 text-primary-500">Añadir</a>
-                </div>
-            </div>
-            
-        </div>
-    </div>
-    <form  [formGroup]="primerForm">
+    <form class="pt-2"  [formGroup]="primerForm">
 
     <div class="flex flex-row">
         <!-- Primera columna - Mitad de la pantalla -->
@@ -118,7 +100,7 @@
                             </mat-form-field>
                         </div>
                         
-                        <div class="flex px-8">
+                        <!-- <div class="flex px-8">
                             <mat-form-field  [ngClass]="formFieldHelpers"
                             class="flex-auto">
                                 <mat-label>Desde - Hasta</mat-label>
@@ -128,9 +110,7 @@
                                 
                                 </mat-date-range-input>
                                 <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                                <!-- <mat-error *ngIf="primerForm.get('start').hasError('matStartDateInvalid')">
-                                    Token es obligatorio
-                                </mat-error> -->
+
                                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                                 <mat-date-range-picker #picker></mat-date-range-picker>
                             
@@ -142,9 +122,43 @@
                                 }
                             </mat-form-field>
                             
-                            </div>
+                        </div> -->
+                        <div class="flex px-8">
+                            <mat-form-field
+                                [ngClass]="formFieldHelpers"
+                                class="flex-auto mr-2">
+                                <mat-label>Desde</mat-label>
+                                <mtx-datetimepicker #datetimePicker
+                                                    type="datetime"
+                                                    mode="auto"
+                                                    multiYearSelector="false"
+                                                    startView="month"
+                                                    timeInterval="1"
+                                                    timeInput="true">
+                                </mtx-datetimepicker>
+                                <input [mtxDatetimepicker]="datetimePicker" formControlName="start" matInput required>
+                                <mat-hint>AAAA-MM-DD HH:MM</mat-hint>
+                                <mtx-datetimepicker-toggle matSuffix [for]="datetimePicker" ></mtx-datetimepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field
+                                [ngClass]="formFieldHelpers"
+                                class="flex-auto">
+                                <mat-label>Hasta</mat-label>
+                                <mtx-datetimepicker #datetimePicker2
+                                                    type="datetime"
+                                                    mode="auto"
+                                                    multiYearSelector="false"
+                                                    startView="month"
+                                                    timeInterval="1"
+                                                    timeInput="true">
+                                </mtx-datetimepicker>
+                                <input [mtxDatetimepicker]="datetimePicker2" formControlName="end" matInput required>
+                                <mat-hint>AAAA-MM-DD HH:MM</mat-hint>
+                                <mtx-datetimepicker-toggle matSuffix [for]="datetimePicker2" ></mtx-datetimepicker-toggle>
+                            </mat-form-field>
+                        </div>
                         
-
+                        <!-- <p>{{datetime.value}} - {{datetime2.value}}</p> -->
                         <div class="flex items-center bg-gray-50 dark:bg-gray-700 py-2 px-4 my-4 border-b">    
                             <h1 class="text-lg font-medium">Filtros</h1>
                             <button mat-icon-button matTooltip="Basic" (click)="addInput()">
@@ -192,14 +206,26 @@
                                     class="flex-auto">
                                     <mat-label></mat-label>
                                     <mat-select #select [value]="value" placeholder="uid1"  data-filter multiple [formControl]="selectedValues">
-                                        <mat-select-trigger>{{ selectedValueByTag[inputs[i]]?.length + ' seleccionados' }}</mat-select-trigger>
+                                        <!-- <mat-select-filter class="p-4" [array]="allValueByTag[inputs[i]]" (filteredReturn)="filterOptions(inputs[i], $event)"></mat-select-filter> -->
+                                        <mat-select-trigger>
+                                            {{selectedValues.value?.[0] || ''}},
+                                            {{selectedValues.value?.[1] || ''}}
+                                            
+                                            @if ((selectedValues.value?.length || 0) > 2) {
+                                              <span class="example-additional-selection">
+                                                (+{{(selectedValues.value?.length || 0) - 1}} {{selectedValues.value?.length === 2 ? 'más' : 'más'}})
+                                              </span>
+                                            }
+                                        </mat-select-trigger>
+                                        <search [appearance]="'bar'"></search>
+                                        <!-- <input matInput placeholder="Filtrar opciones" (input)="filterOptions($event.target.value, inputs[i])"> -->
                                         <mat-checkbox [(ngModel)]="allSelected"
                                                     [ngModelOptions]="{standalone: true}"
                                                     (change)="seleccionarTodo(inputs[i])">-- Seleccionar todo --</mat-checkbox>
                                         <mat-option  (click)="seleccionarClick(inputs[i])" value="{{value}}" *ngFor="let value of allValueByTag[inputs[i]]">{{value}}</mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                
+                                <search [appearance]="'basic'"></search>
                                 <button mat-icon-button matTooltip="Basic" (click)="deleteInput(i)">
                                     <mat-icon
                                     class="text-red-600 icon-size-5"
