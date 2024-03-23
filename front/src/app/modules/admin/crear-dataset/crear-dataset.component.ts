@@ -27,20 +27,15 @@ import { MtxMomentDatetimeModule, provideMomentDatetimeAdapter } from '@ng-mater
 import { MatCardModule } from '@angular/material/card';
 import { provideNativeDatetimeAdapter } from '@ng-matero/extensions/core';
 import { MtxCalendar } from '@ng-matero/extensions/datetimepicker';
-import {
-    MtxCalendarView,
-    MtxDatetimepicker,
-    MtxDatetimepickerInput,
-    MtxDatetimepickerMode,
-    MtxDatetimepickerToggle,
-    MtxDatetimepickerType,
-  } from '@ng-matero/extensions/datetimepicker';
+import { MtxCalendarView, MtxDatetimepicker, MtxDatetimepickerInput, MtxDatetimepickerMode, MtxDatetimepickerToggle, MtxDatetimepickerType} from '@ng-matero/extensions/datetimepicker';
+import { MtxGrid, MtxGridColumn } from '@ng-matero/extensions/grid';
 import { DateTime } from 'luxon';
   
 @Component({
     selector     : 'crear-dataset',
     templateUrl  : './crear-dataset.component.html',
     encapsulation: ViewEncapsulation.None,
+    styleUrls    : ['./crear-dataset.component.scss'],
     animations   : fuseAnimations,
     standalone   : true,
     providers: [provideMomentDatetimeAdapter({
@@ -91,6 +86,7 @@ import { DateTime } from 'luxon';
                     MtxDatetimepicker,
                     MtxDatetimepickerInput,
                     MtxDatetimepickerToggle,
+                    MtxGrid
                  ],
 })
 export class CrearDatasetComponent implements OnInit
@@ -106,6 +102,15 @@ export class CrearDatasetComponent implements OnInit
     {
     }
 
+    // PESTAÑAS-----------------------------------------------------------------------------------------------------
+    selectedTabIndex = 0; // Índice de la pestaña seleccionada
+
+    // Método para cambiar el índice de la pestaña seleccionada
+    changeTab(index: number) {
+        this.selectedTabIndex = index;
+    }
+
+    // -----------------------------------------------------------------------------------------------------
     alert: { type: FuseAlertType; message: string } = {
         type   : 'success',
         message: '',
@@ -137,39 +142,49 @@ export class CrearDatasetComponent implements OnInit
     allColumns: string[]; 
     columnStates: { [key: string]: boolean } = {};
 
+    // tabla FILTROS
+    @ViewChild('grid') grid!: MtxGrid;
+    columns: MtxGridColumn[] = [];
+    list = [];
+    
+    columns1: MtxGridColumn[] = [];
+    list1 = [];
+    
+    columns2: MtxGridColumn[] = [];
+    list2 = [];
+    
+    columns3: MtxGridColumn[] = [];
+    list3 = [];
+    
+
+    
+
 
     primerForm: FormGroup = this.fb.group({
         nombre: ['Test', Validators.required],
         token: ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDYyNzI4NDV9.gCMcKrWdKzECFpHckZhBayNtyS6RBbrF1YD5Ig8afZ4', Validators.required],
-        start: ['', new UntypedFormControl()],
-        end: ['', new UntypedFormControl()],
+        start: ['2024-03-04T17:40:00.000Z', new UntypedFormControl()],
+        end: ['2024-03-05T17:40:00.000Z', new UntypedFormControl()],
         limit: ['', Validators.required],
-        //selectedValues : this.selectedValues,
+
     });
     
-    @ViewChild('select') select: MatSelect;
-
-    allSelected=false;
+    
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // ----------------------------------------------------------------------------------------------------
 
-    /**
-     * On init
-     */
-    ngOnInit(): void
-    {
-        console.log('------------------------------------');
-        this.tags = environment.filters;
-    }
-    
-    //agrandar contenedor derecha
-    toggleContainers() {
-        this.isHidden = !this.isHidden;
-    }
 
+
+
+// --------------------------------------------FILTROS---------------------------------------------------------
+
+    @ViewChild('select') select: MatSelect;
+
+    allSelected=false;
     //añadir el input
     addInput() {
+
         if(!this.getToken()) {
             this.alert = {
                 type   : 'error',
@@ -211,6 +226,7 @@ export class CrearDatasetComponent implements OnInit
 
     //borrar el input
     deleteInput(index: any) {
+
         console.log('borro de inputs = ', this.inputs[index]);
         delete this.selectedValueByTag[this.inputs[index]];
         delete this.allValueByTag[this.inputs[index]];
@@ -221,10 +237,12 @@ export class CrearDatasetComponent implements OnInit
 
     //recoger token del formulario
     get token() {
+
         return this.primerForm.get('token')?.value;
     }
     // hay algun token?
     getToken() {
+
         if(this.primerForm.get('token')?.value !== '') {
             this.addFilter = true;
         }
@@ -234,6 +252,7 @@ export class CrearDatasetComponent implements OnInit
 
     //recogemos los distintos valores de los tags del token
     getValueTag(tag: string) {
+
         this.values = [];
         this.addFilter=false;   
         this.apiSmartUaService.getTagSmartUa(this.token, tag)
@@ -246,57 +265,10 @@ export class CrearDatasetComponent implements OnInit
         });
     }
 
-    //recoger los datos del token con los filtros
-    cargarTabla() {
-
-        console.log(this.primerForm.get('start')?.value);
-        console.log(this.primerForm.get('end')?.value);
-
-        let limite = this.primerForm.get('limit')?.value
-        limite = limite === '' ? 100 : limite;
-
-        this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
-        .subscribe((response) => {
-            console.log(response); 
-            const data = response.result;
-            this.displayedColumns = data.columns;
-            this.allColumns = this.displayedColumns.slice();
-            this.allColumns.forEach(column => {
-                this.columnStates[column] = true; // Todas las columnas inicialmente marcadas como mostradas
-              });
-            this.dataSource = new MatTableDataSource(data.values);
-            this.cdr.detectChanges();
-            
-        },
-        (error) => {
-            console.log(error);
-        });
-
-        this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
-        .subscribe((response) => {
-            console.log(response);
-            this.count_value = response.result.values[0][1];
-            this.cdr.detectChanges();
-        });
-        console.log(this.count_value);
-    }
-
-    //aplicar el filtro
-// Modifica el método applyFilter para filtrar los elementos según el valor del filtro
-    filterOptions(tag: string, searchText: string) {
-        if (!this.allValueByTag[tag]) {
-            return [];
-        }
-        if (!searchText) {
-            return this.allValueByTag[tag];
-        }
-        const hola = this.allValueByTag[tag].filter(option => option.toLowerCase().includes(searchText.toLowerCase()));
-        console.log(hola);
-        return hola;
-    }
-    
-    //seleccionar todos los valores del select
+    //seleccionar todos los valores del select 
+    // VOLVER A HACER !!!!!!!
     seleccionarTodo(index: any) {
+
         if (this.allSelected) {
             this.select.options.forEach((item: MatOption) => {
                 item.select();
@@ -308,10 +280,12 @@ export class CrearDatasetComponent implements OnInit
         console.log(this.selectedValueByTag);
         
     }
+
     //seleccionar el value del select
     seleccionarClick(index: any) {
+
         let newStatus = true;
-        console.log(index);
+
         this.selectedValueByTag[index] = this.selectedValues.value;
         console.log(this.selectedValueByTag);
         this.select.options.forEach((item: MatOption) => {
@@ -321,32 +295,147 @@ export class CrearDatasetComponent implements OnInit
         });
         this.allSelected = newStatus;
     }
-    filtroGuardados(){
-        console.log(this.selectedValueByTag);
+
+// -------------------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * On init
+     */
+    ngOnInit(): void {
+
+        console.log('------------------------------------');
+        this.tags = environment.filters;
+    }
+    
+    //agrandar contenedor derecha
+    toggleContainers() {
+
+        this.isHidden = !this.isHidden;
     }
 
-    toggleColumn(event: any, column: string) {
-        console.log(this.columnStates[column]);
-        if (event.target.checked) {
-          // Marcar la columna como mostrada
-          //que posicion tenia la columna
-          const originalIndex = this.allColumns.indexOf(column);
-          if (originalIndex !== -1) {
-            console.log(this.displayedColumns);
-            // meto la columna en la posición original en la que estaba (pos, noBorrar, nombreColumna)
-            this.displayedColumns.splice(originalIndex, 0, column);
-            console.log(this.displayedColumns);
-          }
-          this.columnStates[column] = true; // Actualizar el estado de la columna a mostrada
-          console.log('marco y añado columna');
+
+// --------------------------------------------Gestion de tablas/ventanas---------------------------------------------------------
+
+    cargarTabla() {
+
+        //switch para ver en que pestaña estamos
+        switch (this.selectedTabIndex) {
+            case 0:
+                this.llamadasApi(); // creación de la tabla 0
+                break;
+            case 1:
+                console.log('Estamos en la pestaña 1')
+                
+                this.tabla1();
+                
+                
+                break;
+            case 2:
+                // Code for tab 2
+                break;
+            // Add more cases for additional tabs if needed
+            default:
+                // Default code if no tab is selected
+                break;
+        }        
+        
+    }
+    
+// -------------------------------------------------------------------------------------------------------------------------------
+
+// --------------------------------------------TABLA 0----------------------------------------------------------------------------
+
+    llamadasApi() {
+
+        let limite = this.primerForm.get('limit')?.value
+        limite = limite === '' ? 100 : limite;
+
+        this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
+        .subscribe((response) => {
+           
+            // console.log(response); 
+            const data = response.result;
+            this.columns =  data.columns.map((column: string) => {
+                return { header: column, field: column };
+            });
+
+            const columnas = data.columns;
+            const valores = data.values;
+
+            // Procesar los valores y combinarlos con las columnas
+            const datosProcesados = valores.map((fila: any[]) => {
+                const filaProcesada: any = {};
+                columnas.forEach((columna: string, indice: number) => {
+                    filaProcesada[columna] = fila[indice];
+                });
+                    return filaProcesada;
+                });
+            this.list = datosProcesados;
+
+            console.log(this.columns);
+           
+            
+            this.cdr.detectChanges();
+            
+        },
+        (error) => {
+            console.log(error);
+        });
+
+        this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
+        .subscribe((response) => {
+            // console.log(response);
+            this.count_value = response.result.values[0][1];
+            this.cdr.detectChanges();
+        });
+    }
+// -------------------------------------------------------------------------------------------------------------------------------
+
+    
+// --------------------------------------------TABLA 1----------------------------------------------------------------------------
+    
+    // Ocultar columna 
+    showColumn(e: any, column: any) {
+        console.log(e.target.checked, column);
+        //buscar en el array de columnas la columna que se ha seleccionado
+        const index = this.columns.indexOf(column);
+        console.log(index); //posicion de la columna
+        if (index === -1) {
+            console.log('No se ha encontrado la columna');
         } else {
-          // Desmarcar la columna como no mostrada
-          const index = this.displayedColumns.indexOf(column);
-          if (index !== -1) {
-            this.displayedColumns.splice(index, 1);
-          }
-          this.columnStates[column] = false; // Actualizar el estado de la columna a no mostrada
+            if(e.target.checked) {
+                this.columns[index].hide = false;
+            }
+            else {
+                this.columns[index].hide = true;
+            }
         }
-      }
+        console.log(this.columns);
+    }
+
+    tabla1() {
+
+        // copiamos las columnas que no esten hide
+        this.columns1 = this.columns.filter(column => !column.hide);
+
+        // copiamos los datos de la tabla que no esten hide
+        this.list1 = this.list.map(item => {
+            const newItem: any = {};
+            this.columns1.forEach(column => {
+                if (item.hasOwnProperty(column.field)) {
+                    newItem[column.field] = item[column.field];
+                }
+            });
+            return newItem;
+        });
+    }
+   
+
+
+
+
+// -------------------------------------------------------------------------------------------------------------------------------
+
+
 
 }

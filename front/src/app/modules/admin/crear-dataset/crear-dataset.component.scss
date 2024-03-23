@@ -1,4 +1,10 @@
-.demo-inline-card {
-    width: 300px;
-    margin-bottom: 1rem;
-  }
+:host ::ng-deep .mtx-grid {
+  height: 280px;
+}
+.mat-sort-header-container {
+  color: rgba(255, 196, 88, 0.953);
+}
+
+.mat-mdc-paginator-container {
+  justify-content:  space-around !important;
+}
