@@ -98,11 +98,10 @@ export class CrearDatasetComponent implements OnInit
     /**
      * Constructor
      */
-    constructor(private _formBuilder: UntypedFormBuilder, private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef)
-    {
-    }
+    constructor(private _formBuilder: UntypedFormBuilder, private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef) {}
 
-    // PESTAÑAS-----------------------------------------------------------------------------------------------------
+// -----------------------------------PESTAÑAS------------------------------------------------------------------
+
     selectedTabIndex = 0; // Índice de la pestaña seleccionada
 
     // Método para cambiar el índice de la pestaña seleccionada
@@ -110,7 +109,8 @@ export class CrearDatasetComponent implements OnInit
         this.selectedTabIndex = index;
     }
 
-    // -----------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------
+
     alert: { type: FuseAlertType; message: string } = {
         type   : 'success',
         message: '',
@@ -182,6 +182,12 @@ export class CrearDatasetComponent implements OnInit
     @ViewChild('select') select: MatSelect;
 
     allSelected=false;
+
+    isContentOpen: boolean = true; 
+    toggleContent() {
+        this.isContentOpen = !this.isContentOpen;
+      }
+
     //añadir el input
     addInput() {
 
@@ -284,8 +290,10 @@ export class CrearDatasetComponent implements OnInit
     //seleccionar el value del select
     seleccionarClick(index: any) {
 
-        let newStatus = true;
+        // PROBLEMA QUE NO SE GUARDA LOS VALORES DEL ULTIMO INPUT Y LOS MUESTRA EN EL VALUE DEL SELECT
 
+        console.log(this.selectedValues.value);;
+        let newStatus = true;
         this.selectedValueByTag[index] = this.selectedValues.value;
         console.log(this.selectedValueByTag);
         this.select.options.forEach((item: MatOption) => {

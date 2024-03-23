@@ -57,75 +57,89 @@
                     <!-- Filtros -->
                     <mat-tab label="Filtros">
                         <div class="flex flex-col  bg-card shadow rounded overflow-hidden">
-                            <div class="bg-gray-50 dark:bg-gray-700 p-4 mb-4 border-b">
-                                <p class="text-lg font-medium">Datos de información</p>
+                            <div>
+                                <div class="flex items-center bg-gray-50 dark:bg-gray-700 p-4 mb-4 border-b flex">
+                                    <p class="text-lg font-medium">Datos de información</p>
+                                    <button *ngIf="isContentOpen" mat-icon-button matTooltip="Basic" (click)="toggleContent()">
+                                        <mat-icon class="icon-size-6 text-primary-500"
+                                            [svgIcon]="'heroicons_solid:arrow-up-circle'"></mat-icon>
+                                    </button>
+                                    <button *ngIf="!isContentOpen" mat-icon-button matTooltip="Basic" (click)="toggleContent()">
+                                        <mat-icon class="icon-size-6 text-primary-500"
+                                            [svgIcon]="'heroicons_solid:arrow-down-circle'"></mat-icon>
+                                    </button>
+                                </div>
+                                <div *ngIf="isContentOpen">
+                                    <div class="flex px-8">
+                                        <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
+                                            <mat-label>Nombre</mat-label>
+                                            <input matInput formControlName="nombre" [placeholder]="'Mi nuevo dataset'">
+                                            <mat-hint>Nombre de la colección</mat-hint>
+                                            <mat-error *ngIf="primerForm.get('nombre').hasError('required')">
+                                                Nombre es obligatorio
+                                            </mat-error>
+                                        </mat-form-field>
+                                        <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
+                                            <mat-label>Token</mat-label>
+                                            <input matInput formControlName="token" [placeholder]="'Token de la colección'">
+                                            <mat-hint>Token de la colección</mat-hint>
+                                            <mat-error *ngIf="primerForm.get('token').hasError('required')">
+                                                Token es obligatorio
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+        
+                                    <!-- <div class="flex px-8">
+                                    <mat-form-field  [ngClass]="formFieldHelpers"
+                                    class="flex-auto">
+                                        <mat-label>Desde - Hasta</mat-label>
+                                        <mat-date-range-input [formGroup]="primerForm" [rangePicker]="picker">
+                                        <input matStartDate formControlName="start" placeholder="Start date">
+                                        <input matEndDate formControlName="end" placeholder="End date">
+                                        
+                                        </mat-date-range-input>
+                                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+        
+                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-date-range-picker #picker></mat-date-range-picker>
+                                    
+                                        @if (primerForm.controls.start.hasError('matStartDateInvalid')) {
+                                        <mat-error>Invalid start date</mat-error>
+                                        }
+                                        @if (primerForm.controls.end.hasError('matEndDateInvalid')) {
+                                        <mat-error>Invalid end date</mat-error>
+                                        }
+                                    </mat-form-field>
+                                    
+                                </div> -->
+                                    <div class="flex px-8">
+                                        <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
+                                            <mat-label>Desde</mat-label>
+                                            <mtx-datetimepicker #datetimePicker type="datetime" mode="auto"
+                                                multiYearSelector="false" startView="month" timeInterval="1" timeInput="true">
+                                            </mtx-datetimepicker>
+                                            <input [mtxDatetimepicker]="datetimePicker" formControlName="start" matInput
+                                                required>
+                                            <mat-hint>AAAA-MM-DD HH:MM</mat-hint>
+                                            <mtx-datetimepicker-toggle matSuffix
+                                                [for]="datetimePicker"></mtx-datetimepicker-toggle>
+                                        </mat-form-field>
+                                        <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
+                                            <mat-label>Hasta</mat-label>
+                                            <mtx-datetimepicker #datetimePicker2 type="datetime" mode="auto"
+                                                multiYearSelector="false" startView="month" timeInterval="1" timeInput="true">
+                                            </mtx-datetimepicker>
+                                            <input [mtxDatetimepicker]="datetimePicker2" formControlName="end" matInput
+                                                required>
+                                            <mat-hint>AAAA-MM-DD HH:MM</mat-hint>
+                                            <mtx-datetimepicker-toggle matSuffix
+                                                [for]="datetimePicker2"></mtx-datetimepicker-toggle>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                    
                             </div>
-                            <div class="flex px-8">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
-                                    <mat-label>Nombre</mat-label>
-                                    <input matInput formControlName="nombre" [placeholder]="'Mi nuevo dataset'">
-                                    <mat-hint>Nombre de la colección</mat-hint>
-                                    <mat-error *ngIf="primerForm.get('nombre').hasError('required')">
-                                        Nombre es obligatorio
-                                    </mat-error>
-                                </mat-form-field>
-                                <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
-                                    <mat-label>Token</mat-label>
-                                    <input matInput formControlName="token" [placeholder]="'Token de la colección'">
-                                    <mat-hint>Token de la colección</mat-hint>
-                                    <mat-error *ngIf="primerForm.get('token').hasError('required')">
-                                        Token es obligatorio
-                                    </mat-error>
-                                </mat-form-field>
-                            </div>
-
-                            <!-- <div class="flex px-8">
-                            <mat-form-field  [ngClass]="formFieldHelpers"
-                            class="flex-auto">
-                                <mat-label>Desde - Hasta</mat-label>
-                                <mat-date-range-input [formGroup]="primerForm" [rangePicker]="picker">
-                                <input matStartDate formControlName="start" placeholder="Start date">
-                                <input matEndDate formControlName="end" placeholder="End date">
-                                
-                                </mat-date-range-input>
-                                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-
-                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-date-range-picker #picker></mat-date-range-picker>
                             
-                                @if (primerForm.controls.start.hasError('matStartDateInvalid')) {
-                                <mat-error>Invalid start date</mat-error>
-                                }
-                                @if (primerForm.controls.end.hasError('matEndDateInvalid')) {
-                                <mat-error>Invalid end date</mat-error>
-                                }
-                            </mat-form-field>
-                            
-                        </div> -->
-                            <div class="flex px-8">
-                                <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
-                                    <mat-label>Desde</mat-label>
-                                    <mtx-datetimepicker #datetimePicker type="datetime" mode="auto"
-                                        multiYearSelector="false" startView="month" timeInterval="1" timeInput="true">
-                                    </mtx-datetimepicker>
-                                    <input [mtxDatetimepicker]="datetimePicker" formControlName="start" matInput
-                                        required>
-                                    <mat-hint>AAAA-MM-DD HH:MM</mat-hint>
-                                    <mtx-datetimepicker-toggle matSuffix
-                                        [for]="datetimePicker"></mtx-datetimepicker-toggle>
-                                </mat-form-field>
-                                <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
-                                    <mat-label>Hasta</mat-label>
-                                    <mtx-datetimepicker #datetimePicker2 type="datetime" mode="auto"
-                                        multiYearSelector="false" startView="month" timeInterval="1" timeInput="true">
-                                    </mtx-datetimepicker>
-                                    <input [mtxDatetimepicker]="datetimePicker2" formControlName="end" matInput
-                                        required>
-                                    <mat-hint>AAAA-MM-DD HH:MM</mat-hint>
-                                    <mtx-datetimepicker-toggle matSuffix
-                                        [for]="datetimePicker2"></mtx-datetimepicker-toggle>
-                                </mat-form-field>
-                            </div>
 
                             <!-- <p>{{datetime.value}} - {{datetime2.value}}</p> -->
                             <div class="flex items-center bg-gray-50 dark:bg-gray-700 py-2 px-4 my-4 border-b">
@@ -140,7 +154,7 @@
                                 </fuse-alert>
                             </div>
 
-                            <div class="max-h-40 overflow-y-auto" [formGroup]="filterForm">
+                            <div [ngClass]="isContentOpen ? 'max-h-[160px]' : 'max-h-[348px]'" class="overflow-y-auto" [formGroup]="filterForm">
                                 <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
                                     <!-- TAG -->
                                     <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
