@@ -247,7 +247,74 @@
                             </ul>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Tratamiento de datos"> Tratamiento de datos </mat-tab>
+                    <mat-tab label="Tratamiento de datos">
+                       
+                        <div class="h-[639px] relative overflow-x-auto">
+                            <div class="h-[639px] overflow-x-auto">
+                                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                    <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 sticky top-0 bg-white dark:bg-gray-600">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-primary-300 border-r">
+                                                Columnas/Acciones
+                                            </th>
+                                            <th scope="col" class="px-14 py-3 text-primary-300">
+                                                Codificar
+                                            </th>
+                                            <th scope="col" class="px-16 py-3 text-primary-300">
+                                                Nulos
+                                            </th>
+                                            <th scope="col" class="px-4 py-3 text-primary-300">
+                                                Normalizar
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngFor="let nombre of columns2">
+                                        <tr class="bg-white dark:bg-gray-800">
+                                            <td class="px-6 px-4 py-4 font-bold text-gray-900 whitespace-nowrap dark:text-white border-r">
+                                                {{ nombre.header }}
+                                            </td>
+                                            <td class="px-6 py-4 place-items-center">
+                                                <mat-form-field>
+                                                    <mat-select>
+                                                        <mat-option>None</mat-option>
+                                                        <mat-option value="option1">one-hot</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </td>
+                                            <td class="px-6 py-4 place-items-center">
+                                                <mat-form-field>
+                                                    <mat-select>
+                                                        <mat-option>None</mat-option>
+                                                        <mat-option value="option1">Eliminar</mat-option>
+                                                        <mat-option value="option2">Sustituir</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center justify-center">
+                                                    <input (change)="normalizamos()" id="checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                    <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"></label>
+                                                    <div *ngIf="normalizar" class="flex items-center">
+                                                        <mat-form-field [ngClass]="formFieldHelpers" class="w-8 mr-2">
+                                                            <input matInput [placeholder]="'0'">
+                                                        </mat-form-field>
+                                                        <mat-form-field [ngClass]="formFieldHelpers" class="w-8">
+                                                            <input matInput [placeholder]="'1'">
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                        
+
+
+                          
+                    </mat-tab>
                 </mat-tab-group>
             </div>
             <!-- Contenedor derecho -->

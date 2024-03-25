@@ -334,26 +334,25 @@ export class CrearDatasetComponent implements OnInit
         //switch para ver en que pestaña estamos
         switch (this.selectedTabIndex) {
             case 0:
+                
                 this.llamadasApi(); // creación de la tabla 0
                 break;
             case 1:
+                
                 console.log('Estamos en la pestaña 1')
-                
                 this.tabla1();
-                
-                
                 break;
             case 2:
+                
                 console.log('Estamos en la pestaña 2');
-
                 this.tabla2();
-
                 break;
             case 3: 
+            
                 console.log('Estamos en la pestaña 3');
+                this.tabla3();
                 break;
             default:
-                // Default code if no tab is selected
                 break;
         }        
         
@@ -536,5 +535,23 @@ export class CrearDatasetComponent implements OnInit
 
     }
 // -------------------------------------------------------------------------------------------------------------------------------
+
+// --------------------------------------------TABLA 3----------------------------------------------------------------------------
+
+
+    ojito = 'option2';
+    normalizar = false;
+
+    normalizamos() {
+        this.normalizar = !this.normalizar;
+    }
+    tabla3(){
+
+    }
+
+
+
+// -------------------------------------------------------------------------------------------------------------------------------
+
 
 }
