@@ -153,7 +153,6 @@ export class CrearDatasetComponent implements OnInit
     
     // TABLA 2
     tiposFechas: any = [];
-    tiposFechasSelected: any = [];
     columns2: MtxGridColumn[] = [];
     list2 = [];
     
@@ -317,7 +316,7 @@ export class CrearDatasetComponent implements OnInit
 
         console.log('------------------------------------');
         this.tags = environment.filters;
-        this.tiposFechas = environment.tiposFechas;
+        //this.tiposFechas = environment.tiposFechas;
         
     }
     
@@ -447,6 +446,11 @@ export class CrearDatasetComponent implements OnInit
             });
             return newItem;
         });
+
+        // mostramos la siguiente pestaña FECHAS
+        this.tiposFechas =  environment.tiposFechas.map((column: string) => {
+            return { header: column, field: column, hide: true, show: true};
+        });
     }
    
 
@@ -462,16 +466,22 @@ export class CrearDatasetComponent implements OnInit
         // lo primero que se tiene que hacer es copiar la tabla1 a la tabla2
         // añadir la columna seleccionada a la tabla2
         // calcular los datos de la tabla2 en función de las columnas seleccionadas gracias a la la columna time
-
-        if(e.target.checked) {
-            this.tiposFechasSelected.push(column);
+        
+        //buscar en el array de columnas la columna que se ha seleccionado
+        const index = this.tiposFechas.indexOf(column);
+        console.log(index); //posicion de la columna
+        if (index === -1) {
+            console.log('No se ha encontrado la columna');
+        } else {
+            if(e.target.checked) {
+                console.log('checkea la columna');
+                this.tiposFechas[index].hide = false;
+            }
+            else {
+                this.tiposFechas[index].hide = true;
+            }
         }
-        else{
-            this.tiposFechasSelected = this.tiposFechasSelected.filter((item: any) => item !== column);
-        }
-
-
-        console.log("Nuevas columnas = ", this.tiposFechasSelected);
+        console.log(this.tiposFechas);
     }
 
     tabla2 (){
@@ -495,33 +505,34 @@ export class CrearDatasetComponent implements OnInit
             }
         };
         
-        // Copia columns1 a columns2 y añade las nuevas columnas
-        this.columns2 = this.columns1;
-        this.tiposFechasSelected.forEach(column => {
-            if (!this.columns2.includes(column)) {
-                this.columns2.push({
-                    header: column,
-                    field: column,
-                    hide: false,
-                    show: true
-                });
+
+        // Copia columns1 a columns2
+        this.columns2 = [...this.columns1];
+
+        // Añade las columnas de tiposFechas que no tienen hide = false a columns2
+        this.tiposFechas.forEach(column => {
+            console.log(column);
+            if (column.hide === false) {
+                this.columns2.push(column);
             }
         });
 
+
+        
         // Copia list1 a list2 y añade la nueva columna a cada objeto
         this.list2 = this.list1.map(item => {
+            //console.log('Item: ', item);
             const newItem = { ...item };
-            this.tiposFechasSelected.forEach(column => {
-                if (columnFunctions[column]) {
-                    newItem[column] = columnFunctions[column](item);
-                } else {
-                    newItem[column] = 'HOLA';
-                }
+            this.tiposFechas.forEach(column => {
+                //console.log('Columna: ', column, 'Item: ', item.time, 'Función: ', columnFunctions[column.header]);
+               if(column.hide === false){
+                   newItem[column.header] = columnFunctions[column.header](item);
+               }
+            
             });
             return newItem;
         });
-        console.log('Columna2: ', this.columns2);
-        console.log('Lista2: ', this.list2);
+        console.log(this.list2);
 
     }
 // -------------------------------------------------------------------------------------------------------------------------------
