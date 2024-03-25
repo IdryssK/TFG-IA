@@ -30,6 +30,7 @@ import { MtxCalendar } from '@ng-matero/extensions/datetimepicker';
 import { MtxCalendarView, MtxDatetimepicker, MtxDatetimepickerInput, MtxDatetimepickerMode, MtxDatetimepickerToggle, MtxDatetimepickerType} from '@ng-matero/extensions/datetimepicker';
 import { MtxGrid, MtxGridColumn } from '@ng-matero/extensions/grid';
 import { DateTime } from 'luxon';
+import moment from 'moment';
   
 @Component({
     selector     : 'crear-dataset',
@@ -150,6 +151,9 @@ export class CrearDatasetComponent implements OnInit
     columns1: MtxGridColumn[] = [];
     list1 = [];
     
+    // TABLA 2
+    tiposFechas: any = [];
+    tiposFechasSelected: any = [];
     columns2: MtxGridColumn[] = [];
     list2 = [];
     
@@ -313,6 +317,8 @@ export class CrearDatasetComponent implements OnInit
 
         console.log('------------------------------------');
         this.tags = environment.filters;
+        this.tiposFechas = environment.tiposFechas;
+        
     }
     
     //agrandar contenedor derecha
@@ -339,9 +345,14 @@ export class CrearDatasetComponent implements OnInit
                 
                 break;
             case 2:
-                // Code for tab 2
+                console.log('Estamos en la pestaña 2');
+
+                this.tabla2();
+
                 break;
-            // Add more cases for additional tabs if needed
+            case 3: 
+                console.log('Estamos en la pestaña 3');
+                break;
             default:
                 // Default code if no tab is selected
                 break;
@@ -444,6 +455,75 @@ export class CrearDatasetComponent implements OnInit
 
 // -------------------------------------------------------------------------------------------------------------------------------
 
+// --------------------------------------------TABLA 2----------------------------------------------------------------------------
 
+    addColumn(e: any, column: any) {
+
+        // lo primero que se tiene que hacer es copiar la tabla1 a la tabla2
+        // añadir la columna seleccionada a la tabla2
+        // calcular los datos de la tabla2 en función de las columnas seleccionadas gracias a la la columna time
+
+        if(e.target.checked) {
+            this.tiposFechasSelected.push(column);
+        }
+        else{
+            this.tiposFechasSelected = this.tiposFechasSelected.filter((item: any) => item !== column);
+        }
+
+
+        console.log("Nuevas columnas = ", this.tiposFechasSelected);
+    }
+
+    tabla2 (){
+
+        const columnFunctions = {
+            'epoch': (item) => moment(item.time).valueOf(),
+            'dia': (item) => moment(item.time).date(),
+            'mes': (item) => moment(item.time).month() + 1, // En moment.js, los meses empiezan en 0
+            'año': (item) => moment(item.time).year(),
+            'dia de la semana': (item) => moment(item.time).day(),
+            'semana': (item) => moment(item.time).week(),
+            'hora': (item) => moment(item.time).hour(),
+            'minuto': (item) => moment(item.time).minute(),
+            'segundo': (item) => moment(item.time).second(),
+            '0-24': (item) => {
+                const time = moment(item.time);
+                const hours = time.hours();
+                const minutes = time.minutes() / 60;
+                const seconds = time.seconds() / 6000;
+                return parseFloat((hours + minutes + seconds).toFixed(4));
+            }
+        };
+        
+        // Copia columns1 a columns2 y añade las nuevas columnas
+        this.columns2 = this.columns1;
+        this.tiposFechasSelected.forEach(column => {
+            if (!this.columns2.includes(column)) {
+                this.columns2.push({
+                    header: column,
+                    field: column,
+                    hide: false,
+                    show: true
+                });
+            }
+        });
+
+        // Copia list1 a list2 y añade la nueva columna a cada objeto
+        this.list2 = this.list1.map(item => {
+            const newItem = { ...item };
+            this.tiposFechasSelected.forEach(column => {
+                if (columnFunctions[column]) {
+                    newItem[column] = columnFunctions[column](item);
+                } else {
+                    newItem[column] = 'HOLA';
+                }
+            });
+            return newItem;
+        });
+        console.log('Columna2: ', this.columns2);
+        console.log('Lista2: ', this.list2);
+
+    }
+// -------------------------------------------------------------------------------------------------------------------------------
 
 }

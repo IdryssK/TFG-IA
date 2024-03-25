@@ -12,5 +12,16 @@ export const environment = {
         "name",
         "origin",
         "typemeter"
-      ]
+      ],
+      tiposFechas: ["epoch", 
+      "dia", 
+      "mes", 
+      "año", 
+      "dia de la semana", 
+      "semana",
+      "hora", 
+      "minuto", 
+      "segundo",
+      "0-24"
+      ],
 };
