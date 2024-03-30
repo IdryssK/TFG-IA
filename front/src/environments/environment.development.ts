@@ -24,4 +24,9 @@ export const environment = {
       "segundo",
       "0-24"
       ],
+      tiposFechas2: [{
+        tipo: 1,
+        texto: "epoch-fecha-en-milisegundos"
+        
+      }]
 };

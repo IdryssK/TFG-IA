@@ -16,10 +16,15 @@ app.use(cors());
 app.use( express.json() );// Soporte para cuerpos codificados en JSON
 
 // === Rutas
+
 // Usuarios
 app.use('/api/users', require('./routes/user'));
+
 // Login
 app.use('/api/login', require('./routes/auth'));
+
+// Datasets
+app.use('/api/datasets', require('./routes/dataset'));
 
 
 app.listen(process.env.PORT, () => {

@@ -178,7 +178,7 @@ const createUsers = async( req , res = response ) => {
  */
 const updateUsers = async( req , res = response ) => {
     const uid = req.params.id;
-    
+
     try{
 
         // Solo los usuarios administrador pueden editar usuarios
@@ -194,8 +194,9 @@ const updateUsers = async( req , res = response ) => {
 
         if( user === null ){
             // Si no lo hay, responde con not found sin cuerpo.
-            res.status(404);
-            res.send();
+            res.status(400).json({
+                msg: 'No existe el usuario'
+            });
             return;
         }
 
@@ -203,13 +204,13 @@ const updateUsers = async( req , res = response ) => {
         const { ...object } = req.body;
 
         let data = {
-            email: object.email,
-            password: object.password,
-            role: ( object.role === 0 || object.role === 1 ? object.role : 0 ),
-            lim_consult: ( object.lim_consult >= 0 ? object.lim_consult : 10 ),
-            idUser: uid
+            User_Email: object.email,
+            User_Password: object.password,
+            User_Rol: ( object.role === 0 || object.role === 1 ? object.role : 0 ),
+            User_Idx: Number(uid)
         }
 
+        console.log(data)
         // Se comprueba si alguno de los campos no se han enviado por el cuerpo o es nulo
         Object.keys(data).forEach(key => {
             if(data[key] === undefined || data[key] === null || data[key] === ''){
@@ -217,9 +218,9 @@ const updateUsers = async( req , res = response ) => {
             }
         });
 
-        if(data.email !== undefined){
+        if(data.User_Email !== undefined){
             // Se comprueba si el email ya esta en uso
-            const existeEmail = await userByEmail(data.email);
+            const existeEmail = await userByUser_Email(data.User_Email);
 
             if( existeEmail !== null ){
                 res.status(400).json({
@@ -229,9 +230,9 @@ const updateUsers = async( req , res = response ) => {
             }
         }
 
-        if(data.password !== undefined){
+        if(data.User_Password !== undefined){
             // Comprueba si la contraseña cumple con los requisitos
-            if(!checkPassword(data.password)){
+            if(!checkPassword(data.User_Password)){
                 res.status(400).json({
                     msg: 'La contraseña de debe tener minimo 8 caracteres, 2 dígitos, tener al menos una mayúscula y minúscula y no debe tener espacios'
                 });
@@ -242,7 +243,7 @@ const updateUsers = async( req , res = response ) => {
             const salt = bcrypt.genSaltSync();
 
             // Cifra la contrasena con la cadena.
-            data.password = bcrypt.hashSync(data.password, salt);
+            data.User_Password = bcrypt.hashSync(data.User_Password, salt);
         }
         
         // Se actualiza. 

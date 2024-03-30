@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { User } from 'app/core/user/user.types';
+import { environment } from 'environments/environment.development';
 import { map, Observable, ReplaySubject, tap } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
@@ -9,6 +10,7 @@ export class UserService
     private _httpClient = inject(HttpClient);
     private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
 
+    constructor(private http: HttpClient){}
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
@@ -60,4 +62,36 @@ export class UserService
             }),
         );
     }
+
+    // function for get all users
+    getAll(): Observable<any> {
+
+        return this.http.get<any>(`${environment.apiUrl}/users`, this.cabeceras).pipe(
+            map((response) => response),
+        );
+    }
+
+    getUser(id: number): Observable<any> {
+
+        return this.http.get<any>(`${environment.apiUrl}/users/${id}`, this.cabeceras).pipe(
+            map((response) => response),
+        );
+    }
+
+    updateUser(user:{email: string, password: string, rol: number}, id: number): Observable<any> {
+
+        return this.http.put<any>(`${environment.apiUrl}/users/${id}`, user, this.cabeceras).pipe(
+            map((response) => response),
+        );
+    }
+
+    get cabeceras() {
+        return {
+          headers: {
+            'accessToken': this.token
+          }};
+      }
+      get token(): string {
+        return localStorage.getItem('accessToken') || '';
+      }
 }

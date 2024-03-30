@@ -1,11 +1,24 @@
 <div class="flex flex-col flex-grow min-w-0 ">
 
-    <form class="pt-2" [formGroup]="primerForm">
+    <form class="pt-2" [formGroup]="primerForm" (ngSubmit)="guardarDataSet()">
 
         <div class="flex flex-row">
             <!-- Primera columna - Mitad de la pantalla -->
             <div class="w-1/2">
-
+                <div class="grid grid-cols-3">
+                    <div class="col-span-1 ">
+                        <div class="flex items-center justify-start ml-6">
+                            <button mat-flat-button>
+                                Cancelar
+                            </button>
+                            <button class="px-6 mx-3" mat-flat-button [color]="'primary'" type="submit">
+                                Guardar
+                                <!-- <mat-icon [svgIcon]="'heroicons_outline:bookmark'"></mat-icon> -->
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
 
             <!-- Segunda columna - Mitad de la pantalla -->
@@ -56,7 +69,7 @@
                 <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;">
                     <!-- Filtros -->
                     <mat-tab label="Filtros">
-                        <div class="flex flex-col  bg-card shadow rounded overflow-hidden">
+                        <div class="flex flex-col h-[639px] bg-card shadow rounded overflow-hidden">
                             <div>
                                 <div class="flex items-center bg-gray-50 dark:bg-gray-700 p-4 mb-4 border-b flex">
                                     <p class="text-lg font-medium">Datos de información</p>
@@ -154,7 +167,7 @@
                                 </fuse-alert>
                             </div>
 
-                            <div [ngClass]="isContentOpen ? 'max-h-[160px]' : 'max-h-[348px]'" class="overflow-y-auto" [formGroup]="filterForm">
+                            <div [ngClass]="isContentOpen ? 'max-h-[250px]' : 'max-h-[439px]'" class="overflow-y-auto" [formGroup]="filterForm">
                                 <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
                                     <!-- TAG -->
                                     <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
@@ -204,16 +217,7 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="flex items-center justify-end border-t -mx-8 mt-8 px-8 py-5 bg-gray-50 dark:bg-gray-700">
-                                <button mat-button>
-                                    Cancel
-                                </button>
-                                <button class="px-6 mx-3" mat-flat-button [color]="'primary'"
-                                    >
-                                    Save
-                                </button>
-                            </div>
+                           
                         </div>
                     </mat-tab>
                     <mat-tab label="Selección de caracteristicas ">

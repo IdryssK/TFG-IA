@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken'); // JSON Web Token
  * @param {*} next Siguiente metodo a ejecutar.
  */
 const validateJWT = (req, res, next) => {
-    const token = req.header('x-token');
+    const token = req.header('accessToken');
     
     if (!token) {
         return res.status(400).json({

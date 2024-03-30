@@ -43,7 +43,7 @@ const userList = async(data) => {
 
 const userById = async(id) => {
     try {
-        const query = `SELECT User_Idx, User_Email, User_Rol FROM ${process.env.USERTABLE} WHERE User_Idx = ? LIMIT 1`;
+        const query = `SELECT User_Idx, User_Email, User_Rol FROM usuario WHERE User_Idx = ?`;
 
         const paramsQuery = [id];
         const [user] = await dbConsult(query, paramsQuery);
@@ -69,7 +69,7 @@ const userCreate = async(data) => {
 const userUpdate = async(data) =>  {
     try {
 
-        const query = `UPDATE ${process.env.USERTABLE} SET ? WHERE User_Idx = ?`;
+        const query = `UPDATE usuario SET ? WHERE User_Idx = ?`;
         const paramsQuery = [data, data.User_Idx]
         await dbConsult(query, paramsQuery);
 
@@ -94,7 +94,7 @@ const userDelete = async(id) => {
 const getHash = async(id) => {
     try {
         
-        const query = `SELECT User_Password FROM ${process.env.USERTABLE} WHERE User_Idx = ? LIMIT 1`;
+        const query = `SELECT User_Password FROM usuario WHERE User_Idx = ? LIMIT 1`;
         const paramsQuery = [id];
         const [pass] = await dbConsult(query, paramsQuery);
 

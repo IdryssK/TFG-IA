@@ -169,7 +169,10 @@ export class CrearDatasetComponent implements OnInit
         start: ['2024-03-04T17:40:00.000Z', new UntypedFormControl()],
         end: ['2024-03-05T17:40:00.000Z', new UntypedFormControl()],
         limit: ['', Validators.required],
-
+        filtros :[this.selectedValueByTag], 
+        caracteristicas: [this.columns],
+        fechas: [this.tiposFechas]
+        // datos: []
     });
     
     
@@ -554,4 +557,13 @@ export class CrearDatasetComponent implements OnInit
 // -------------------------------------------------------------------------------------------------------------------------------
 
 
+// --------------------------------------------GUARDAR----------------------------------------------------------------------------
+
+    guardarDataSet() {
+        console.log('Guardando dataset');
+        console.log(this.primerForm.value);
+        console.log(this.selectedValueByTag);
+    }
+
+// -------------------------------------------------------------------------------------------------------------------------------
 }

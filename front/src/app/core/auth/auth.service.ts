@@ -148,9 +148,9 @@ export class AuthService
      *
      * @param user
      */
-    signUp(user: { name: string; email: string; password: string; company: string }): Observable<any>
+    signUp(user: { email: string; password: string }): Observable<any>
     {
-        return this._httpClient.post('api/auth/sign-up', user);
+        return this._httpClient.post('http://localhost:3000/api/users', user, this.cabeceras);
     }
 
     /**
@@ -189,4 +189,13 @@ export class AuthService
         // If the access token exists, and it didn't expire, sign in using it
         return this.signInUsingToken();
     }
+    get cabeceras() {
+        return {
+          headers: {
+            'accessToken': this.token
+          }};
+      }
+      get token(): string {
+        return localStorage.getItem('accessToken') || '';
+      }
 }
