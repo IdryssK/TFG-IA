@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatSort, MatSortModule, Sort} from '@angular/material/sort';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatInputModule} from '@angular/material/input';
@@ -11,51 +11,42 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { UserService } from 'app/core/user/user.service';
 import { Router, RouterLink } from '@angular/router';
-
+import { NgIf } from '@angular/common';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-gestion-usuario',
   templateUrl: './gestion-usuario.component.html',
   styleUrl: './gestion-usuario.component.scss',
   standalone: true,
-  imports: [RouterLink, MatFormFieldModule, MatIconModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatButtonModule, FormsModule, MtxGrid],
+  imports: [NgIf, TranslocoModule,ReactiveFormsModule , LanguagesComponent, RouterLink, MatFormFieldModule, MatIconModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatButtonModule, FormsModule, MtxGrid],
 })
 export class GestionUsuarioComponent implements OnInit{
   searchInputControl: UntypedFormControl = new UntypedFormControl();
+  
 
-  constructor(private userService : UserService, private router: Router) {
+  constructor(private userService : UserService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
   ngOnInit(): void {
-    
-    // hacer llamada a userService.getUsers()
-    this.userService.getAll().subscribe(users => {
-      let userList = users.users.map(user => ({
-        idx: user.User_Idx,
-        email: user.User_Email,
-        role: user.User_Rol === 1 ? 'admin' : 'usuario'
-      }));
-      
-      console.log(userList);
-      this.list = userList;
-    });
+    this.getList();
 
+    this.transoloService.langChanges$.subscribe(() => {
+  
+      let t = translate('user.operations');
+      console.log(translate('user.operations'))
+    });
+    
   }
 
-  popDelete : MtxGridColumnButtonPop = {
-    title: 'Borrar usuario',
-    description: '¿Estás seguro de que quieres borrar este usuario?',
-    closeColor: 'primary',
-    closeText: 'Cancelar',
-    okColor: 'warn',
-    okText: 'Borrar',
-  };
 
   columns: MtxGridColumn[] = [
     { header: 'Idx', field: 'idx' },
     { header: 'Email', field: 'email' },
     { header: 'Role', field: 'role', class: 'role-column'},
     {
-      header: 'Operation',
+      header: translate('user.operations'),
       field: 'operation',
       width: '240px',
       pinned: 'right',
@@ -64,16 +55,9 @@ export class GestionUsuarioComponent implements OnInit{
       buttons: [
         {
           type: 'icon',
-          text: 'copy',
-          icon: 'file_copy',
-          tooltip: 'copy',
-          disabled: false,
-          click: () => this.router.navigate(['/gestion-usuario']),
-        },
-        {
-          type: 'icon',
           text: 'edit',
           icon: 'edit',
+          class: 'success',
           tooltip: 'Edit',
           click: (row) => this.router.navigate(['/gestion-usuario/editar', row.idx]),
         },
@@ -83,27 +67,99 @@ export class GestionUsuarioComponent implements OnInit{
           icon: 'delete',
           tooltip: 'Delete',
           color: 'warn',
-          pop: this.popDelete,
-          click: () => alert('delete'),
-          badge: {
-            content: 12,
-            size: 'small',
-          },
+          click: (row) => this.borrarUsuario(row.idx),
         },
       ],
     },
   ];
 
-  
+  searchForm = this.fb.group({
+    searchQuery: ['']
+  });
+  lastSearch: any;
+
   list: any[] = [  ];
+  isLoading: boolean;
+  total: number = 0;
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    // this.dataSource.filter = filterValue.trim().toLowerCase();
+  query = {
+    page: 0,
+    per_page: 5,
+    query:''
+  };
 
-    // if (this.dataSource.paginator) {
-    //   this.dataSource.paginator.firstPage();
+  getList() {
+    this.isLoading = true;
+    // hacer llamada a userService.getUsers()
+    this.userService.getAll(this.query).subscribe(data => {
+      let userList = data.users.map(user => ({
+        idx: user.User_Idx,
+        email: user.User_Email,
+        role: user.User_Rol === 1 ? 'admin' : 'usuario'
+      }));
+      console.log(data.page.total)
+      this.total = data.page.total;
+      this.isLoading = false;
+      
+      console.log(userList);
+      this.list = userList;
+    });
+  }
+
+  getNextPage(e: PageEvent) {
+    console.log(e);
+    
+    this.query.page = e.pageIndex;
+    this.query.per_page = e.pageSize;
+    console.log(this.query);
+    this.getList();
+  }
+  
+  borrarUsuario(idx: number) {
+    console.log(this.userService.get());
+    // if (uid === this.userService.()) {
+    //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});
+    //   return;
     // }
+    const confirmation = this._fuseConfirmationService.open({
+      title  : 'Eliminar usuario',
+      message: '¿Estas seguro de que quieres eliminar el usuario?',
+      actions: {
+          confirm: {
+              label: 'Eliminar',
+          },
+      },
+    });
+    confirmation.afterClosed().subscribe((result) => {
+        // If the confirm button pressed...
+        if ( result === 'confirmed' ) {  
+          this.userService.deleteUser(idx).subscribe(
+            () => {
+              
+              this.getList();
+            },
+            (error) => {
+              console.error(error);
+              // Handle the error here
+            }
+          );
+        }
+        else {
+          console.log('no se ha eliminado el usuario');
+        }
+    });
+    
+  }
+
+  search(){
+    // Se comprueba que el fomrulario este correcto
+    if(!this.searchForm.valid){
+      return;
+    }
+
+    this.lastSearch = '%' + this.searchForm.value.searchQuery + '%';
+    this.query.query = this.lastSearch;
+    this.getList();
   }
 
 }

@@ -64,9 +64,15 @@ export class UserService
     }
 
     // function for get all users
-    getAll(): Observable<any> {
+    getAll(params): Observable<any> {
 
-        return this.http.get<any>(`${environment.apiUrl}/users`, this.cabeceras).pipe(
+        console.log(this.cabeceras.headers.accessToken);
+        let data = {
+            headers: this.cabeceras.headers,
+            params: params
+        }
+        console.log(data);
+        return this.http.get<any>(`${environment.apiUrl}/users`, data).pipe(
             map((response) => response),
         );
     }
@@ -85,6 +91,12 @@ export class UserService
         );
     }
 
+    deleteUser(id: number): Observable<any> {
+        
+        return this.http.delete<any>(`${environment.apiUrl}/users/${id}`, this.cabeceras).pipe(
+            map((response) => response),
+        );
+    }
     get cabeceras() {
         return {
           headers: {

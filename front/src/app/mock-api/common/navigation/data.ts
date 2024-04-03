@@ -5,9 +5,24 @@ export const defaultNavigation: FuseNavigationItem[] = [
     {
         id   : 'dataset',
         title: 'DATASET',
-        type : 'basic',
+        type : 'group',
         icon : 'heroicons_outline:chart-pie',
-        link : '/dataset',
+        children: [
+            {
+                id   : 'dataset.configuraciones',
+                title: 'Configuraciones',
+                type : 'basic',
+                icon : 'heroicons_outline:adjustments-horizontal',
+                link : '/dataset',
+            },
+            {
+                id   : 'dataset.datos',
+                title: 'Datos',
+                type : 'basic',
+                icon : 'heroicons_outline:code-bracket-square',
+                link : '/apps/chat',
+            }
+        ]
     },
     {
         id   : 'entrenamientos',
@@ -36,9 +51,24 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     {
         id   : 'dataset',
         title: 'DATASET',
-        type : 'basic',
+        type : 'group',
         icon : 'heroicons_outline:circle-stack',
-        link : '/dataset'
+        children: [
+            {
+                id   : 'apps.academy',
+                title: 'Configuraciones',
+                type : 'basic',
+                icon : 'heroicons_outline:academic-cap',
+                link : '/dataset',
+            },
+            {
+                id   : 'apps.chat',
+                title: 'Chat',
+                type : 'basic',
+                icon : 'heroicons_outline:chat-bubble-bottom-center-text',
+                link : '/apps/chat',
+            }
+        ]
     },
     {
         id   : 'entrenamientos',

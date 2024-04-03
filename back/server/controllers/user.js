@@ -17,12 +17,14 @@ const passwordValidator = require('password-validator');
  */
 const getUsers = async( req , res ) => {
     // Pagina y registros por pagina.
-    const desde      = Number( req.query.desde ) || 0; // En caso de que no venga nada o no sea un numero se inicializa a 0.
-    const registropp = Number( process.env.DOCPAG );
+    const page      = Number( req.query.page ) || 0; // En caso de que no venga nada o no sea un numero se inicializa a 0.
+    const registropp = Number( req.query.per_page ) || 10; // En caso de que no venga nada o no sea un numero se inicializa a 10.
 
+    // Calcula el índice de inicio basado en el número de página y los registros por página
+    const desde = (page) * registropp;
     // Se comprueba si se pasa alguna query por parametro para buscar usuarios
     const querySearch = req.query.query;
-
+    console.log(req.query);
     // Datos para enviar a la base de datos
     const data = {
         desde,
@@ -191,7 +193,7 @@ const updateUsers = async( req , res = response ) => {
 
         // Comprueba que haya un usuario con ese ID.
         let user = await userById(uid);
-
+        console.log('DESPUES DE BUSCAR EL USUARIO')
         if( user === null ){
             // Si no lo hay, responde con not found sin cuerpo.
             res.status(400).json({
@@ -202,11 +204,12 @@ const updateUsers = async( req , res = response ) => {
 
         // Extrae los campos que no cabe especificar a la hora de crear.
         const { ...object } = req.body;
-
+        console.log(object);
+        object.rol = Number(object.rol);
         let data = {
             User_Email: object.email,
             User_Password: object.password,
-            User_Rol: ( object.role === 0 || object.role === 1 ? object.role : 0 ),
+            User_Rol: ( object.rol === 0 || object.rol === 1 ? object.rol : 0 ),
             User_Idx: Number(uid)
         }
 

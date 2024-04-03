@@ -16,9 +16,10 @@ const userByUser_Email = async(User_Email) => {
 }
 
 const userList = async(data) => {
+    console.log(data);
     try {
         let paramsQuery = [];
-        let query = `SELECT User_Idx, User_Email, User_Rol FROM ${process.env.USERTABLE}`;
+        let query = `SELECT User_Idx, User_Email, User_Rol FROM usuario`;
 
         if(data.querySearch){
             query += ` WHERE User_Email LIKE ?`;
@@ -37,6 +38,24 @@ const userList = async(data) => {
 
         return users.length === 0 ? [[], total.length] : [users, total.length];
     } catch (error) {
+        throw error;
+    }
+}
+
+const userListOld = async() => {
+    try {
+        let paramsQuery = [];
+        let query = `SELECT User_Idx, User_Email, User_Rol FROM usuario`;
+
+
+        // Se realiza una busqueda de todos los usuarios para poder hacer la paginación
+        const [total] = await dbConsult(query);
+
+        const [users] = await dbConsult(query);
+
+        return users.length === 0 ? [[], total.length] : [users, total.length];
+    }
+    catch (error) {
         throw error;
     }
 }

@@ -1,5 +1,9 @@
 {
-    "welcome-back": "Welcome back",
-    "Project": "Project",
-    "Analytics": "Analytics"
+    "hola" : "Hello",
+    "user" : {
+        "title" : "List of users",
+        "search-bar" : "Search for a user...",
+        "new" : "Add",
+        "operations" : "Operations"
+    }
 }

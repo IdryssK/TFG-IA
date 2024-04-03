@@ -11,13 +11,14 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { Subject, takeUntil } from 'rxjs';
+import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 
 @Component({
     selector     : 'modern-layout',
     templateUrl  : './modern.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [FuseLoadingBarComponent, NgIf, FuseVerticalNavigationComponent, FuseHorizontalNavigationComponent, MatButtonModule, MatIconModule, FuseFullscreenComponent, UserComponent, RouterOutlet],
+    imports      : [FuseLoadingBarComponent, LanguagesComponent, NgIf, FuseVerticalNavigationComponent, FuseHorizontalNavigationComponent, MatButtonModule, MatIconModule, FuseFullscreenComponent, UserComponent, RouterOutlet],
 })
 export class ModernLayoutComponent implements OnInit, OnDestroy
 {

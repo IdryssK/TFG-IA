@@ -1,0 +1,9 @@
+{
+    "hola" : "Hola",
+    "user" : {
+        "title" : "Lista de usuarios",
+        "search-bar" : "Busca un usuario...",
+        "new" : "Añadir",
+        "operations" : "Operaciones"
+    }
+}
