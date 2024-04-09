@@ -74,6 +74,7 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
+            {path: 'configuracion', loadChildren: () => import('app/modules/admin/configuraciones2/configuraciones.routes')},
             {path: 'dataset', loadChildren: () => import('app/modules/admin/dataset/dataset.routes')},
             {path: 'example2', loadChildren: () => import('app/modules/admin/example2/example2.routes')},
             {path: 'algoritmos', loadChildren: () => import('app/modules/admin/algoritmos/algoritmos.routes')},

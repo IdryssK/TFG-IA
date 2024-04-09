@@ -5,5 +5,11 @@
         "search-bar" : "Busca un usuario...",
         "new" : "Añadir",
         "operations" : "Operaciones"
+    },
+    "configuracion" : {
+        "title" : "Configuración",
+        "search-bar" : "Busca una configuración...",
+        "new" : "Añadir",
+        "operations" : "Operaciones"
     }
 }

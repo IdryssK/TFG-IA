@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
-import { CrearDatasetComponent } from './crear-dataset/crear-dataset.component';
-import { DatasetComponent } from './dataset.component';
+import { ConfiguracionesComponent } from './configuraciones.component';
 
 export default [
     {
@@ -10,12 +9,12 @@ export default [
     },
     {
         path     : 'lista',
-        component: DatasetComponent,
+        component: ConfiguracionesComponent,
     },
-    {
-        path: 'crear',
-        component: CrearDatasetComponent
-    },
+    // {
+    //     path: 'crear',
+    //     //component: 
+    // },
     // {
     //     path: 'editar/:id',
     //     component: EditUserComponent

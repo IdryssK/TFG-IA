@@ -3,33 +3,25 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const defaultNavigation: FuseNavigationItem[] = [
     {
+        id   : 'configuracion',
+        title: 'CONFIGURACION',
+        type : 'basic',
+        icon : 'heroicons_outline:wrench-screwdriver',
+        link : '/configuracion',
+    },
+    {
         id   : 'dataset',
         title: 'DATASET',
-        type : 'group',
+        type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        children: [
-            {
-                id   : 'dataset.configuraciones',
-                title: 'Configuraciones',
-                type : 'basic',
-                icon : 'heroicons_outline:adjustments-horizontal',
-                link : '/dataset',
-            },
-            {
-                id   : 'dataset.datos',
-                title: 'Datos',
-                type : 'basic',
-                icon : 'heroicons_outline:code-bracket-square',
-                link : '/apps/chat',
-            }
-        ]
+        link : '/dataset',
     },
     {
         id   : 'entrenamientos',
         title: 'ENTRENAMIENTOS',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/example2'
+        link : '/entrenamientos'
     },
     {
         id   : 'algoritmos',
@@ -49,26 +41,18 @@ export const defaultNavigation: FuseNavigationItem[] = [
 
 export const horizontalNavigation: FuseNavigationItem[] = [
     {
+        id   : 'configuracion',
+        title: 'CONFIGURACION',
+        type : 'basic',
+        icon : 'heroicons_outline:wrench-screwdriver',
+        link : '/configuracion',
+    },
+    {
         id   : 'dataset',
         title: 'DATASET',
-        type : 'group',
-        icon : 'heroicons_outline:circle-stack',
-        children: [
-            {
-                id   : 'apps.academy',
-                title: 'Configuraciones',
-                type : 'basic',
-                icon : 'heroicons_outline:academic-cap',
-                link : '/dataset',
-            },
-            {
-                id   : 'apps.chat',
-                title: 'Chat',
-                type : 'basic',
-                icon : 'heroicons_outline:chat-bubble-bottom-center-text',
-                link : '/apps/chat',
-            }
-        ]
+        type : 'basic',
+        icon : 'heroicons_outline:chart-pie',
+        link : '/dataset',
     },
     {
         id   : 'entrenamientos',
