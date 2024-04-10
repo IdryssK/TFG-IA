@@ -78,9 +78,11 @@ export class AuthService
                 this._authenticated = true;
 
                 // Store the user on the user service
-                console.log(response.user);
+                // console.log(response.user);
                 this._userService.user = response.user;
-                console.log(this._userService.user);
+                this._userService.setConnectedUser();
+
+                // console.log(this._userService.getConnectedUser());
                 // Return a new observable with the response
                 return of(response);
             }),
@@ -121,7 +123,9 @@ export class AuthService
 
                 // Store the user on the user service 
                 this._userService.user = response.user;
+                this._userService.setConnectedUser();
 
+                // console.log(this._userService.getConnectedUser());
                 // Return true
                 return of(true);
             }),

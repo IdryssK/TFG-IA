@@ -3,6 +3,7 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
+import { AdminGuard } from './core/auth/guards/admin.guard';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -10,7 +11,7 @@ import { LayoutComponent } from 'app/layout/layout.component';
 export const appRoutes: Route[] = [
 
     // Redirect empty path to '/example'
-    {path: '', pathMatch : 'full', redirectTo: 'dataset'},
+    {path: '', pathMatch : 'full', redirectTo: 'home'},
 
     // Redirect signed-in user to the '/example'
     //
@@ -74,11 +75,11 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'configuracion', loadChildren: () => import('app/modules/admin/configuraciones2/configuraciones.routes')},
+            {path: 'configuracion', loadChildren: () => import('app/modules/admin/configuraciones/configuraciones.routes')},
             {path: 'dataset', loadChildren: () => import('app/modules/admin/dataset/dataset.routes')},
             {path: 'example2', loadChildren: () => import('app/modules/admin/example2/example2.routes')},
             {path: 'algoritmos', loadChildren: () => import('app/modules/admin/algoritmos/algoritmos.routes')},
-            {path: 'gestion-usuario', loadChildren: () => import('app/modules/admin/gestion-usuario/gestion-usuario.routes')},
+            {path: 'gestion-usuario',canActivate: [AdminGuard], loadChildren: () => import('app/modules/admin/gestion-usuario/gestion-usuario.routes')},
         ]
     }
 ];

@@ -1,21 +1,24 @@
 import { Injectable } from '@angular/core';
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { FuseMockApiService } from '@fuse/lib/mock-api';
-import { compactNavigation, defaultNavigation, futuristicNavigation, horizontalNavigation } from 'app/mock-api/common/navigation/data';
+import { UserService } from 'app/core/user/user.service';
+import { compactNavigation, defaultNavigationAdmin, futuristicNavigation, horizontalNavigationAdmin,defaultNavigationUser,horizontalNavigationUser} from 'app/mock-api/common/navigation/data';
 import { cloneDeep } from 'lodash-es';
 
 @Injectable({providedIn: 'root'})
 export class NavigationMockApi
 {
     private readonly _compactNavigation: FuseNavigationItem[] = compactNavigation;
-    private readonly _defaultNavigation: FuseNavigationItem[] = defaultNavigation;
     private readonly _futuristicNavigation: FuseNavigationItem[] = futuristicNavigation;
-    private readonly _horizontalNavigation: FuseNavigationItem[] = horizontalNavigation;
-
+    private readonly _defaultNavigationAdmin: FuseNavigationItem[] = defaultNavigationAdmin;
+    private readonly _horizontalNavigationAdmin: FuseNavigationItem[] = horizontalNavigationAdmin;
+    private readonly _defaultNavigationUser: FuseNavigationItem[] = defaultNavigationUser;
+    private readonly _horizontalNavigationUser: FuseNavigationItem[] = horizontalNavigationUser;
+    
     /**
      * Constructor
      */
-    constructor(private _fuseMockApiService: FuseMockApiService)
+    constructor(private _fuseMockApiService: FuseMockApiService, private userService: UserService)
     {
         // Register Mock API handlers
         this.registerHandlers();
@@ -33,56 +36,69 @@ export class NavigationMockApi
         // -----------------------------------------------------------------------------------------------------
         // @ Navigation - GET
         // -----------------------------------------------------------------------------------------------------
-        this._fuseMockApiService
-            .onGet('api/common/navigation')
-            .reply(() =>
-            {
-                // Fill compact navigation children using the default navigation
-                this._compactNavigation.forEach((compactNavItem) =>
-                {
-                    this._defaultNavigation.forEach((defaultNavItem) =>
-                    {
-                        if ( defaultNavItem.id === compactNavItem.id )
-                        {
-                            compactNavItem.children = cloneDeep(defaultNavItem.children);
-                        }
-                    });
-                });
 
-                // Fill futuristic navigation children using the default navigation
-                this._futuristicNavigation.forEach((futuristicNavItem) =>
-                {
-                    this._defaultNavigation.forEach((defaultNavItem) =>
-                    {
-                        if ( defaultNavItem.id === futuristicNavItem.id )
-                        {
-                            futuristicNavItem.children = cloneDeep(defaultNavItem.children);
-                        }
-                    });
-                });
+        this.userService.user$.subscribe((user) => {
 
-                // Fill horizontal navigation children using the default navigation
-                this._horizontalNavigation.forEach((horizontalNavItem) =>
+            if (user.User_Rol === 1) {
+                this._fuseMockApiService
+                .onGet('api/common/navigation')
+                .reply(() =>
                 {
-                    this._defaultNavigation.forEach((defaultNavItem) =>
+                    // Fill horizontal navigation children using the default navigation
+                    this._horizontalNavigationAdmin.forEach((horizontalNavItem) =>
                     {
-                        if ( defaultNavItem.id === horizontalNavItem.id )
+                        this._defaultNavigationAdmin.forEach((defaultNavItem) =>
                         {
-                            horizontalNavItem.children = cloneDeep(defaultNavItem.children);
-                        }
+                            if ( defaultNavItem.id === horizontalNavItem.id )
+                            {
+                                horizontalNavItem.children = cloneDeep(defaultNavItem.children);
+                            }
+                        });
                     });
-                });
 
-                // Return the response
-                return [
-                    200,
+                    // Return the response
+                    return [
+                        200,
+                        {
+                            compact   : cloneDeep(this._compactNavigation),
+                            default   : cloneDeep(this._defaultNavigationAdmin),
+                            futuristic: cloneDeep(this._futuristicNavigation),
+                            horizontal: cloneDeep(this._horizontalNavigationAdmin),
+                        },
+                    ];
+                });
+            }
+            else {
+                this._fuseMockApiService
+                .onGet('api/common/navigation')
+                .reply(() =>
+                {
+                    // Fill horizontal navigation children using the default navigation
+                    this._horizontalNavigationUser.forEach((horizontalNavItem) =>
                     {
-                        compact   : cloneDeep(this._compactNavigation),
-                        default   : cloneDeep(this._defaultNavigation),
-                        futuristic: cloneDeep(this._futuristicNavigation),
-                        horizontal: cloneDeep(this._horizontalNavigation),
-                    },
-                ];
-            });
+                        this._defaultNavigationUser.forEach((defaultNavItem) =>
+                        {
+                            if ( defaultNavItem.id === horizontalNavItem.id )
+                            {
+                                horizontalNavItem.children = cloneDeep(defaultNavItem.children);
+                            }
+                        });
+                    });
+
+                    // Return the response
+                    return [
+                        200,
+                        {
+                            compact   : cloneDeep(this._compactNavigation),
+                            futuristic: cloneDeep(this._futuristicNavigation),
+                            default   : cloneDeep(this._defaultNavigationUser),
+                            horizontal: cloneDeep(this._horizontalNavigationUser),
+                        },
+                    ];
+                });
+            }
+        
+        });
     }
+    
 }

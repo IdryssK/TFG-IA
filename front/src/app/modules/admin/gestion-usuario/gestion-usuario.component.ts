@@ -15,19 +15,21 @@ import { NgIf } from '@angular/common';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { FuseAlertService, FuseAlertComponent } from '@fuse/components/alert';
+import { NavigationService } from 'app/core/navigation/navigation.service';
 
 @Component({
   selector: 'app-gestion-usuario',
   templateUrl: './gestion-usuario.component.html',
   styleUrl: './gestion-usuario.component.scss',
   standalone: true,
-  imports: [NgIf, TranslocoModule,ReactiveFormsModule , LanguagesComponent, RouterLink, MatFormFieldModule, MatIconModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatButtonModule, FormsModule, MtxGrid],
+  imports: [NgIf, TranslocoModule,ReactiveFormsModule, FuseAlertComponent,LanguagesComponent, RouterLink, MatFormFieldModule, MatIconModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatButtonModule, FormsModule, MtxGrid],
 })
 export class GestionUsuarioComponent implements OnInit{
   searchInputControl: UntypedFormControl = new UntypedFormControl();
   
 
-  constructor(private userService : UserService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
+  constructor(private userService : UserService, private nav: NavigationService, private _fuseAlertService: FuseAlertService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
   ngOnInit(): void {
     this.getList();
@@ -37,6 +39,15 @@ export class GestionUsuarioComponent implements OnInit{
       let t = translate('user.operations');
       console.log(translate('user.operations'))
     });
+    this.nav.navigation$.subscribe((data) => {
+      console.log('nav:', data);
+    });
+    this.nav.get().subscribe((data) => {
+      console.log('nav2:', data);
+    });
+    this.userService.user$.subscribe((data) => { 
+      console.log(data);
+    } );
     
   }
 
@@ -59,7 +70,7 @@ export class GestionUsuarioComponent implements OnInit{
           icon: 'edit',
           class: 'success',
           tooltip: 'Edit',
-          click: (row) => this.router.navigate(['/gestion-usuario/editar', row.idx]),
+          click: (row) => this.editar(row.idx),
         },
         {
           type: 'icon',
@@ -97,11 +108,11 @@ export class GestionUsuarioComponent implements OnInit{
         email: user.User_Email,
         role: user.User_Rol === 1 ? 'admin' : 'usuario'
       }));
-      console.log(data.page.total)
+      // console.log(data.page.total)
       this.total = data.page.total;
       this.isLoading = false;
       
-      console.log(userList);
+      // console.log(userList);
       this.list = userList;
     });
   }
@@ -115,39 +126,74 @@ export class GestionUsuarioComponent implements OnInit{
     this.getList();
   }
   
+  editar(idx: number) {
+
+    let idxLogged : any;
+    this.userService.user$.subscribe((user) => {
+      idxLogged = user.User_Idx;
+    });
+    if (idxLogged && idxLogged === idx) {
+      // Show error message
+      this._fuseAlertService.show('error-edit-own-user');
+      setTimeout(() => {
+        this._fuseAlertService.dismiss('error-edit-own-user');
+      }, 1500);
+      console.log('Cannot edit your own user');
+    } else {
+      this.router.navigate(['/gestion-usuario/editar', idx]);
+    }
+
+
+    // this.router.navigate(['/gestion-usuario/editar', idx]);
+  }
+// this.router.navigate(['/gestion-usuario/editar', row.idx])
   borrarUsuario(idx: number) {
-    console.log(this.userService.get());
+
+    let idxLogged : any;
+    this.userService.user$.subscribe((user) => {
+      idxLogged = user.User_Idx;
+    });
+    if(idxLogged === idx){
+      this._fuseAlertService.show('error-delete-own-user');
+      setTimeout(() => {
+        this._fuseAlertService.dismiss('error-delete-own-user');
+      }, 1500);
+      return;
+    }
+    else {
+      const confirmation = this._fuseConfirmationService.open({
+        title  : 'Eliminar usuario',
+        message: '¿Estas seguro de que quieres eliminar el usuario?',
+        actions: {
+            confirm: {
+                label: 'Eliminar',
+            },
+        },
+      });
+      confirmation.afterClosed().subscribe((result) => {
+          // If the confirm button pressed...
+          if ( result === 'confirmed' ) {  
+            this.userService.deleteUser(idx).subscribe(
+              () => {
+                
+                this.getList();
+              },
+              (error) => {
+                console.error(error);
+                // Handle the error here
+              }
+            );
+          }
+          else {
+            console.log('no se ha eliminado el usuario');
+          }
+      });
+    }
     // if (uid === this.userService.()) {
     //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});
     //   return;
     // }
-    const confirmation = this._fuseConfirmationService.open({
-      title  : 'Eliminar usuario',
-      message: '¿Estas seguro de que quieres eliminar el usuario?',
-      actions: {
-          confirm: {
-              label: 'Eliminar',
-          },
-      },
-    });
-    confirmation.afterClosed().subscribe((result) => {
-        // If the confirm button pressed...
-        if ( result === 'confirmed' ) {  
-          this.userService.deleteUser(idx).subscribe(
-            () => {
-              
-              this.getList();
-            },
-            (error) => {
-              console.error(error);
-              // Handle the error here
-            }
-          );
-        }
-        else {
-          console.log('no se ha eliminado el usuario');
-        }
-    });
+    
     
   }
 

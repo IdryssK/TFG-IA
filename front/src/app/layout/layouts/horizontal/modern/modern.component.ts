@@ -105,6 +105,7 @@ export class ModernLayoutComponent implements OnInit, OnDestroy
         {
             // Toggle the opened status
             navigation.toggle();
+            console.log('toggleNavigation');
         }
     }
 }

@@ -38,6 +38,25 @@
               <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
               <span class="ml-2 mr-1">{{'user.new' | transloco}}</span>
           </button>
+          <div class="z-40 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <fuse-alert
+              [appearance]="'outline'"
+              [dismissible]="true"
+              [dismissed]="true"
+              [name]="'error-edit-own-user'"
+              [type]="'warning'">
+              Cannot edit your own user
+            </fuse-alert>
+            <fuse-alert
+              [appearance]="'outline'"
+              [dismissible]="true"
+              [dismissed]="true"
+              [name]="'error-delete-own-user'"
+              [type]="'warning'">
+              Cannot delete your own user
+            </fuse-alert>
+          </div>
+          
       </div>
   </div>
 

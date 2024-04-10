@@ -2,13 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { User } from 'app/core/user/user.types';
 import { environment } from 'environments/environment.development';
-import { map, Observable, ReplaySubject, tap } from 'rxjs';
+import { map, Observable, ReplaySubject, Subject, takeUntil, tap } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class UserService
 {
     private _httpClient = inject(HttpClient);
     private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
+    userConnected: User;
 
     constructor(private http: HttpClient){}
     // -----------------------------------------------------------------------------------------------------
@@ -48,6 +50,21 @@ export class UserService
         );
     }
 
+    setConnectedUser(): void {
+        this.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User) =>
+            {
+                this.userConnected = user;
+                // console.log(this.user);
+                // Mark for check
+                // this._changeDetectorRef.markForCheck();
+            });
+    }
+
+    getConnectedUser(): User {
+        return this.userConnected;
+    }
     /**
      * Update the user
      *
@@ -106,4 +123,5 @@ export class UserService
       get token(): string {
         return localStorage.getItem('accessToken') || '';
       }
+    
 }
