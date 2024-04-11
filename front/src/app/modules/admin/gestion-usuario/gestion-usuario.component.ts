@@ -39,15 +39,7 @@ export class GestionUsuarioComponent implements OnInit{
       let t = translate('user.operations');
       console.log(translate('user.operations'))
     });
-    this.nav.navigation$.subscribe((data) => {
-      console.log('nav:', data);
-    });
-    this.nav.get().subscribe((data) => {
-      console.log('nav2:', data);
-    });
-    this.userService.user$.subscribe((data) => { 
-      console.log(data);
-    } );
+    this._fuseAlertService.dismiss('error-delete-own-user');
     
   }
 
@@ -134,9 +126,10 @@ export class GestionUsuarioComponent implements OnInit{
     });
     if (idxLogged && idxLogged === idx) {
       // Show error message
+      console.log('Cannot edit your own user');
       this._fuseAlertService.show('error-edit-own-user');
       setTimeout(() => {
-        this._fuseAlertService.dismiss('error-edit-own-user');
+        // this._fuseAlertService.dismiss('error-edit-own-user');
       }, 1500);
       console.log('Cannot edit your own user');
     } else {
@@ -156,11 +149,12 @@ export class GestionUsuarioComponent implements OnInit{
     if(idxLogged === idx){
       this._fuseAlertService.show('error-delete-own-user');
       setTimeout(() => {
-        this._fuseAlertService.dismiss('error-delete-own-user');
+        // this._fuseAlertService.dismiss('error-delete-own-user');
       }, 1500);
       return;
     }
     else {
+      
       const confirmation = this._fuseConfirmationService.open({
         title  : 'Eliminar usuario',
         message: '¿Estas seguro de que quieres eliminar el usuario?',

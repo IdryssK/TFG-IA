@@ -1,4 +1,19 @@
 :host ::ng-deep {
+  .mat-column-role > .ng-star-inserted > .ng-star-inserted{
+    background-color: #FEE2E2; // El color de fondo asociado a bg-red-100 en Tailwind CSS
+    color: #DC2626; // El color de texto asociado a text-red-800 en Tailwind CSS
+    font-size: 0.875rem; // El tamaño de fuente asociado a text-sm en Tailwind CSS
+    font-weight: 500; // El peso de la fuente asociado a font-medium en Tailwind CSS
+    margin-right: 0.5rem; // El espacio a la derecha asociado a me-2 en Tailwind CSS
+    padding: 0.125rem 0.625rem; // El relleno asociado a px-2.5 y py-0.5 en Tailwind CSS
+    border-radius: 0.25rem; // El radio de borde asociado a rounded en Tailwind CSS
+
+    // Estilos para el tema oscuro
+    .dark & {
+      background-color: #742A2A; // El color de fondo asociado a bg-red-900 en Tailwind CSS
+      color: #FEB2B2; // El color de texto asociado a text-red-300 en Tailwind CSS
+    }
+  }
   .mtx-grid {
     .mat-badge-after .mat-badge-content {
       right: 0;
@@ -8,10 +23,9 @@
       top: 0;
     }
   
-    .mat-sort-header-container {
-      color: rgba(255, 196, 88, 0.953);
-    }
-
+    // .mat-sort-header-container {
+    //   color: rgba(255, 196, 88, 0.953);
+    // }
     
     .mat-mdc-paginator-container {
       justify-content:  space-around !important;
@@ -21,3 +35,4 @@
 :host ::ng-deep .mtx-grid {
   height: 100%;
 }
+
