@@ -25,10 +25,10 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 import { MtxMomentDatetimeModule, provideMomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 import { MatCardModule } from '@angular/material/card';
-import { provideNativeDatetimeAdapter } from '@ng-matero/extensions/core';
+// import { provideNativeDatetimeAdapter } from '@ng-matero/extensions/core';
 import { MtxCalendar } from '@ng-matero/extensions/datetimepicker';
-import { MtxCalendarView, MtxDatetimepicker, MtxDatetimepickerInput, MtxDatetimepickerMode, MtxDatetimepickerToggle, MtxDatetimepickerType} from '@ng-matero/extensions/datetimepicker';
-import { MtxGrid, MtxGridColumn } from '@ng-matero/extensions/grid';
+import { MtxCalendarView, MtxDatetimepicker, MtxDatetimepickerInput, MtxDatetimepickerMode, MtxDatetimepickerToggle, } from '@ng-matero/extensions/datetimepicker';
+import { MtxGrid, MtxGridColumn,MtxGridColumnTag } from '@ng-matero/extensions/grid';
 import { DateTime } from 'luxon';
 import moment from 'moment';
   
@@ -367,6 +367,8 @@ export class CrearDatasetComponent implements OnInit
 
     llamadasApi() {
 
+        let tags: MtxGridColumnTag = {1: {text: 'tag1', color: 'primary'}, 2: {text: 'tag2', color: 'accent'}, 3: {text: 'tag3', color: 'warn'}};
+        
         let limite = this.primerForm.get('limit')?.value
         limite = limite === '' ? 100 : limite;
 
@@ -376,7 +378,7 @@ export class CrearDatasetComponent implements OnInit
             // console.log(response); 
             const data = response.result;
             this.columns =  data.columns.map((column: string) => {
-                return { header: column, field: column };
+                return { header: column, field: column, tag: tags };
             });
 
             const columnas = data.columns;
