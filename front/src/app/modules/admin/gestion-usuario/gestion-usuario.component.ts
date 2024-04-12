@@ -5,7 +5,7 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { MtxGrid, MtxGridColumn, MtxGridColumnButtonPop } from '@ng-matero/extensions/grid';
+import { MtxGrid, MtxGridColumn, MtxGridColumnButtonPop, MtxGridRowClassFormatter } from '@ng-matero/extensions/grid';
 
 import { MatIconModule } from '@angular/material/icon';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
@@ -43,11 +43,19 @@ export class GestionUsuarioComponent implements OnInit{
     
   }
 
+  rowClassFormatter: MtxGridRowClassFormatter = {
+    admin: (data, index) => data.role === 'admin',
+    usuario: (data, index) => data.role === 'usuario',
+  };
 
   columns: MtxGridColumn[] = [
     { header: 'Idx', field: 'idx' },
     { header: 'Email', field: 'email' },
-    { header: 'Role', field: 'role', class: 'role-column'},
+    { 
+      header: 'Role', 
+      field: 'role', 
+      formatter: (data: any) => data.role === 'admin' ? `<span class="admin">${data.role}</span>` : `<span class="usuario">${data.role}</span>`
+    },
     {
       header: translate('user.operations'),
       field: 'operation',
