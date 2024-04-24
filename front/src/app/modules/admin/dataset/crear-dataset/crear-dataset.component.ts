@@ -133,6 +133,7 @@ export class CrearDatasetComponent implements OnInit
     
     filteredItems: string[] = this.values.slice();
     selectedValues = new FormControl([]);
+    selectedValues2;
     selectedValueByTag: {[tag: string]: any[]} = {};
     allValueByTag: {[tag: string]: any[]} = {};
     filteredValues: string[] = [];
@@ -184,7 +185,7 @@ export class CrearDatasetComponent implements OnInit
 
 
 // --------------------------------------------FILTROS---------------------------------------------------------
-
+    
     @ViewChild('select') select: MatSelect;
 
     allSelected=false;
@@ -208,6 +209,7 @@ export class CrearDatasetComponent implements OnInit
             this.showAlert = false;
             let tag = this.tags.find((input: any) => !this.inputs.includes(input));
             if(this.tags.length > this.inputs.length){
+                this.filterForm.addControl(tag, new FormControl());
                 console.log('Meto en inptus = ', this.tags[this.tags.indexOf(tag)]);
                 this.inputs.push(this.tags[this.tags.indexOf(tag)]);
                 this.getValueTag(this.tags[this.tags.indexOf(tag)]);
@@ -228,9 +230,11 @@ export class CrearDatasetComponent implements OnInit
             } else {
                 console.log('Adding new input and removing the previous one');
                 const newInput = event.source.value;
-                console.log(newInput);
+                delete this.selectedValueByTag[this.inputs[index]];
                 this.inputs[index] = newInput;
                 this.getValueTag(this.tags[this.tags.indexOf(newInput)]);
+                this.allValueByTag[this.tags[this.tags.indexOf(newInput)]] = this.values;
+
             }
         }
 
@@ -263,55 +267,69 @@ export class CrearDatasetComponent implements OnInit
     
 
     //recogemos los distintos valores de los tags del token
-    getValueTag(tag: string) {
-
-        this.values = [];
-        this.addFilter=false;   
-        this.apiSmartUaService.getTagSmartUa(this.token, tag)
-        .subscribe((response) => {
-            // console.log(response.result.values.length);
-            for(let i = 0; i < response.result.values.length; i++) {
+    async getValueTag(tag: string) {
+        try {
+            this.values = [];
+            this.addFilter = false;
+            const response = await this.apiSmartUaService.getTagSmartUa(this.token, tag).toPromise();
+            for (let i = 0; i < response.result.values.length; i++) {
                 this.values.push(response.result.values[i][1]);
-                //console.log(response.result.values[i][1]);
             }
-        });
+            // console.log(this.values);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     //seleccionar todos los valores del select 
     // VOLVER A HACER !!!!!!!
-    seleccionarTodo(index: any) {
+    seleccionarTodo(inputIndex: any) {
+    // Obtén todas las opciones disponibles para este input
+        const allOptions = this.allValueByTag[inputIndex];
 
-        if (this.allSelected) {
-            this.select.options.forEach((item: MatOption) => {
-                item.select();
-            });
+        // Comprueba si todas las opciones ya están seleccionadas
+        if (this.selectedValueByTag[inputIndex].length === allOptions.length) {
+            // Si todas las opciones ya están seleccionadas, deselecciónalas
+            this.selectedValueByTag[inputIndex] = [];
         } else {
-            this.select.options.forEach((item: MatOption) => item.deselect());
+            // Si no todas las opciones están seleccionadas, selecciónalas todas
+            this.selectedValueByTag[inputIndex] = allOptions;
         }
-        this.selectedValueByTag[index] = this.selectedValues.value;
-        console.log(this.selectedValueByTag);
-        
     }
 
-    //seleccionar el value del select
-    seleccionarClick(index: any) {
-
-        // PROBLEMA QUE NO SE GUARDA LOS VALORES DEL ULTIMO INPUT Y LOS MUESTRA EN EL VALUE DEL SELECT
-
-        console.log(this.selectedValues.value);;
-        let newStatus = true;
-        this.selectedValueByTag[index] = this.selectedValues.value;
-        console.log(this.selectedValueByTag);
-        this.select.options.forEach((item: MatOption) => {
-            if (item.selected) {
-                newStatus = false;
-            }
-        });
-        this.allSelected = newStatus;
-    }
 
 // -------------------------------------------------------------------------------------------------------------------------------
 
+    async editar (){
+        const prueba = {
+            "uid": [
+                "CLU07020001",
+                "ELU00290001",
+                "ELU07020001"
+            ],
+            "description_origin": [
+                "Acom. Respaldo CPD en STI",
+                "Alumbrado Ext. Animalario y Petrología"
+            ]
+        }
+        console.log(prueba.uid);
+        console.log(Object.keys(prueba));
+        console.log(Object.keys(prueba).length);
+        Object.keys(prueba).forEach(key => {
+            this.inputs.push(key);
+        });
+
+        for (let i = 0; i < this.inputs.length; i++) {
+            await this.getValueTag(this.tags[this.tags.indexOf(this.inputs[i])]);
+            this.allValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]] = this.values;
+            this.selectedValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]]= prueba[this.inputs[i]];
+            this.selectedValues2 = this.selectedValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]];
+        }
+        console.log(this.allValueByTag);
+       
+        console.log(this.selectedValueByTag);
+
+    }
     /**
      * On init
      */
@@ -319,6 +337,7 @@ export class CrearDatasetComponent implements OnInit
 
         console.log('------------------------------------');
         this.tags = environment.filters;
+        this.editar();
         //this.tiposFechas = environment.tiposFechas;
         
     }

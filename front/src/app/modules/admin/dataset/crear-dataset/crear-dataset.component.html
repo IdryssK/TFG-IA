@@ -102,29 +102,6 @@
                                         </mat-form-field>
                                     </div>
         
-                                    <!-- <div class="flex px-8">
-                                    <mat-form-field  [ngClass]="formFieldHelpers"
-                                    class="flex-auto">
-                                        <mat-label>Desde - Hasta</mat-label>
-                                        <mat-date-range-input [formGroup]="primerForm" [rangePicker]="picker">
-                                        <input matStartDate formControlName="start" placeholder="Start date">
-                                        <input matEndDate formControlName="end" placeholder="End date">
-                                        
-                                        </mat-date-range-input>
-                                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-        
-                                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                                        <mat-date-range-picker #picker></mat-date-range-picker>
-                                    
-                                        @if (primerForm.controls.start.hasError('matStartDateInvalid')) {
-                                        <mat-error>Invalid start date</mat-error>
-                                        }
-                                        @if (primerForm.controls.end.hasError('matEndDateInvalid')) {
-                                        <mat-error>Invalid end date</mat-error>
-                                        }
-                                    </mat-form-field>
-                                    
-                                </div> -->
                                     <div class="flex px-8">
                                         <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
                                             <mat-label>Desde</mat-label>
@@ -185,31 +162,24 @@
                                     <!-- VALUES -->
                                     <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
                                         <mat-label></mat-label>
-                                        <mat-select #select [value]="value" placeholder="uid1" data-filter multiple
-                                            [formControl]="selectedValues">
+                                        <mat-select #select [value]="value" placeholder="" data-filter multiple
+                                              [(ngModel)]="selectedValueByTag[inputs[i]]" [ngModelOptions]="{standalone: true}">
                                             <!-- <mat-select-filter class="p-4" [array]="allValueByTag[inputs[i]]" (filteredReturn)="filterOptions(inputs[i], $event)"></mat-select-filter> -->
                                             <mat-select-trigger>
-                                                {{selectedValues.value?.[0] || ''}},
-                                                {{selectedValues.value?.[1] || ''}}
-
-                                                @if ((selectedValues.value?.length || 0) > 2) {
-                                                <span class="example-additional-selection">
-                                                    (+{{(selectedValues.value?.length || 0) - 1}}
-                                                    {{selectedValues.value?.length === 2 ? 'más' : 'más'}})
-                                                </span>
-                                                }
+                                                <ng-container *ngIf="selectedValueByTag[inputs[i]]?.length > 2; else lessThanThree">
+                                                    (+{{selectedValueByTag[inputs[i]]?.length}} seleccionados)
+                                                </ng-container>
+                                            
+                                                <ng-template #lessThanThree>
+                                                    {{selectedValueByTag[inputs[i]]?.join(', ')}}
+                                                </ng-template>
                                             </mat-select-trigger>
-                                            <search [appearance]="'bar'"></search>
                                             <!-- <input matInput placeholder="Filtrar opciones" (input)="filterOptions($event.target.value, inputs[i])"> -->
-                                            <mat-checkbox [(ngModel)]="allSelected"
-                                                [ngModelOptions]="{standalone: true}"
-                                                (change)="seleccionarTodo(inputs[i])">-- Seleccionar todo
-                                                --</mat-checkbox>
-                                            <mat-option (click)="seleccionarClick(inputs[i])" value="{{value}}"
+                                            <mat-option (click)="seleccionarTodo(inputs[i])">-- Seleccionar todo --</mat-option>
+                                            <mat-option value="{{value}}"
                                                 *ngFor="let value of allValueByTag[inputs[i]]">{{value}}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <search [appearance]="'basic'"></search>
                                     <button mat-icon-button matTooltip="Basic" (click)="deleteInput(i)">
                                         <mat-icon class="text-red-600 icon-size-5"
                                             [svgIcon]="'heroicons_solid:trash'"></mat-icon>

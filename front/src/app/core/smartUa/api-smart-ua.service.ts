@@ -20,7 +20,7 @@ export class ApiSmartUaService {
         return response;
       }),
       catchError((error) => { 
-        console.log(error.url);
+        console.log(error);
         return of(error); 
       })
     );
