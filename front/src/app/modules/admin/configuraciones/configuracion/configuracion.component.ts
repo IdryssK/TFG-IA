@@ -16,7 +16,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { environment } from 'environments/environment';
 import { ApiSmartUaService } from 'app/core/smartUa/api-smart-ua.service';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { fuseAnimations } from '@fuse/animations';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -31,13 +31,14 @@ import { MtxCalendarView, MtxDatetimepicker, MtxDatetimepickerInput, MtxDatetime
 import { MtxGrid, MtxGridColumn,MtxGridColumnTag } from '@ng-matero/extensions/grid';
 import { DateTime } from 'luxon';
 import moment from 'moment';
+import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones.service';
   
 @Component({
     selector     : 'app-configuracion',
     templateUrl  : './configuracion.component.html',
     encapsulation: ViewEncapsulation.None,
     styleUrls    : ['./configuracion.component.scss'],
-    animations   : fuseAnimations,
+    animations   : fuseAnimations, 
     standalone   : true,
     providers: [provideMomentDatetimeAdapter({
                                                 parse: {
@@ -99,7 +100,7 @@ export class ConfiguracionComponent implements OnInit
     /**
      * Constructor
      */
-    constructor(private _formBuilder: UntypedFormBuilder, private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef) {}
+    constructor(private configuracionService: ConfiguracionesService,private _formBuilder: UntypedFormBuilder, private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute,) {}
 
 // -----------------------------------PESTAÑAS------------------------------------------------------------------
 
@@ -148,7 +149,8 @@ export class ConfiguracionComponent implements OnInit
     @ViewChild('grid') grid!: MtxGrid;
     columns: MtxGridColumn[] = [];
     list = [];
-    
+    administrarColumnas: any[] = [];
+
     columns1: MtxGridColumn[] = [];
     list1 = [];
     
@@ -161,20 +163,31 @@ export class ConfiguracionComponent implements OnInit
     list3 = [];
     
 
-    
+    private idx: string ='';
 
 
     primerForm: FormGroup = this.fb.group({
+        idx: [{value: 'nuevo', disabled: true}, Validators.required],
         nombre: ['Test', Validators.required],
         token: ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDYyNzI4NDV9.gCMcKrWdKzECFpHckZhBayNtyS6RBbrF1YD5Ig8afZ4', Validators.required],
         start: ['2024-03-04T17:40:00.000Z', new UntypedFormControl()],
         end: ['2024-03-05T17:40:00.000Z', new UntypedFormControl()],
         limit: ['', Validators.required],
         filtros :[this.selectedValueByTag], 
-        caracteristicas: [this.columns],
-        fechas: [this.tiposFechas]
+        Tablacaracteristicas: [[]],
+        TablaList: [[]],
+        Tabla1AdministrarColumnas: [[]],
+        Tabla1Columns: [[]],
+        Tabla1List: [[]],
+        Tabla2Columns: [[]],
+        Tabla2List: [[]],
+        Tabla2TiposFechas: [[]],
+        Tabla3Columns: [[]],
+        Tabla3List: [[]],
+        fechas: [[]]
         // datos: []
     });
+    
     
     
     // -----------------------------------------------------------------------------------------------------
@@ -302,127 +315,47 @@ export class ConfiguracionComponent implements OnInit
 
     async editar (){
         // -------------Filtros----------------
-        const prueba = {
-            "uid": [
-                "CLU07020001",
-                "ELU00290001",
-                "ELU07020001"
-            ],
-            "description_origin": [
-                " Educación Alum-Fuerza(Auxiliar)",
-                " Educación Clima(Auxiliar)",
-                "Acom. Respaldo CPD en STI",
-                "Alumbrado Ext. Animalario y Petrología"
-            ]
-        }
-        console.log(prueba.uid);
-        console.log(Object.keys(prueba));
-        console.log(Object.keys(prueba).length);
-        Object.keys(prueba).forEach(key => {
+        let prueba;
+        this.configuracionService.configuracionList().subscribe(async (response) => {
+            prueba = JSON.parse(response.configuraciones[0].CONF_Data);
+                console.log(prueba);
+                console.log(prueba);
+        Object.keys(prueba.filtros).forEach(key => {
             this.inputs.push(key);
         });
 
         for (let i = 0; i < this.inputs.length; i++) {
             await this.getValueTag(this.tags[this.tags.indexOf(this.inputs[i])]);
             this.allValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]] = this.values;
-            this.selectedValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]]= prueba[this.inputs[i]];
-            this.selectedValues2 = this.selectedValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]];
+            this.selectedValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]]= prueba.filtros[this.inputs[i]];
         }
-        console.log(this.allValueByTag);
-       
-        console.log(this.selectedValueByTag);
 
-        this.cargarTabla();
+        const tablaCol = prueba.Tablacaracteristicas;
+        const TablaList = prueba.TablaList;
+
+        this.columns = tablaCol;
+        this.list = TablaList;
+        this.primerForm.get('limit')?.setValue(prueba.limit);
+        //this.cargarTabla();
         // -------------Caracteristicas----------------
-        const data = [
-            {
-                "header": "time",
-                "field": "time",
-                "hide": true,
-                "show": true
-            },
-            {
-                "header": "uid",
-                "field": "uid",
-                "hide": true,
-                "show": true
-            },
-            {
-                "header": "value",
-                "field": "value",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "metric",
-                "field": "metric",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "typemeter",
-                "field": "typemeter",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "alias",
-                "field": "alias",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "lat",
-                "field": "lat",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "lon",
-                "field": "lon",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "cota",
-                "field": "cota",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "description",
-                "field": "description",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "description_origin",
-                "field": "description_origin",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "name",
-                "field": "name",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "organizationid",
-                "field": "organizationid",
-                "hide": false,
-                "show": true
-            },
-            {
-                "header": "origin",
-                "field": "origin",
-                "hide": false,
-                "show": true
-            }
-        ]
-        this.columns = data;
-        console.log('gola')
+        const tabla1Col = prueba.Tabla1Columns;
+        const tabla1List = prueba.Tabla1List;
+        
+        this.administrarColumnas = prueba.Tabla1AdministrarColumnas;
+        this.columns1 = tabla1Col;
+        this.list1 = prueba.Tabla1List;
+        //------------Fechas----------------
+        this.columns2 = prueba.Tabla2Columns;
+        this.list2 = prueba.Tabla2List
+        this.tiposFechas = prueba.Tabla2TiposFechas;
+        });
+        
     }
+
+    pestana1 () {
+        
+    }
+
     /**
      * On init
      */
@@ -430,7 +363,14 @@ export class ConfiguracionComponent implements OnInit
 
         console.log('------------------------------------');
         this.tags = environment.filters;
-        this.editar();
+        this.idx = this.route.snapshot.params['idx'];
+        console.log(this.idx);
+        this.primerForm.get('idx')?.setValue(this.idx);
+        if(this.idx !== 'nuevo'){
+            this.editar();
+            
+        }
+        //this.editar();
         //this.tiposFechas = environment.tiposFechas;
         
     }
@@ -489,7 +429,7 @@ export class ConfiguracionComponent implements OnInit
             // console.log(response); 
             const data = response.result;
             this.columns =  data.columns.map((column: string) => {
-                return { header: column, field: column};
+                return { header: column, field: column, hide: false, show: true};
             });
 
             const columnas = data.columns;
@@ -506,8 +446,9 @@ export class ConfiguracionComponent implements OnInit
             this.list = datosProcesados;
 
             console.log(this.columns);
-           
             
+            // para que no tengan la misma referencia y les afecte los cambios a uno y otro
+            this.administrarColumnas = JSON.parse(JSON.stringify(this.columns));
             this.cdr.detectChanges();
             
         },
@@ -526,42 +467,39 @@ export class ConfiguracionComponent implements OnInit
 
     
 // --------------------------------------------TABLA 1----------------------------------------------------------------------------
-    
     // Ocultar columna 
     showColumn(e: any, column: any) {
         console.log(e.target.checked, column);
         //buscar en el array de columnas la columna que se ha seleccionado
-        const index = this.columns.indexOf(column);
+        const index = this.administrarColumnas.indexOf(column);
         console.log(index); //posicion de la columna
         if (index === -1) {
             console.log('No se ha encontrado la columna');
         } else {
             if(e.target.checked) {
-                this.columns[index].hide = false;
+                this.administrarColumnas[index].hide = false;
             }
             else {
-                this.columns[index].hide = true;
+                this.administrarColumnas[index].hide = true;
             }
         }
+        console.log(this.administrarColumnas);
         console.log(this.columns);
     }
 
     tabla1() {
 
         // copiamos las columnas que no esten hide
-        this.columns1 = this.columns.filter(column => !column.hide);
-
+        this.columns1 = [...this.administrarColumnas];
+        
         // copiamos los datos de la tabla que no esten hide
-        this.list1 = this.list.map(item => {
-            const newItem: any = {};
-            this.columns1.forEach(column => {
-                if (item.hasOwnProperty(column.field)) {
-                    newItem[column.field] = item[column.field];
-                }
-            });
-            return newItem;
+        this.list1 = [...this.list];
+        const hola = this.list1;
+        this.list1 = [];
+        hola.forEach(element => {
+            this.list1.push(element);
         });
-
+        console.log(this.list1)
         // mostramos la siguiente pestaña FECHAS
         this.tiposFechas =  environment.tiposFechas.map((column: string) => {
             return { header: column, field: column, hide: true, show: true};
@@ -674,8 +612,22 @@ export class ConfiguracionComponent implements OnInit
 
     guardarDataSet() {
         console.log('Guardando dataset');
+
+        this.primerForm.value.Tablacaracteristicas = this.columns;
+        this.primerForm.value.TablaList = this.list;
+        
+        this.primerForm.value.Tabla1AdministrarColumnas = this.administrarColumnas;
+        this.primerForm.value.Tabla1Columns = this.columns1;
+        this.primerForm.value.Tabla1List = this.list1;
+        
+        this.primerForm.value.Tabla2Columns = this.columns2;
+        this.primerForm.value.Tabla2List = this.list2;
+
+        this.primerForm.value.Tabla2TiposFechas = this.tiposFechas;
+        this.primerForm.value.Tabla3Columns = this.columns3;
+        this.primerForm.value.Tabla3List = this.list3;
         console.log(this.primerForm.value);
-        console.log(this.selectedValueByTag);
+        // console.log(this.selectedValueByTag);
     }
 
 // -------------------------------------------------------------------------------------------------------------------------------

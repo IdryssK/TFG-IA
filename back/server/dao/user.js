@@ -42,23 +42,6 @@ const userList = async(data) => {
     }
 }
 
-const userListOld = async() => {
-    try {
-        let paramsQuery = [];
-        let query = `SELECT User_Idx, User_Email, User_Rol FROM usuario`;
-
-
-        // Se realiza una busqueda de todos los usuarios para poder hacer la paginación
-        const [total] = await dbConsult(query);
-
-        const [users] = await dbConsult(query);
-
-        return users.length === 0 ? [[], total.length] : [users, total.length];
-    }
-    catch (error) {
-        throw error;
-    }
-}
 
 const userById = async(id) => {
     try {

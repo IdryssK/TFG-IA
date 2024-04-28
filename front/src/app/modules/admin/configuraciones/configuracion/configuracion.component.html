@@ -1,6 +1,6 @@
 <div class="flex flex-col flex-grow min-w-0 ">
 
-    <form class="pt-2" [formGroup]="primerForm" (ngSubmit)="guardarDataSet()">
+    <form class="pt-2" [formGroup]="primerForm" >
 
         <div class="flex flex-row">
             <!-- Primera columna - Mitad de la pantalla -->
@@ -11,7 +11,7 @@
                             <button mat-flat-button>
                                 Cancelar
                             </button>
-                            <button class="px-6 mx-3" mat-flat-button [color]="'primary'" type="submit">
+                            <button class="px-6 mx-3" mat-flat-button [color]="'primary'" type="submit" (click)="guardarDataSet()">
                                 Guardar
                                 <!-- <mat-icon [svgIcon]="'heroicons_outline:bookmark'"></mat-icon> -->
                             </button>
@@ -196,7 +196,7 @@
                             <div class="flex flex-col items-center justify-center">
 
                                 <ul class="grid grid-cols-2 gap-4 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200">
-                                    <li *ngFor="let column of columns; let i = index">
+                                    <li *ngFor="let column of administrarColumnas; let i = index">
                                         <div class="flex items-center p-2 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
                                             <input type="checkbox" [checked]="!column.hide" (change)="showColumn($event, column)" id={{i}} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                             <label for={{i}} class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{{ column.header }}</label>
@@ -215,7 +215,7 @@
                             <ul  class="px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" *ngFor="let tipo of tiposFechas; let i = index">
                                 <li>
                                     <div class="flex items-center p-2 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
-                                        <input type="checkbox" (change)="addColumn($event, tipo)" id={{i}} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                        <input type="checkbox" [checked]="!tipo.hide" (change)="addColumn($event, tipo)" id={{i}} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
                                         <label for={{i}} class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{{ tipo.header }}</label>
                                     </div>
                                 </li>
@@ -322,10 +322,6 @@
                                     [pageSizeOptions]="[5,10,20,30]" 
                                     [noResultText]="'No hay resultados'">
                                 </mtx-grid>
-
-                                <!-- <ng-template #menuFooter class="flex content-end">
-                                <button mat-button class="ml-6" [color]="'primary'" (click)="closeMenu()">Close</button>
-                            </ng-template> -->
                             </div>
                         </div>
                     </mat-tab>
