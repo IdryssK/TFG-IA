@@ -33,10 +33,10 @@ import { DateTime } from 'luxon';
 import moment from 'moment';
   
 @Component({
-    selector     : 'crear-dataset',
-    templateUrl  : './crear-dataset.component.html',
+    selector     : 'app-configuracion',
+    templateUrl  : './configuracion.component.html',
     encapsulation: ViewEncapsulation.None,
-    styleUrls    : ['./crear-dataset.component.scss'],
+    styleUrls    : ['./configuracion.component.scss'],
     animations   : fuseAnimations,
     standalone   : true,
     providers: [provideMomentDatetimeAdapter({
@@ -90,7 +90,7 @@ import moment from 'moment';
                     MtxGrid
                  ],
 })
-export class CrearDatasetComponent implements OnInit
+export class ConfiguracionComponent implements OnInit
 {
 
     horizontalStepperForm: UntypedFormGroup;

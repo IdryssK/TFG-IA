@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { ConfiguracionesComponent } from './configuraciones.component';
-
+import {ConfiguracionComponent} from './configuracion/configuracion.component'
 export default [
     {
         path      : '',
@@ -11,12 +11,9 @@ export default [
         path     : 'lista',
         component: ConfiguracionesComponent,
     },
-    // {
-    //     path: 'crear',
-    //     //component: 
-    // },
-    // {
-    //     path: 'editar/:id',
-    //     component: EditUserComponent
-    // },
+    {
+        path: 'configuracion/:idx',
+        component: ConfiguracionComponent
+    },
+
 ] as Routes;

@@ -9,7 +9,7 @@
             <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
         </div>
         <!-- Title -->
-        <div class="text-4xl font-extrabold tracking-tight">{{ 'configuracion.title' | transloco }}</div>
+        <div class="text-4xl font-extrabold tracking-tight">{{ 'datasets.title' | transloco }}</div>
         <!-- Actions -->
         <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
             <!-- Search -->
@@ -25,7 +25,7 @@
                   matInput
                   formControlName="searchQuery"
                   [autocomplete]="'off'"
-                  [placeholder]="'configuracion.search-bar' | transloco ">
+                  [placeholder]="'datasets.search-bar' | transloco ">
           </mat-form-field>
           </form>
             
@@ -34,9 +34,9 @@
                 class="ml-4"
                 mat-flat-button
                 [color]="'primary'"
-                [routerLink]="'/dataset/crear'">
+                [routerLink]="'/dataset/dataseto/nuevo'">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                <span class="ml-2 mr-1">{{'configuracion.new' | transloco}}</span>
+                <span class="ml-2 mr-1">{{'datasets.new' | transloco}}</span>
             </button>
         </div>
     </div>
@@ -50,7 +50,8 @@
             [pageIndex]="query.page"
             [pageSize]="query.per_page"
             [pageSizeOptions]="[5,10,20]"
-            (page)="getNextPage($event)">
+            (page)="getNextPage($event)"
+            [noResultText]="'No hay resultados'">
   
   
     </mtx-grid>

@@ -13,7 +13,7 @@ export default [
         component: DatasetComponent,
     },
     {
-        path: 'crear',
+        path: 'dataseto/:idx',
         component: CrearDatasetComponent
     },
     // {

@@ -32,7 +32,7 @@ export class DatasetComponent implements OnInit{
   constructor(private userService : UserService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
   ngOnInit(): void {
-    this.getList();
+    //this.getList();
 
     this.transoloService.langChanges$.subscribe(() => {
   
@@ -43,46 +43,7 @@ export class DatasetComponent implements OnInit{
   }
 
 
-  columns: MtxGridColumn[] = [
-    { header: 'Idx', field: 'idx' },
-    { header: 'Email', field: 'email' },
-    { header: 'Role', field: 'role', class: 'role-column'},
-    {
-      header: translate('user.operations'),
-      field: 'operation',
-      width: '240px',
-      pinned: 'right',
-      right: '2px',
-      type: 'button',
-      buttons: [
-        {
-          type: 'icon',
-          text: 'copy',
-          icon: 'file_copy',
-          // color: 'primary',
-          // class: 'success',
-          tooltip: 'Copy',
-          click: (row) => alert('Copy ' + row.idx),
-        },
-        {
-          type: 'icon',
-          text: 'edit',
-          icon: 'edit',
-          class: 'success',
-          tooltip: 'Edit',
-          click: (row) => this.router.navigate(['/dataset/editar', row.idx]),
-        },
-        {
-          type: 'icon',
-          text: 'delete',
-          icon: 'delete',
-          tooltip: 'Delete',
-          color: 'warn',
-          click: (row) => this.borrarUsuario(row.idx),
-        },
-      ],
-    },
-  ];
+  columns: MtxGridColumn[] = [  ];
 
   searchForm = this.fb.group({
     searchQuery: ['']
@@ -102,19 +63,7 @@ export class DatasetComponent implements OnInit{
   getList() {
     this.isLoading = true;
     // hacer llamada a userService.getUsers()
-    this.userService.getAll(this.query).subscribe(data => {
-      let userList = data.users.map(user => ({
-        idx: user.User_Idx,
-        email: user.User_Email,
-        role: user.User_Rol === 1 ? 'admin' : 'usuario'
-      }));
-      console.log(data.page.total)
-      this.total = data.page.total;
-      this.isLoading = false;
-      
-      console.log(userList);
-      this.list = userList;
-    });
+  
   }
 
   getNextPage(e: PageEvent) {

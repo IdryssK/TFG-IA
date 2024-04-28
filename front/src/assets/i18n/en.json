@@ -6,9 +6,15 @@
         "new" : "Add",
         "operations" : "Operations"
     },
-    "configuracion" : {
+    "configuraciones" : {
         "title" : "Configurations list",
         "search-bar" : "Search for a configuration...",
+        "new" : "Add",
+        "operations" : "Operations"
+    },
+    "datasets" : {
+        "title" : "Datasets list",
+        "search-bar" : "Search for a dataset...",
         "new" : "Add",
         "operations" : "Operations"
     }

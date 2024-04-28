@@ -68,7 +68,7 @@ export class ConfiguracionesComponent implements OnInit{
           icon: 'edit',
           class: 'success',
           tooltip: 'Edit',
-          click: (row) => this.router.navigate(['/dataset/editar', row.idx]),
+          click: (row) => this.router.navigate(['dataset/configuracion', row.idx]),
         },
         {
           type: 'icon',
@@ -76,7 +76,7 @@ export class ConfiguracionesComponent implements OnInit{
           icon: 'delete',
           tooltip: 'Delete',
           color: 'warn',
-          // click: (row) => this.borrarUsuario(row.idx),
+          click: (row) => this.borrarUsuario(row.idx),
         },
       ],
     },
@@ -100,19 +100,19 @@ export class ConfiguracionesComponent implements OnInit{
   getList() {
     this.isLoading = true;
     // hacer llamada a userService.getUsers()
-    // this.userService.getAll(this.query).subscribe(data => {
-    //   let userList = data.users.map(user => ({
-    //     idx: user.User_Idx,
-    //     email: user.User_Email,
-    //     role: user.User_Rol === 1 ? 'admin' : 'usuario'
-    //   }));
-    //   console.log(data.page.total)
-    //   this.total = data.page.total;
-    //   this.isLoading = false;
+    this.userService.getAll(this.query).subscribe(data => {
+      let userList = data.users.map(user => ({
+        idx: user.User_Idx,
+        email: user.User_Email,
+        role: user.User_Rol === 1 ? 'admin' : 'usuario'
+      }));
+      console.log(data.page.total)
+      this.total = data.page.total;
+      this.isLoading = false;
       
-    //   console.log(userList);
-    //   this.list = userList;
-    // });
+      console.log(userList);
+      this.list = userList;
+    });
   }
 
   getNextPage(e: PageEvent) {
@@ -124,51 +124,51 @@ export class ConfiguracionesComponent implements OnInit{
     this.getList();
   }
   
-  // borrarUsuario(idx: number) {
-  //   console.log(this.userService.get());
-  //   // if (uid === this.userService.()) {
-  //   //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});
-  //   //   return;
-  //   // }
-  //   const confirmation = this._fuseConfirmationService.open({
-  //     title  : 'Eliminar usuario',
-  //     message: '¿Estas seguro de que quieres eliminar el usuario?',
-  //     actions: {
-  //         confirm: {
-  //             label: 'Eliminar',
-  //         },
-  //     },
-  //   });
-  //   confirmation.afterClosed().subscribe((result) => {
-  //       // If the confirm button pressed...
-  //       if ( result === 'confirmed' ) {  
-  //         this.userService.deleteUser(idx).subscribe(
-  //           () => {
+  borrarUsuario(idx: number) {
+    console.log(this.userService.get());
+    // if (uid === this.userService.()) {
+    //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});
+    //   return;
+    // }
+    const confirmation = this._fuseConfirmationService.open({
+      title  : 'Eliminar usuario',
+      message: '¿Estas seguro de que quieres eliminar el usuario?',
+      actions: {
+          confirm: {
+              label: 'Eliminar',
+          },
+      },
+    });
+    confirmation.afterClosed().subscribe((result) => {
+        // If the confirm button pressed...
+        if ( result === 'confirmed' ) {  
+          this.userService.deleteUser(idx).subscribe(
+            () => {
               
-  //             this.getList();
-  //           },
-  //           (error) => {
-  //             console.error(error);
-  //             // Handle the error here
-  //           }
-  //         );
-  //       }
-  //       else {
-  //         console.log('no se ha eliminado el usuario');
-  //       }
-  //   });
+              this.getList();
+            },
+            (error) => {
+              console.error(error);
+              // Handle the error here
+            }
+          );
+        }
+        else {
+          console.log('no se ha eliminado el usuario');
+        }
+    });
     
-  // }
+  }
 
   search(){
     // Se comprueba que el fomrulario este correcto
-    // if(!this.searchForm.valid){
-    //   return;
-    // }
+    if(!this.searchForm.valid){
+      return;
+    }
 
-    // this.lastSearch = '%' + this.searchForm.value.searchQuery + '%';
-    // this.query.query = this.lastSearch;
-    // this.getList();
+    this.lastSearch = '%' + this.searchForm.value.searchQuery + '%';
+    this.query.query = this.lastSearch;
+    this.getList();
   }
 
 }

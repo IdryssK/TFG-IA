@@ -5,18 +5,18 @@ import { UserService } from 'app/core/user/user.service';
 
 export const defaultNavigationAdmin: FuseNavigationItem[] = [
     {
-        id   : 'configuracion',
-        title: 'CONFIGURACION',
+        id   : 'configuraciones',
+        title: 'CONFIGURACIONES',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
-        link : '/configuracion',
+        link : '/configuraciones',
     },
     {
-        id   : 'dataset',
-        title: 'DATASET',
+        id   : 'datasets',
+        title: 'DATASETS',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/dataset',
+        link : '/datasets',
     },
     {
         id   : 'entrenamientos',
@@ -43,18 +43,18 @@ export const defaultNavigationAdmin: FuseNavigationItem[] = [
 
 export const horizontalNavigationAdmin: FuseNavigationItem[] = [
     {
-        id   : 'configuracion',
-        title: 'CONFIGURACION',
+        id   : 'configuraciones',
+        title: 'CONFIGURACIONES',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
-        link : '/configuracion',
+        link : '/configuraciones',
     },
     {
-        id   : 'dataset',
-        title: 'DATASET',
+        id   : 'datasets',
+        title: 'DATASETS',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/dataset',
+        link : '/datasets',
     },
     {
         id   : 'entrenamientos',
@@ -80,18 +80,18 @@ export const horizontalNavigationAdmin: FuseNavigationItem[] = [
 ];
 export const defaultNavigationUser: FuseNavigationItem[] = [
     {
-        id   : 'configuracion',
-        title: 'CONFIGURACION',
+        id   : 'configuraciones',
+        title: 'CONFIGURACIONES',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
-        link : '/configuracion',
+        link : '/configuraciones',
     },
     {
-        id   : 'dataset',
-        title: 'DATASET',
+        id   : 'datasets',
+        title: 'DATASETS',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/dataset',
+        link : '/datasets',
     },
     {
         id   : 'entrenamientos',
@@ -111,18 +111,18 @@ export const defaultNavigationUser: FuseNavigationItem[] = [
 
 export const horizontalNavigationUser: FuseNavigationItem[] = [
     {
-        id   : 'configuracion',
-        title: 'CONFIGURACION',
+        id   : 'configuraciones',
+        title: 'CONFIGURACIONES',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
-        link : '/configuracion',
+        link : '/configuraciones',
     },
     {
-        id   : 'dataset',
-        title: 'DATASET',
+        id   : 'datasets',
+        title: 'DATASETS',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/dataset',
+        link : '/datasets',
     },
     {
         id   : 'entrenamientos',
