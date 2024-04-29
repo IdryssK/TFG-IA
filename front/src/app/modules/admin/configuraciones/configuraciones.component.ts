@@ -95,7 +95,7 @@ export class ConfiguracionesComponent implements OnInit{
 
   query = {
     page: 0,
-    per_page: 5,
+    per_page: 15,
     query:''
   };
 
