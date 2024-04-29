@@ -24,9 +24,7 @@ router.get('/:id', [
 
 
 router.post('/', [
-    check('CONF_Nombre', 'El campo email es obligatorio').notEmpty(),
     check('CONF_Data', 'El email debe ser válido').notEmpty(),
-    check('CONF_Upd_When', 'El campo password es obligatorio').notEmpty(),
     validateJWT,
     validateFields,
 ], crearConfiguracion);    

@@ -15,19 +15,20 @@ import { NgIf } from '@angular/common';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
-
+import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones.service';
+import { FuseAlertComponent, FuseAlertService, FuseAlertType } from '@fuse/components/alert';
 @Component({
   selector: 'app-configuraciones',
   standalone: true,
   templateUrl: './configuraciones.component.html',
   styleUrl: './configuraciones.component.scss',
-  imports: [NgIf, TranslocoModule,ReactiveFormsModule , LanguagesComponent, RouterLink, MatFormFieldModule, MatIconModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatButtonModule, FormsModule, MtxGrid],
+  imports: [FuseAlertComponent, NgIf, TranslocoModule,ReactiveFormsModule , LanguagesComponent, RouterLink, MatFormFieldModule, MatIconModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatButtonModule, FormsModule, MtxGrid],
 })
 export class ConfiguracionesComponent implements OnInit{
   searchInputControl: UntypedFormControl = new UntypedFormControl();
   
 
-  constructor(private userService : UserService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
+  constructor(private _fuseAlertService: FuseAlertService, private userService : UserService, private configService: ConfiguracionesService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
   ngOnInit(): void {
     this.getList();
@@ -43,8 +44,8 @@ export class ConfiguracionesComponent implements OnInit{
 
   columns: MtxGridColumn[] = [
     { header: 'Idx', field: 'idx' },
-    { header: 'Email', field: 'email' },
-    { header: 'Role', field: 'role', class: 'role-column'},
+    { header: 'Nombre', field: 'nombre' },
+    { header: 'Ultima modificación', field: 'updWhen', class: 'role-column'},
     {
       header: translate('user.operations'),
       field: 'operation',
@@ -59,8 +60,9 @@ export class ConfiguracionesComponent implements OnInit{
           icon: 'file_copy',
           // color: 'primary',
           // class: 'success',
+          color: 'success',
           tooltip: 'Copy',
-          click: (row) => alert('Copy ' + row.idx),
+          click: (row) => this.copiarConfiguracion(row.idx),
         },
         {
           type: 'icon',
@@ -68,7 +70,7 @@ export class ConfiguracionesComponent implements OnInit{
           icon: 'edit',
           class: 'success',
           tooltip: 'Edit',
-          click: (row) => this.router.navigate(['dataset/configuracion', row.idx]),
+          click: (row) => this.router.navigate(['configuraciones/configuracion', row.idx]),
         },
         {
           type: 'icon',
@@ -76,7 +78,7 @@ export class ConfiguracionesComponent implements OnInit{
           icon: 'delete',
           tooltip: 'Delete',
           color: 'warn',
-          click: (row) => this.borrarUsuario(row.idx),
+          click: (row) => this.borrarConfiguracion(row.idx),
         },
       ],
     },
@@ -100,19 +102,31 @@ export class ConfiguracionesComponent implements OnInit{
   getList() {
     this.isLoading = true;
     // hacer llamada a userService.getUsers()
-    this.userService.getAll(this.query).subscribe(data => {
-      let userList = data.users.map(user => ({
-        idx: user.User_Idx,
-        email: user.User_Email,
-        role: user.User_Rol === 1 ? 'admin' : 'usuario'
+    this.configService.configuracionList(this.query).subscribe(data => {
+      console.log(data);
+      let configList = data.configuraciones.map(config => ({
+        idx: config.CONF_Idx,
+        nombre: config.CONF_Nombre,
+        updWhen: config.CONF_Upd_When
       }));
-      console.log(data.page.total)
       this.total = data.page.total;
       this.isLoading = false;
-      
-      console.log(userList);
-      this.list = userList;
+      this.list = configList;
     });
+
+    // this.userService.getAll(this.query).subscribe(data => {
+    //   let userList = data.users.map(user => ({
+    //     idx: user.User_Idx,
+    //     email: user.User_Email,
+    //     role: user.User_Rol === 1 ? 'admin' : 'usuario'
+    //   }));
+    //   console.log(data.page.total)
+    //   this.total = data.page.total;
+    //   this.isLoading = false;
+      
+    //   console.log(userList);
+    //   this.list = userList;
+    // });
   }
 
   getNextPage(e: PageEvent) {
@@ -124,15 +138,11 @@ export class ConfiguracionesComponent implements OnInit{
     this.getList();
   }
   
-  borrarUsuario(idx: number) {
-    console.log(this.userService.get());
-    // if (uid === this.userService.()) {
-    //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});
-    //   return;
-    // }
+  borrarConfiguracion(idx: number) {
+    
     const confirmation = this._fuseConfirmationService.open({
-      title  : 'Eliminar usuario',
-      message: '¿Estas seguro de que quieres eliminar el usuario?',
+      title  : 'Eliminar configuración',
+      message: '¿Estas seguro de que quieres eliminar la configuración?',
       actions: {
           confirm: {
               label: 'Eliminar',
@@ -142,16 +152,11 @@ export class ConfiguracionesComponent implements OnInit{
     confirmation.afterClosed().subscribe((result) => {
         // If the confirm button pressed...
         if ( result === 'confirmed' ) {  
-          this.userService.deleteUser(idx).subscribe(
-            () => {
-              
-              this.getList();
-            },
-            (error) => {
-              console.error(error);
-              // Handle the error here
-            }
-          );
+          this.configService.deleteConfiguracion(idx).subscribe(data => {
+            console.log(data);
+            this.getList();
+            this._fuseAlertService.show('success-delete');
+          });
         }
         else {
           console.log('no se ha eliminado el usuario');
@@ -159,6 +164,27 @@ export class ConfiguracionesComponent implements OnInit{
     });
     
   }
+
+  copiarConfiguracion(idx: number) {
+    console.log('copiar configuracion');
+    let copyData;
+    this.configService.getConfiguracion(idx).subscribe(data => {
+      console.log(JSON.parse(data.configuracion.CONF_Data));
+      copyData = JSON.parse(data.configuracion.CONF_Data);
+    
+
+    console.log(copyData);
+    copyData.nombre = copyData.nombre + '_copia_idx_' + idx;
+
+    // copyData.CONF_Nombre = copyData.CONF_Nombre + ' - copia';
+    console.log(copyData);
+    this.configService.copyConfiguracion(copyData).subscribe(data => {
+      console.log(data);
+      this.getList();
+      this._fuseAlertService.show('success-copy');
+    });
+  });
+  } 
 
   search(){
     // Se comprueba que el fomrulario este correcto

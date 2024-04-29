@@ -5,7 +5,7 @@ Importación de módulos
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-
+const bodyParser = require('body-parser');
 // Crear una aplicación de express
 const app = express();
 
@@ -14,7 +14,7 @@ const app = express();
 
 app.use(cors()); 
 app.use( express.json() );// Soporte para cuerpos codificados en JSON
-
+app.use(bodyParser.json({ limit: '50mb' })); // Soporte para cuerpos JSON
 // === Rutas
 
 // Usuarios

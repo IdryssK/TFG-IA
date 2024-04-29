@@ -17,7 +17,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { environment } from 'environments/environment';
 import { ApiSmartUaService } from 'app/core/smartUa/api-smart-ua.service';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
+import { FuseAlertComponent, FuseAlertService, FuseAlertType } from '@fuse/components/alert';
 import { fuseAnimations } from '@fuse/animations';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import {NativeDateAdapter} from '@angular/material/core';
@@ -97,10 +97,11 @@ export class ConfiguracionComponent implements OnInit
     horizontalStepperForm: UntypedFormGroup;
     verticalStepperForm: UntypedFormGroup;
     formFieldHelpers: string[] = ['fuse-mat-emphasized-affix'];
+    ;
     /**
      * Constructor
      */
-    constructor(private configuracionService: ConfiguracionesService,private _formBuilder: UntypedFormBuilder, private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute,) {}
+    constructor(private _fuseAlertService: FuseAlertService, private configuracionService: ConfiguracionesService,private _formBuilder: UntypedFormBuilder, private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute,) {}
 
 // -----------------------------------PESTAÑAS------------------------------------------------------------------
 
@@ -168,10 +169,10 @@ export class ConfiguracionComponent implements OnInit
 
     primerForm: FormGroup = this.fb.group({
         idx: [{value: 'nuevo', disabled: true}, Validators.required],
-        nombre: ['Test', Validators.required],
-        token: ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDYyNzI4NDV9.gCMcKrWdKzECFpHckZhBayNtyS6RBbrF1YD5Ig8afZ4', Validators.required],
-        start: ['2024-03-04T17:40:00.000Z', new UntypedFormControl()],
-        end: ['2024-03-05T17:40:00.000Z', new UntypedFormControl()],
+        nombre: ['', Validators.required],
+        token: ['', Validators.required],
+        start: ['', new UntypedFormControl()],
+        end: ['', new UntypedFormControl()],
         limit: ['', Validators.required],
         filtros :[this.selectedValueByTag], 
         Tablacaracteristicas: [[]],
@@ -313,13 +314,24 @@ export class ConfiguracionComponent implements OnInit
 
 // -------------------------------------------------------------------------------------------------------------------------------
 
-    async editar (){
-        // -------------Filtros----------------
-        let prueba;
-        this.configuracionService.configuracionList().subscribe(async (response) => {
-            prueba = JSON.parse(response.configuraciones[0].CONF_Data);
-                console.log(prueba);
-                console.log(prueba);
+    async editar(idx) {
+        this.configuracionService.getConfiguracion(idx).subscribe(async (response) => {
+            let prueba = JSON.parse(response.configuracion.CONF_Data);
+            this.setFormValues(prueba);
+            await this.setFiltros(prueba);
+            this.setTablas(prueba);
+        });
+    }
+
+    setFormValues(prueba) {
+        this.primerForm.get('nombre')?.setValue(prueba.nombre);
+        this.primerForm.get('token')?.setValue(prueba.token);
+        this.primerForm.get('start')?.setValue(prueba.start);
+        this.primerForm.get('end')?.setValue(prueba.end);
+        this.primerForm.get('limit')?.setValue(prueba.limit);
+    }
+
+    async setFiltros(prueba) {
         Object.keys(prueba.filtros).forEach(key => {
             this.inputs.push(key);
         });
@@ -329,32 +341,19 @@ export class ConfiguracionComponent implements OnInit
             this.allValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]] = this.values;
             this.selectedValueByTag[this.tags[this.tags.indexOf(this.inputs[i])]]= prueba.filtros[this.inputs[i]];
         }
+    }
 
-        const tablaCol = prueba.Tablacaracteristicas;
-        const TablaList = prueba.TablaList;
-
-        this.columns = tablaCol;
-        this.list = TablaList;
-        this.primerForm.get('limit')?.setValue(prueba.limit);
-        //this.cargarTabla();
-        // -------------Caracteristicas----------------
-        const tabla1Col = prueba.Tabla1Columns;
-        const tabla1List = prueba.Tabla1List;
-        
+    setTablas(prueba) {
+        this.columns = prueba.Tablacaracteristicas;
+        this.list = prueba.TablaList;
         this.administrarColumnas = prueba.Tabla1AdministrarColumnas;
-        this.columns1 = tabla1Col;
+        this.columns1 = prueba.Tabla1Columns;
         this.list1 = prueba.Tabla1List;
-        //------------Fechas----------------
         this.columns2 = prueba.Tabla2Columns;
-        this.list2 = prueba.Tabla2List
+        this.list2 = prueba.Tabla2List;
         this.tiposFechas = prueba.Tabla2TiposFechas;
-        });
-        
     }
 
-    pestana1 () {
-        
-    }
 
     /**
      * On init
@@ -367,11 +366,9 @@ export class ConfiguracionComponent implements OnInit
         console.log(this.idx);
         this.primerForm.get('idx')?.setValue(this.idx);
         if(this.idx !== 'nuevo'){
-            this.editar();
+            this.editar(this.idx);
             
         }
-        //this.editar();
-        //this.tiposFechas = environment.tiposFechas;
         
     }
     
@@ -627,6 +624,12 @@ export class ConfiguracionComponent implements OnInit
         this.primerForm.value.Tabla3Columns = this.columns3;
         this.primerForm.value.Tabla3List = this.list3;
         console.log(this.primerForm.value);
+        
+        this.configuracionService.saveConfiguracion(this.primerForm.value).subscribe((response) => {
+            console.log(response);
+            this._fuseAlertService.show('success-save');
+        });
+
         // console.log(this.selectedValueByTag);
     }
 

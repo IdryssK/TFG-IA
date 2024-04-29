@@ -12,12 +12,49 @@ export class ConfiguracionesService {
   
   constructor(private http: HttpClient) { }
 
-  configuracionList(): Observable<any> {
+  configuracionList(params): Observable<any> {
 
-    return this.http.get<any>(`${environment.apiUrl}/configuraciones`, this.cabeceras).pipe(
+    console.log(this.cabeceras.headers.accessToken);
+    let data = {
+        headers: this.cabeceras.headers,
+        params: params
+    };
+    return this.http.get<any>(`${environment.apiUrl}/configuraciones`, data).pipe(
         map((response) => response),
     );
   }
+
+  getConfiguracion(idx: number): Observable<any> {
+  
+    return this.http.get<any>(`${environment.apiUrl}/configuraciones/${idx}`, this.cabeceras).pipe(
+        map((response) => response),
+    );
+  }
+
+  saveConfiguracion(data): Observable<any> {
+    let params = {
+      "CONF_Data": data
+    };
+    return this.http.post<any>(`${environment.apiUrl}/configuraciones`, params, this.cabeceras).pipe(
+      map((response) => response),
+    );
+  }
+
+  deleteConfiguracion(idx): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/configuraciones/${idx}`, this.cabeceras).pipe(
+      map((response) => response),
+    );
+  }
+  
+  copyConfiguracion(data): Observable<any> {
+    let params = {
+      "CONF_Data": data
+    };
+    return this.http.post<any>(`${environment.apiUrl}/configuraciones`, params, this.cabeceras).pipe(
+      map((response) => response),
+    );
+  }
+
   get cabeceras() {
     return {
       headers: {
