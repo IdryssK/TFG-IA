@@ -57,7 +57,7 @@ async function createConfiguracion(data) {
 // Actualizar una configuración existente
 async function updateConfiguracion(data) {
     try {
-        const query = 'UPDATE configuracion SET ? WHERE CONF_Idx = ? RETURNING *';
+        const query = 'UPDATE configuracion SET ? WHERE CONF_Idx = ?' ;
         const values = [data, data.CONF_Idx];
         await dbConsult(query, values);
     } catch (error) {

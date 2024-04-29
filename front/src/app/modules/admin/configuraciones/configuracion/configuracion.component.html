@@ -1,4 +1,4 @@
-<!-- <div class="z-40 fixed top-10/100 left-1/2 transform -translate-x-1/2">
+<div class="z-40 fixed top-10/100 left-1/2 transform -translate-x-1/2">
     <fuse-alert
       [appearance]="'outline'"
       [dismissible]="true"
@@ -7,7 +7,17 @@
       [type]="'success'">
       Se ha guardado correctamente la configuración
     </fuse-alert>
-</div> -->
+</div>
+<div class="z-40 fixed top-10/100 left-1/2 transform -translate-x-1/2">
+    <fuse-alert
+      [appearance]="'outline'"
+      [dismissible]="true"
+      [dismissed]="true"
+      [name]="'success-update'"
+      [type]="'success'">
+      Se ha actualizado correctamente la configuración
+    </fuse-alert>
+</div>
 <div class="flex flex-col flex-grow min-w-0 ">
     
     <form class="pt-2" [formGroup]="primerForm" >
@@ -18,12 +28,29 @@
                 <div class="grid grid-cols-3">
                     <div class="col-span-1 ">
                         <div class="flex items-center justify-start ml-6">
-                            <button mat-flat-button routerLink="/configuraciones/lista">
-                                Cancelar
+                            <button 
+                            mat-flat-button 
+                            (click)="cancelar()">
+                                <span *ngIf="primerForm.pristine">
+                                    Cancelar
+                                </span>
+                                <span *ngIf="!primerForm.pristine">
+                                    Restablecer
+                                </span>
                             </button>
-                            <button class="px-6 mx-3" mat-flat-button [color]="'primary'" type="submit" (click)="guardarDataSet()">
-                                Guardar
-                                <!-- <mat-icon [svgIcon]="'heroicons_outline:bookmark'"></mat-icon> -->
+                            <button 
+                            class="px-6 mx-3" 
+                            mat-flat-button 
+                            [disabled]="primerForm.pristine || primerForm.disabled" 
+                            [color]="'primary'" 
+                            type="submit" 
+                            (click)="guardarDataSet()">
+                                <span>Guardar</span>
+                                <mat-progress-spinner
+                                    *ngIf="primerForm.disabled"
+                                    [diameter]="24"
+                                    [mode]="'indeterminate'">
+                                </mat-progress-spinner>
                             </button>
                         </div>
                     </div>
@@ -173,7 +200,7 @@
                                     <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
                                         <mat-label></mat-label>
                                         <mat-select #select [value]="value" placeholder="" data-filter multiple
-                                              [(ngModel)]="selectedValueByTag[inputs[i]]" [ngModelOptions]="{standalone: true}">
+                                              [(ngModel)]="selectedValueByTag[inputs[i]]" (ngModelChange)="markAsModified()" [ngModelOptions]="{standalone: true}">
                                             <!-- <mat-select-filter class="p-4" [array]="allValueByTag[inputs[i]]" (filteredReturn)="filterOptions(inputs[i], $event)"></mat-select-filter> -->
                                             <mat-select-trigger>
                                                 <ng-container *ngIf="selectedValueByTag[inputs[i]]?.length > 2; else lessThanThree">

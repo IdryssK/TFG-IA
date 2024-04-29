@@ -4,8 +4,18 @@
       [dismissible]="true"
       [dismissed]="true"
       [name]="'success-delete'"
-      [type]="'success'">
+      [type]="'warning'">
       Se ha borrado correctamente la configuración
+    </fuse-alert>
+</div>
+<div class="z-40 fixed top-10/100 left-1/2 transform -translate-x-1/2">
+    <fuse-alert
+      [appearance]="'outline'"
+      [dismissible]="true"
+      [dismissed]="true"
+      [name]="'success-copy'"
+      [type]="'success'">
+      Se ha copiado correctamente la configuración
     </fuse-alert>
 </div>
 <div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent" >
@@ -51,7 +61,7 @@
         </div>
     </div>
   
-    <div class="h-[666vh]">
+    <div class="h-[73vh]">
       <mtx-grid class="" [data]="list" 
               [columns]="columns"
               [length]="total"

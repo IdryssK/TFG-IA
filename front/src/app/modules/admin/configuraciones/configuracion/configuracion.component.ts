@@ -16,7 +16,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { environment } from 'environments/environment';
 import { ApiSmartUaService } from 'app/core/smartUa/api-smart-ua.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FuseAlertComponent, FuseAlertService, FuseAlertType } from '@fuse/components/alert';
 import { fuseAnimations } from '@fuse/animations';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -32,6 +32,7 @@ import { MtxGrid, MtxGridColumn,MtxGridColumnTag } from '@ng-matero/extensions/g
 import { DateTime } from 'luxon';
 import moment from 'moment';
 import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones.service';
+import { FuseConfirmationService } from '@fuse/services/confirmation/confirmation.service';
   
 @Component({
     selector     : 'app-configuracion',
@@ -101,7 +102,7 @@ export class ConfiguracionComponent implements OnInit
     /**
      * Constructor
      */
-    constructor(private _fuseAlertService: FuseAlertService, private configuracionService: ConfiguracionesService,private _formBuilder: UntypedFormBuilder, private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute,) {}
+    constructor(private _fuseAlertService: FuseAlertService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
 
 // -----------------------------------PESTAÑAS------------------------------------------------------------------
 
@@ -165,7 +166,7 @@ export class ConfiguracionComponent implements OnInit
     
 
     private idx: string ='';
-
+    isModified: boolean = false;
 
     primerForm: FormGroup = this.fb.group({
         idx: [{value: 'nuevo', disabled: true}, Validators.required],
@@ -221,6 +222,7 @@ export class ConfiguracionComponent implements OnInit
         }
         else {
             this.showAlert = false;
+            this.markAsModified();
             let tag = this.tags.find((input: any) => !this.inputs.includes(input));
             if(this.tags.length > this.inputs.length){
                 this.filterForm.addControl(tag, new FormControl());
@@ -237,18 +239,18 @@ export class ConfiguracionComponent implements OnInit
 
     //actualizar el valor del input
     onSelectChangeTag(event, index: any) {
-        
         if (event.isUserInput) {
             if (this.inputs.includes(event.source.value)) {
                 console.log('Already added');
             } else {
+                this.markAsModified();
                 console.log('Adding new input and removing the previous one');
                 const newInput = event.source.value;
                 delete this.selectedValueByTag[this.inputs[index]];
                 this.inputs[index] = newInput;
                 this.getValueTag(this.tags[this.tags.indexOf(newInput)]);
                 this.allValueByTag[this.tags[this.tags.indexOf(newInput)]] = this.values;
-
+                this.isModified = true;
             }
         }
 
@@ -256,7 +258,7 @@ export class ConfiguracionComponent implements OnInit
 
     //borrar el input
     deleteInput(index: any) {
-
+        this.markAsModified();
         console.log('borro de inputs = ', this.inputs[index]);
         delete this.selectedValueByTag[this.inputs[index]];
         delete this.allValueByTag[this.inputs[index]];
@@ -361,6 +363,9 @@ export class ConfiguracionComponent implements OnInit
     ngOnInit(): void {
 
         console.log('------------------------------------');
+        this.isModified = false;
+        console.log(this.primerForm.pristine);
+        console.log(this.isModified);
         this.tags = environment.filters;
         this.idx = this.route.snapshot.params['idx'];
         console.log(this.idx);
@@ -466,6 +471,7 @@ export class ConfiguracionComponent implements OnInit
 // --------------------------------------------TABLA 1----------------------------------------------------------------------------
     // Ocultar columna 
     showColumn(e: any, column: any) {
+        this.markAsModified();
         console.log(e.target.checked, column);
         //buscar en el array de columnas la columna que se ha seleccionado
         const index = this.administrarColumnas.indexOf(column);
@@ -516,7 +522,7 @@ export class ConfiguracionComponent implements OnInit
         // lo primero que se tiene que hacer es copiar la tabla1 a la tabla2
         // añadir la columna seleccionada a la tabla2
         // calcular los datos de la tabla2 en función de las columnas seleccionadas gracias a la la columna time
-        
+        this.markAsModified();
         //buscar en el array de columnas la columna que se ha seleccionado
         const index = this.tiposFechas.indexOf(column);
         console.log(index); //posicion de la columna
@@ -608,30 +614,79 @@ export class ConfiguracionComponent implements OnInit
 // --------------------------------------------GUARDAR----------------------------------------------------------------------------
 
     guardarDataSet() {
-        console.log('Guardando dataset');
-
-        this.primerForm.value.Tablacaracteristicas = this.columns;
-        this.primerForm.value.TablaList = this.list;
-        
-        this.primerForm.value.Tabla1AdministrarColumnas = this.administrarColumnas;
-        this.primerForm.value.Tabla1Columns = this.columns1;
-        this.primerForm.value.Tabla1List = this.list1;
-        
-        this.primerForm.value.Tabla2Columns = this.columns2;
-        this.primerForm.value.Tabla2List = this.list2;
-
-        this.primerForm.value.Tabla2TiposFechas = this.tiposFechas;
-        this.primerForm.value.Tabla3Columns = this.columns3;
-        this.primerForm.value.Tabla3List = this.list3;
-        console.log(this.primerForm.value);
-        
-        this.configuracionService.saveConfiguracion(this.primerForm.value).subscribe((response) => {
-            console.log(response);
-            this._fuseAlertService.show('success-save');
-        });
-
-        // console.log(this.selectedValueByTag);
+        if(!this.primerForm.invalid) {
+            console.log('Guardando dataset');
+    
+            this.primerForm.value.Tablacaracteristicas = this.columns;
+            this.primerForm.value.TablaList = this.list;
+            
+            this.primerForm.value.Tabla1AdministrarColumnas = this.administrarColumnas;
+            this.primerForm.value.Tabla1Columns = this.columns1;
+            this.primerForm.value.Tabla1List = this.list1;
+            
+            this.primerForm.value.Tabla2Columns = this.columns2;
+            this.primerForm.value.Tabla2List = this.list2;
+    
+            this.primerForm.value.Tabla2TiposFechas = this.tiposFechas;
+            this.primerForm.value.Tabla3Columns = this.columns3;
+            this.primerForm.value.Tabla3List = this.list3;
+            console.log(this.primerForm.value);
+            
+            if(this.idx === 'nuevo') {
+                this.configuracionService.saveConfiguracion(this.primerForm.value).subscribe((response) => {
+                    console.log(response);
+                    this._fuseAlertService.show('success-save');
+                    this.primerForm.markAsPristine();
+                });
+            }
+            else {
+                this.configuracionService.updateConfiguracion(this.idx, this.primerForm.value).subscribe((response) => {
+                    console.log(response);
+                    this._fuseAlertService.show('success-update');
+                    this.primerForm.markAsPristine();
+                    // this.router.navigate(['/configuraciones']);
+                });
+            }
+        }
+        else {
+            console.log('Formulario no válido');
+        }
     }
 
+
+    cancelar() {
+        console.log('cancelar')
+        if(this.primerForm.pristine) {
+          this.router.navigate(['/configuraciones']);
+        } else {
+          const confirmation = this._fuseConfirmationService.open({
+                title  : 'Restablecer cambios',
+                message: 'Estas seguro de que quieres restablecer los cambios? Se perderán los cambios no guardados.',
+                actions: {
+                    confirm: {
+                        label: 'Resablecer',
+                    },
+                },
+            });
+            confirmation.afterClosed().subscribe((result) => {
+                // If the confirm button pressed...
+                if ( result === 'confirmed' ) {  
+                    this.primerForm.reset();
+                    this.inputs = [];
+                    if(this.idx !== 'nuevo'){
+                        this.editar(this.idx);
+                    }
+                }
+            });
+        }
+      }
+
+      markAsModified() {
+        console.log('marcando como modificado');
+        this.isModified = true;
+        Object.keys(this.primerForm.controls).forEach(key => {
+            this.primerForm.controls[key].markAsDirty();
+        });
+    }
 // -------------------------------------------------------------------------------------------------------------------------------
 }

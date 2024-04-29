@@ -55,6 +55,16 @@ export class ConfiguracionesService {
     );
   }
 
+  updateConfiguracion(idx, data): Observable<any> {
+    let params = {
+      "CONF_Data": data
+    };
+    console.log(params);
+    return this.http.put<any>(`${environment.apiUrl}/configuraciones/${idx}`, params, this.cabeceras).pipe(
+      map((response) => response),
+    );
+  }
+  
   get cabeceras() {
     return {
       headers: {

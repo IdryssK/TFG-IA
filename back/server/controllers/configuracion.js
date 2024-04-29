@@ -126,8 +126,9 @@ const actualizarConfiguracion = async (req, res) => {
         const { ...object } = req.body;
         
         let data = {
-            CONF_Nombre: object.nombre,
-            CONF_Data: object,
+            CONF_Idx: uid,
+            CONF_Nombre: object.CONF_Data.nombre,
+            CONF_Data: JSON.stringify(object.CONF_Data),
             CONF_Upd_When: new Date(),
         }
 
