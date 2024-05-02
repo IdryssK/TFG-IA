@@ -167,6 +167,7 @@ export class ConfiguracionComponent implements OnInit
 
     private idx: string ='';
     isModified: boolean = false;
+    isReload: boolean = false;
 
     primerForm: FormGroup = this.fb.group({
         idx: [{value: 'nuevo', disabled: true}, Validators.required],
@@ -250,7 +251,6 @@ export class ConfiguracionComponent implements OnInit
                 this.inputs[index] = newInput;
                 this.getValueTag(this.tags[this.tags.indexOf(newInput)]);
                 this.allValueByTag[this.tags[this.tags.indexOf(newInput)]] = this.values;
-                this.isModified = true;
             }
         }
 
@@ -346,13 +346,13 @@ export class ConfiguracionComponent implements OnInit
     }
 
     setTablas(prueba) {
-        this.columns = prueba.Tablacaracteristicas;
-        this.list = prueba.TablaList;
+        // this.columns = prueba.Tablacaracteristicas;
+        // this.list = prueba.TablaList;
         this.administrarColumnas = prueba.Tabla1AdministrarColumnas;
-        this.columns1 = prueba.Tabla1Columns;
-        this.list1 = prueba.Tabla1List;
-        this.columns2 = prueba.Tabla2Columns;
-        this.list2 = prueba.Tabla2List;
+        // this.columns1 = prueba.Tabla1Columns;
+        // this.list1 = prueba.Tabla1List;
+        // this.columns2 = prueba.Tabla2Columns;
+        // this.list2 = prueba.Tabla2List;
         this.tiposFechas = prueba.Tabla2TiposFechas;
     }
 
@@ -364,6 +364,7 @@ export class ConfiguracionComponent implements OnInit
 
         console.log('------------------------------------');
         this.isModified = false;
+        this.isReload = false;
         console.log(this.primerForm.pristine);
         console.log(this.isModified);
         this.tags = environment.filters;
@@ -374,6 +375,12 @@ export class ConfiguracionComponent implements OnInit
             this.editar(this.idx);
             
         }
+        this.tiposFechas =  environment.tiposFechas.map((column: string) => {
+            return { header: column, field: column, hide: true, show: true};
+        });
+        this.administrarColumnas = environment.administrarColumnas.map((column: string) => {
+            return { header: column, field: column, hide: false, show: true};
+        });
         
     }
     
@@ -386,47 +393,26 @@ export class ConfiguracionComponent implements OnInit
 
 // --------------------------------------------Gestion de tablas/ventanas---------------------------------------------------------
 
-    cargarTabla() {
-
-        //switch para ver en que pestaña estamos
-        switch (this.selectedTabIndex) {
-            case 0:
-                
-                this.llamadasApi(); // creación de la tabla 0
-                break;
-            case 1:
-                
-                console.log('Estamos en la pestaña 1')
-                this.tabla1();
-                break;
-            case 2:
-                
-                console.log('Estamos en la pestaña 2');
-                this.tabla2();
-                break;
-            case 3: 
-            
-                console.log('Estamos en la pestaña 3');
-                this.tabla3();
-                break;
-            default:
-                break;
-        }        
-        
+    async cargarTabla() {
+        await this.llamadasApi();
+        this.tabla1();
+        this.tabla2();
+        this.tabla3();
+        this.isReload = false;
     }
     
 // -------------------------------------------------------------------------------------------------------------------------------
 
 // --------------------------------------------TABLA 0----------------------------------------------------------------------------
 
-    llamadasApi() {
-
+    async llamadasApi() {
+        console.log('llamadasApi 1');
         
         let limite = this.primerForm.get('limit')?.value
         limite = limite === '' ? 100 : limite;
 
-        this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
-        .subscribe((response) => {
+        await this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
+        .toPromise().then((response) => {
            
             // console.log(response); 
             const data = response.result;
@@ -447,10 +433,10 @@ export class ConfiguracionComponent implements OnInit
                 });
             this.list = datosProcesados;
 
-            console.log(this.columns);
+            console.log(this.list);
             
             // para que no tengan la misma referencia y les afecte los cambios a uno y otro
-            this.administrarColumnas = JSON.parse(JSON.stringify(this.columns));
+            // this.administrarColumnas = JSON.parse(JSON.stringify(this.columns));
             this.cdr.detectChanges();
             
         },
@@ -458,8 +444,8 @@ export class ConfiguracionComponent implements OnInit
             console.log(error);
         });
 
-        this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
-        .subscribe((response) => {
+        await this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
+        .toPromise().then((response) => {
             // console.log(response);
             this.count_value = response.result.values[0][1];
             this.cdr.detectChanges();
@@ -491,22 +477,16 @@ export class ConfiguracionComponent implements OnInit
     }
 
     tabla1() {
-
+        console.log('tabla1 ');
         // copiamos las columnas que no esten hide
         this.columns1 = [...this.administrarColumnas];
         
         // copiamos los datos de la tabla que no esten hide
         this.list1 = [...this.list];
-        const hola = this.list1;
-        this.list1 = [];
-        hola.forEach(element => {
-            this.list1.push(element);
-        });
+       
         console.log(this.list1)
         // mostramos la siguiente pestaña FECHAS
-        this.tiposFechas =  environment.tiposFechas.map((column: string) => {
-            return { header: column, field: column, hide: true, show: true};
-        });
+        
     }
    
 
@@ -541,25 +521,25 @@ export class ConfiguracionComponent implements OnInit
     }
 
     tabla2 (){
-
+        console.log('tabla2')
         const columnFunctions = {
-            'epoch': (item) => moment(item.time).valueOf(),
-            'dia': (item) => moment(item.time).date(),
-            'mes': (item) => moment(item.time).month() + 1, // En moment.js, los meses empiezan en 0
-            'año': (item) => moment(item.time).year(),
-            'dia de la semana': (item) => moment(item.time).day(),
-            'semana': (item) => moment(item.time).week(),
-            'hora': (item) => moment(item.time).hour(),
-            'minuto': (item) => moment(item.time).minute(),
-            'segundo': (item) => moment(item.time).second(),
+            'epoch': (item) => moment.utc(item.time).valueOf(),
+            'dia': (item) => moment.utc(item.time).date(),
+            'mes': (item) => moment.utc(item.time).month() + 1, // En moment.js, los meses empiezan en 0
+            'año': (item) => moment.utc(item.time).year(),
+            'dia de la semana': (item) => moment.utc(item.time).day(),
+            'semana': (item) => moment.utc(item.time).week(),
+            'hora': (item) => moment.utc(item.time).hour(),
+            'minuto': (item) => moment.utc(item.time).minute(),
+            'segundo': (item) => moment.utc(item.time).second(),
             '0-24': (item) => {
-                const time = moment(item.time);
+                const time = moment.utc(item.time);
                 const hours = time.hours();
                 const minutes = time.minutes() / 60;
                 const seconds = time.seconds() / 6000;
                 return parseFloat((hours + minutes + seconds).toFixed(4));
-            }
-        };
+    }
+};
         
 
         // Copia columns1 a columns2
@@ -567,7 +547,7 @@ export class ConfiguracionComponent implements OnInit
 
         // Añade las columnas de tiposFechas que no tienen hide = false a columns2
         this.tiposFechas.forEach(column => {
-            console.log(column);
+            // console.log(column);
             if (column.hide === false) {
                 this.columns2.push(column);
             }
@@ -580,7 +560,7 @@ export class ConfiguracionComponent implements OnInit
             //console.log('Item: ', item);
             const newItem = { ...item };
             this.tiposFechas.forEach(column => {
-                //console.log('Columna: ', column, 'Item: ', item.time, 'Función: ', columnFunctions[column.header]);
+                console.log('Columna: ', column, 'Item: ', item.time, 'Función: ', columnFunctions[column.header](item));
                if(column.hide === false){
                    newItem[column.header] = columnFunctions[column.header](item);
                }
@@ -603,7 +583,7 @@ export class ConfiguracionComponent implements OnInit
         this.normalizar = !this.normalizar;
     }
     tabla3(){
-
+        console.log('tabla3');
     }
 
 
@@ -617,19 +597,19 @@ export class ConfiguracionComponent implements OnInit
         if(!this.primerForm.invalid) {
             console.log('Guardando dataset');
     
-            this.primerForm.value.Tablacaracteristicas = this.columns;
-            this.primerForm.value.TablaList = this.list;
+            // this.primerForm.value.Tablacaracteristicas = this.columns;
+            // this.primerForm.value.TablaList = this.list;
             
             this.primerForm.value.Tabla1AdministrarColumnas = this.administrarColumnas;
-            this.primerForm.value.Tabla1Columns = this.columns1;
-            this.primerForm.value.Tabla1List = this.list1;
+            // this.primerForm.value.Tabla1Columns = this.columns1;
+            // this.primerForm.value.Tabla1List = this.list1;
             
-            this.primerForm.value.Tabla2Columns = this.columns2;
-            this.primerForm.value.Tabla2List = this.list2;
-    
             this.primerForm.value.Tabla2TiposFechas = this.tiposFechas;
-            this.primerForm.value.Tabla3Columns = this.columns3;
-            this.primerForm.value.Tabla3List = this.list3;
+            // this.primerForm.value.Tabla2Columns = this.columns2;
+            // this.primerForm.value.Tabla2List = this.list2;
+    
+            // this.primerForm.value.Tabla3Columns = this.columns3;
+            // this.primerForm.value.Tabla3List = this.list3;
             console.log(this.primerForm.value);
             
             if(this.idx === 'nuevo') {
@@ -671,6 +651,7 @@ export class ConfiguracionComponent implements OnInit
             confirmation.afterClosed().subscribe((result) => {
                 // If the confirm button pressed...
                 if ( result === 'confirmed' ) {  
+                    this.isReload = false;
                     this.primerForm.reset();
                     this.inputs = [];
                     if(this.idx !== 'nuevo'){
@@ -687,6 +668,7 @@ export class ConfiguracionComponent implements OnInit
         Object.keys(this.primerForm.controls).forEach(key => {
             this.primerForm.controls[key].markAsDirty();
         });
+        this.isReload = true;
     }
 // -------------------------------------------------------------------------------------------------------------------------------
 }

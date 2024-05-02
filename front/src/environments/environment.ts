@@ -26,4 +26,21 @@ export const environment = {
                   "segundo",
                   "0-24"
                   ],
+                  
+      administrarColumnas: [
+        "time",
+        "uid",
+        "value",
+        "metric",
+        "typemeter",
+        "alias",
+        "lat",
+        "lon",
+        "cota",
+        "description",
+        "description_origin",
+        "name",
+        "organizationid",
+        "origin",
+    ]
 };

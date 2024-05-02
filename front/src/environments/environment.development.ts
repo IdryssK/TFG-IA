@@ -28,5 +28,22 @@ export const environment = {
         tipo: 1,
         texto: "epoch-fecha-en-milisegundos"
         
-      }]
+      }],
+      administrarColumnas: [
+        "time",
+        "uid",
+        "value",
+        "metric",
+        "typemeter",
+        "alias",
+        "lat",
+        "lon",
+        "cota",
+        "description",
+        "description_origin",
+        "name",
+        "organizationid",
+        "origin",
+    ]
+      
 };

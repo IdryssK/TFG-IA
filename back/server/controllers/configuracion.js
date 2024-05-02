@@ -70,7 +70,6 @@ const obtenerConfiguracionPorId = async (req, res) => {
 // Crear una nueva configuración
 const crearConfiguracion = async (req, res) => {
     const {...object} = req.body;
-    // console.log(object);
     try {
         // Comprueba si el email ya esta en uso
         const existeCONF = await getConfiguracionById(object.CONF_Idx);
@@ -88,12 +87,12 @@ const crearConfiguracion = async (req, res) => {
             CONF_Data: JSON.stringify(object.CONF_Data),
             CONF_Upd_When: new Date(),
         }
-        console.log(data)
 
-        await createConfiguracion(data);
+        const resultado = await createConfiguracion(data);
 
         res.status(200).json({
             msg: 'Configuracion creada',
+            resultado
         });
         
     } catch (error) {

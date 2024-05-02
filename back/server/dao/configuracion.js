@@ -47,8 +47,8 @@ async function createConfiguracion(data) {
     try {
         const query = `INSERT INTO configuracion (${Object.keys(data).join(',')}) VALUES (?)`;
         const values = [Object.values(data)];
-        await dbConsult(query, values);
-        
+        const [result] = await dbConsult(query, values);
+        return result.insertId;
     } catch (error) {
         throw new Error('Error al crear la configuración');
     }

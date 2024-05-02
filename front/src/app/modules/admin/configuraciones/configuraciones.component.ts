@@ -28,8 +28,8 @@ export class ConfiguracionesComponent implements OnInit{
   searchInputControl: UntypedFormControl = new UntypedFormControl();
   
 
-  constructor(private _fuseAlertService: FuseAlertService, private userService : UserService, private configService: ConfiguracionesService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
-  }
+  constructor(private _fuseAlertService: FuseAlertService, private userService : UserService, private configService: ConfiguracionesService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {}
+  
   ngOnInit(): void {
     this.getList();
 
@@ -169,19 +169,15 @@ export class ConfiguracionesComponent implements OnInit{
     console.log('copiar configuracion');
     let copyData;
     this.configService.getConfiguracion(idx).subscribe(data => {
-      console.log(JSON.parse(data.configuracion.CONF_Data));
       copyData = JSON.parse(data.configuracion.CONF_Data);
     
-
-    console.log(copyData);
     copyData.nombre = copyData.nombre + '_copia_idx_' + idx;
 
     // copyData.CONF_Nombre = copyData.CONF_Nombre + ' - copia';
     console.log(copyData);
     this.configService.copyConfiguracion(copyData).subscribe(data => {
       console.log(data);
-      this.getList();
-      this._fuseAlertService.show('success-copy');
+      this.router.navigate(['configuraciones/configuracion', data.resultado]);
     });
   });
   } 
