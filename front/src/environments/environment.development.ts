@@ -44,6 +44,32 @@ export const environment = {
         "name",
         "organizationid",
         "origin",
+    ],
+    tratamientoDatos: [
+        "time",
+        "uid",
+        "value",
+        "metric",
+        "typemeter",
+        "alias",
+        "lat",
+        "lon",
+        "cota",
+        "description",
+        "description_origin",
+        "name",
+        "organizationid",
+        "origin",
+        "epoch", 
+        "dia", 
+        "mes", 
+        "año", 
+        "dia de la semana", 
+        "semana",
+        "hora", 
+        "minuto", 
+        "segundo",
+        "0-24"
     ]
       
 };

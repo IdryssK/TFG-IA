@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, ViewEncapsulation} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -33,7 +33,7 @@ import { DateTime } from 'luxon';
 import moment from 'moment';
 import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation/confirmation.service';
-  
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 @Component({
     selector     : 'app-configuracion',
     templateUrl  : './configuracion.component.html',
@@ -89,7 +89,8 @@ import { FuseConfirmationService } from '@fuse/services/confirmation/confirmatio
                     MtxDatetimepicker,
                     MtxDatetimepickerInput,
                     MtxDatetimepickerToggle,
-                    MtxGrid
+                    MtxGrid,
+                    MatSlideToggleModule
                  ],
 })
 export class ConfiguracionComponent implements OnInit
@@ -161,6 +162,7 @@ export class ConfiguracionComponent implements OnInit
     columns2: MtxGridColumn[] = [];
     list2 = [];
     
+    tratamientoDatos: any = [];
     columns3: MtxGridColumn[] = [];
     list3 = [];
     
@@ -185,6 +187,7 @@ export class ConfiguracionComponent implements OnInit
         Tabla2Columns: [[]],
         Tabla2List: [[]],
         Tabla2TiposFechas: [[]],
+        Tabla3TratamientoDatos: [[]],
         Tabla3Columns: [[]],
         Tabla3List: [[]],
         fechas: [[]]
@@ -354,6 +357,7 @@ export class ConfiguracionComponent implements OnInit
         // this.columns2 = prueba.Tabla2Columns;
         // this.list2 = prueba.Tabla2List;
         this.tiposFechas = prueba.Tabla2TiposFechas;
+        this.tratamientoDatos = prueba.Tabla3TratamientoDatos;
     }
 
 
@@ -365,8 +369,7 @@ export class ConfiguracionComponent implements OnInit
         console.log('------------------------------------');
         this.isModified = false;
         this.isReload = false;
-        console.log(this.primerForm.pristine);
-        console.log(this.isModified);
+
         this.tags = environment.filters;
         this.idx = this.route.snapshot.params['idx'];
         console.log(this.idx);
@@ -380,6 +383,9 @@ export class ConfiguracionComponent implements OnInit
         });
         this.administrarColumnas = environment.administrarColumnas.map((column: string) => {
             return { header: column, field: column, hide: false, show: true};
+        });
+        this.tratamientoDatos = environment.tratamientoDatos.map((column: string) => {
+            return { header: column, nulos: 'Eliminar', valorSustituir: '', codificar: 'one-hot', normalizar: false, min: '', max: '', hide: false, show: true};
         });
         
     }
@@ -398,6 +404,7 @@ export class ConfiguracionComponent implements OnInit
         this.tabla1();
         this.tabla2();
         this.tabla3();
+        this.normalizamos();
         this.isReload = false;
     }
     
@@ -560,7 +567,6 @@ export class ConfiguracionComponent implements OnInit
             //console.log('Item: ', item);
             const newItem = { ...item };
             this.tiposFechas.forEach(column => {
-                console.log('Columna: ', column, 'Item: ', item.time, 'Función: ', columnFunctions[column.header](item));
                if(column.hide === false){
                    newItem[column.header] = columnFunctions[column.header](item);
                }
@@ -578,15 +584,38 @@ export class ConfiguracionComponent implements OnInit
 
     ojito = 'option2';
     normalizar = false;
+    displayedColumns2: string[] = ['columna', 'nulos', 'codificar', 'normalizar'];
+    dataJEJE = [{}
+            ];
 
     normalizamos() {
-        this.normalizar = !this.normalizar;
+        console.log(this.dataJEJE);
     }
     tabla3(){
         console.log('tabla3');
+        // this.testColumns = [
+        //     { header: 'Name', field: 'name' },
+        //     { header: 'Weight', field: 'weight' },
+        //     { header: 'Gender', field: 'gender' },
+        //     { header: 'Mobile', field: 'mobile', cellTemplate: this.statusTpl },
+        //    ];
+        this.dataJEJE = [{header: 'columna1', nulos: '', codificar: '', normalizar: false}, 
+                        {header: 'description_origin', nulos: 'Sustituir', codificar: 'one-hot', normalizar: false}, 
+                        {header: 'columna3', nulos: 'Eliminar', valorSustituir: '', codificar: 'one-hot', normalizar: false, min: '', max: ''}];
     }
 
-
+    pestana(event:any) {
+        if(event === 3){
+            this.tratamientoDatos.forEach((tratamientoDato) => {
+                let administrarColumna = this.administrarColumnas.find((administrarColumna) => administrarColumna.header === tratamientoDato.header);
+                if (administrarColumna) {
+                    tratamientoDato.hide = administrarColumna.hide;
+                }
+              });
+        }
+        console.log(this.tratamientoDatos);
+        
+    }
 
 // -------------------------------------------------------------------------------------------------------------------------------
 
@@ -607,7 +636,7 @@ export class ConfiguracionComponent implements OnInit
             this.primerForm.value.Tabla2TiposFechas = this.tiposFechas;
             // this.primerForm.value.Tabla2Columns = this.columns2;
             // this.primerForm.value.Tabla2List = this.list2;
-    
+            this.primerForm.value.Tabla3TratamientoDatos = this.tratamientoDatos;
             // this.primerForm.value.Tabla3Columns = this.columns3;
             // this.primerForm.value.Tabla3List = this.list3;
             console.log(this.primerForm.value);
@@ -672,3 +701,11 @@ export class ConfiguracionComponent implements OnInit
     }
 // -------------------------------------------------------------------------------------------------------------------------------
 }
+
+
+
+
+
+
+
+

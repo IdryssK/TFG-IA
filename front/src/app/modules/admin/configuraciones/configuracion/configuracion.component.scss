@@ -166,7 +166,10 @@ $dark-base: (
     }
 }
 
-
+.padding > div > :nth-child(2) {
+    /* Your styles here */
+    padding: 0px !important;
+}
 
 :host ::ng-deep .mtx-grid {
   height: 280px;

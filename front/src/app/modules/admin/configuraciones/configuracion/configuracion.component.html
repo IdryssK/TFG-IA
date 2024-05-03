@@ -110,7 +110,7 @@
             <div id="leftContainer" [ngClass]="{'hidden': isHidden}" class="flex-auto w-1/2 border border-red"
                 style="height: 723px;">
                 <!-- Pestañas -->
-                <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;">
+                <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;" (selectedTabChange)="pestana($event.index)" >
                     <!-- Filtros -->
                     <mat-tab label="Filtros">
                         <div class="flex flex-col h-[639px] bg-card shadow rounded overflow-hidden">
@@ -206,7 +206,7 @@
                                     <!-- VALUES -->
                                     <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
                                         <mat-label></mat-label>
-                                        <mat-select #select [value]="value" placeholder="" data-filter multiple
+                                        <mat-select #select [value]="value" placeholder="" multiple
                                               [(ngModel)]="selectedValueByTag[inputs[i]]" (ngModelChange)="markAsModified()" [ngModelOptions]="{standalone: true}">
                                             <!-- <mat-select-filter class="p-4" [array]="allValueByTag[inputs[i]]" (filteredReturn)="filterOptions(inputs[i], $event)"></mat-select-filter> -->
                                             <mat-select-trigger>
@@ -275,70 +275,73 @@
                     <mat-tab label="Tratamiento de datos">
                        
                         <div class="h-[639px] relative overflow-x-auto">
-                            <div class="h-[639px] overflow-x-auto">
-                                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 sticky top-0 bg-white dark:bg-gray-600">
-                                        <tr>
-                                            <th scope="col" class="px-6 py-3 text-primary-300 border-r">
-                                                Columnas/Acciones
-                                            </th>
-                                            <th scope="col" class="px-14 py-3 text-primary-300">
-                                                Codificar
-                                            </th>
-                                            <th scope="col" class="px-16 py-3 text-primary-300">
-                                                Nulos
-                                            </th>
-                                            <th scope="col" class="px-4 py-3 text-primary-300">
-                                                Normalizar
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody *ngFor="let nombre of columns2">
-                                        <tr class="bg-white dark:bg-gray-800">
-                                            <td class="px-6 px-4 py-4 font-bold text-gray-900 whitespace-nowrap dark:text-white border-r">
-                                                {{ nombre.header }}
-                                            </td>
-                                            <td class="px-6 py-4 place-items-center">
+                            
+                            <div class="mat-elevation-z8 h-[598px] bg-card rounded">
+                                <table mat-table [dataSource]="tratamientoDatos" class="w-full">
+    
+                                    <!-- Nombre Column -->
+                                    <ng-container matColumnDef="columna">
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Nombre</th>
+                                        <td mat-cell *matCellDef="let element" class="px-6 py-4 font-bold text-gray-900 whitespace-nowrap dark:text-white border-r">{{element.header}}</td>
+                                    </ng-container>
+    
+                                    <!-- Nulos Column -->
+                                    <ng-container matColumnDef="nulos">
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Nulos</th>
+                                        <td mat-cell *matCellDef="let element" class="px-6 py-4">
+                                            <div class="flex items-center">
                                                 <mat-form-field>
-                                                    <mat-select>
-                                                        <mat-option>None</mat-option>
-                                                        <mat-option value="option1">one-hot</mat-option>
+                                                    <mat-select [(value)]="element.nulos" (selectionChange)="markAsModified(); isReload = true;">
+                                                        <mat-option value="Eliminar">Eliminar</mat-option>
+                                                        <mat-option value="Sustituir">Sustituir</mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
-                                            </td>
-                                            <td class="px-6 py-4 place-items-center">
-                                                <mat-form-field>
-                                                    <mat-select>
-                                                        <mat-option>None</mat-option>
-                                                        <mat-option value="option1">Eliminar</mat-option>
-                                                        <mat-option value="option2">Sustituir</mat-option>
-                                                    </mat-select>
+                                                <mat-form-field class="ml-1 p-1 w-20">
+                                                    <input matInput [(ngModel)]="element.valorSustituir" [ngModelOptions]="{standalone: true}" [disabled]="element.nulos !== 'Sustituir'">
                                                 </mat-form-field>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <div class="flex items-center justify-center">
-                                                    <input (change)="normalizamos()" id="checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                    <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"></label>
-                                                    <div *ngIf="normalizar" class="flex items-center">
-                                                        <mat-form-field [ngClass]="formFieldHelpers" class="w-8 mr-2">
-                                                            <input matInput [placeholder]="'0'">
-                                                        </mat-form-field>
-                                                        <mat-form-field [ngClass]="formFieldHelpers" class="w-8">
-                                                            <input matInput [placeholder]="'1'">
-                                                        </mat-form-field>
-                                                    </div>
+                                            </div>
+                                        </td>
+                                    </ng-container>
+    
+                                    <!-- Codificar Column -->
+                                    <ng-container matColumnDef="codificar">
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Codificar</th>
+                                        <td mat-cell *matCellDef="let element" class="px-6 py-4">
+                                            <mat-form-field>
+                                                <mat-select [(value)]="element.codificar">
+                                                    <mat-option value="one-hot">one-hot</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                    </ng-container>
+    
+                                    <!-- Normalizar Column -->
+                                    <ng-container matColumnDef="normalizar">
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Normalizar</th>
+                                        <td mat-cell *matCellDef="let element" class="px-6 py-4">
+                                            <div class="flex items-center">
+                                                <div class="flex items-center mb-4">
+                                                    <!-- <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"> -->
+                                                    <mat-checkbox [color]="'primary'" [(ngModel)]="element.normalizar" [ngModelOptions]="{standalone: true}" (change)="element.normalizar ? element.min = 0 : element.min = null; element.normalizar ? element.max = 1 : element.max = null; markAsModified(); isReload = true;"></mat-checkbox>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                                <mat-form-field class="w-12 padding pr-1"   >
+                                                    <input matInput [(ngModel)]="element.min" [ngModelOptions]="{standalone: true}" [disabled]="!element.normalizar" class="ml-1 border p-1">
+                                                </mat-form-field>
+                                                <mat-form-field class="w-12  padding" >
+                                                    <input matInput [(ngModel)]="element.max" [ngModelOptions]="{standalone: true}" [disabled]="!element.normalizar" class="ml-1 border p-1 ">
+                                                </mat-form-field>
+                                            </div>
+                                        </td>
+                                    </ng-container>
+    
+                                    <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: displayedColumns2;" [hidden]="row.hide"></tr>
                                 </table>
                             </div>
-                            
                         </div>
-                        
 
 
-                          
+                       
                     </mat-tab>
                 </mat-tab-group>
             </div>
