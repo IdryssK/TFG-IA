@@ -34,6 +34,8 @@ import moment from 'moment';
 import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation/confirmation.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import * as dfd from 'danfojs';
+
 @Component({
     selector     : 'app-configuracion',
     templateUrl  : './configuracion.component.html',
@@ -179,19 +181,9 @@ export class ConfiguracionComponent implements OnInit
         end: ['', new UntypedFormControl()],
         limit: ['', Validators.required],
         filtros :[this.selectedValueByTag], 
-        Tablacaracteristicas: [[]],
-        TablaList: [[]],
         Tabla1AdministrarColumnas: [[]],
-        Tabla1Columns: [[]],
-        Tabla1List: [[]],
-        Tabla2Columns: [[]],
-        Tabla2List: [[]],
         Tabla2TiposFechas: [[]],
         Tabla3TratamientoDatos: [[]],
-        Tabla3Columns: [[]],
-        Tabla3List: [[]],
-        fechas: [[]]
-        // datos: []
     });
     
     
@@ -403,8 +395,8 @@ export class ConfiguracionComponent implements OnInit
         await this.llamadasApi();
         this.tabla1();
         this.tabla2();
+        this.pestana();
         this.tabla3();
-        this.normalizamos();
         this.isReload = false;
     }
     
@@ -585,38 +577,244 @@ export class ConfiguracionComponent implements OnInit
     ojito = 'option2';
     normalizar = false;
     displayedColumns2: string[] = ['columna', 'nulos', 'codificar', 'normalizar'];
-    dataJEJE = [{}
-            ];
+    dataJEJE = [
+        {
+            "epoch": 1714518000000,
+            "time": "1",
+            "uid": " MLU02080001",
+            "value": 5.761,
+            "metric": "kWh",
+            "typemeter": "SmartEnergy",
+            "alias": "6339609",
+            "lat": 38.37997,
+            "lon": -0.52714,
+            "cota": 0,
+            "description": "Consumo de energia en kWh por hora",
+            "description_origin": "Nuevo Invernadero",
+            "name": "1h",
+            "organizationid": "UA UNIVERSIDAD DE ALICANTE",
+            "origin": "ElectricMeters UA",
+        },
+        {
+            "epoch": 1714521600000,
+            "time": "2",
+            "uid": null,
+            "value": null,
+            "metric": "kWh",
+            "typemeter": "SmartEnergy",
+            "alias": "6339609",
+            "lat": 38.37997,
+            "lon": -0.52714,
+            "cota": 0,
+            "description": "Consumo de energia en kWh por hora",
+            "description_origin": "Nuevo Invernadero",
+            "name": "1h",
+            "organizationid": "UA UNIVERSIDAD DE ALICANTE",
+            "origin": "ElectricMeters UA",
+        },
+        {
+            "epoch": 1714521600000,
+            "time": "3",
+            "uid": null,
+            "value": 5310.39,
+            "metric": "kWh",
+            "typemeter": "SmartEnergy",
+            "alias": "6339609",
+            "lat": 38.37997,
+            "lon": -0.52714,
+            "cota": 0,
+            "description": "Consumo de energia en kWh por mes",
+            "description_origin": "Nuevo Invernadero",
+            "name": "1M",
+            "organizationid": "UA UNIVERSIDAD DE ALICANTE",
+            "origin": "ElectricMeters UA",
+        }
+    ]
 
     normalizamos() {
         console.log(this.dataJEJE);
     }
     tabla3(){
         console.log('tabla3');
-        // this.testColumns = [
-        //     { header: 'Name', field: 'name' },
-        //     { header: 'Weight', field: 'weight' },
-        //     { header: 'Gender', field: 'gender' },
-        //     { header: 'Mobile', field: 'mobile', cellTemplate: this.statusTpl },
-        //    ];
-        this.dataJEJE = [{header: 'columna1', nulos: '', codificar: '', normalizar: false}, 
-                        {header: 'description_origin', nulos: 'Sustituir', codificar: 'one-hot', normalizar: false}, 
-                        {header: 'columna3', nulos: 'Eliminar', valorSustituir: '', codificar: 'one-hot', normalizar: false, min: '', max: ''}];
+        // console.log(this.tratamientoDatos);
+
+        //recorremos list2 y si en alguna linea la columna "value" es igual a 5.761, la cambiamos por null
+
+        this.list2.forEach((item) => {
+            if(item.value === 5.761) {
+                item.value = null;
+                // console.log(true);
+            }
+            if(item.time === '2024-05-01T00:00:00Z') {
+                item.time = null;
+            }
+        });
+        this.list2.forEach((item) => {
+            if(item.value === null) {
+                // console.log(true);
+            }
+        });
+
+        this.columns3 = this.tratamientoDatos.map((column: any) => {
+            return { header: column.header, field: column.header, hide: column.hide, show: column.show};
+        });
+        var datosCodificar;
+        var datosNulos;
+        // --------------- TRATAR NULOS ---------------------
+         datosNulos = this.list2.map((item: any) => {
+            // console.log(item);
+            const newItem: any = {};
+            let noMete = false;
+            const columns = this.tratamientoDatos.filter((column: any) => !column.hide);
+            for (let i = 0; i < columns.length; i++) {
+                const column = columns[i];
+                // console.log('ESTAMOS EN LA COLUMNA: ', column.header, ' -----------------');
+                // console.log(column);
+                if (item.hasOwnProperty(column.header)) {
+                    if (column.nulos === 'Eliminar' && item[column.header] === null) {
+                        // console.log('Eliminando nulos de ', column.header);
+                        // no se guarda en newItem y se va al siguiente
+                        noMete = true;
+                        break;
+                    }
+                    if (column.nulos === 'Sustituir' && item[column.header] === null) {
+                        // console.log('Sustituyendo nulos de ', column.header);
+                        // se guarda en newItem con el valor de valorSustituir
+                        item[column.header] = parseInt(column.valorSustituir);
+                    }
+
+                    newItem[column.header] = item[column.header];
+                    // console.log(newItem);
+                }
+            }
+            return noMete ? null : newItem;
+        }).filter(item => item !== null);
+        
+        console.log(datosNulos);
+
+        // --------------- CODIFICAR ---------------------
+        let valoresPorColumnas = {};
+
+        for (let columna in this.tratamientoDatos) {
+            if (this.tratamientoDatos[columna].codificar === 'one-hot' && this.tratamientoDatos[columna].hide === false) {
+                let nombreColumna = this.tratamientoDatos[columna].header;
+                valoresPorColumnas[nombreColumna] = datosNulos.map(item => item[nombreColumna]);
+            }
+        }
+
+        let valoresPorColumnasCodificados = {};
+        Object.keys(valoresPorColumnas).forEach((key) => {
+            let df = new dfd.DataFrame(valoresPorColumnas)
+            let encode = new dfd.OneHotEncoder()
+            
+            encode.fit(df[key])
+            let sf_enc = encode.transform(df[key].values)
+            var resultado=[];
+            sf_enc.forEach(element => {
+                resultado.push(element.indexOf(1))
+            });
+            valoresPorColumnasCodificados[key] = resultado;
+        });
+        console.log(valoresPorColumnasCodificados);
+
+        // remplace los valores de las columnas codificadas en datosNulos
+        datosCodificar = datosNulos.map((item) => {
+            const newItem = { ...item };
+            for (let columna in valoresPorColumnasCodificados) {
+                newItem[columna] = valoresPorColumnasCodificados[columna].shift();
+            }
+            return newItem;
+        });
+        console.log(datosCodificar);
+
+        // --------------- NORMALIZAR ---------------------
+        let valoresPorColumnasNormalizados = {};
+        for (let columna in this.tratamientoDatos) {
+            if (this.tratamientoDatos[columna].normalizar === true && this.tratamientoDatos[columna].hide === false) {
+                let nombreColumna = this.tratamientoDatos[columna].header;
+                let valores = datosCodificar.map(item => item[nombreColumna]);
+                console.log(valores);
+                let min = Math.min(...valores);
+                let max = Math.max(...valores);
+                valoresPorColumnasNormalizados[nombreColumna] = valores.map(valor => (valor - min) / (max - min));
+            }
+        }
+        console.log(valoresPorColumnasNormalizados);
+        // reemplace los valores de las columnas normalizadas en datosCodificar
+        let datosNormalizados = datosCodificar.map((item) => {
+            const newItem = { ...item };
+            for (let columna in valoresPorColumnasNormalizados) {
+                newItem[columna] = valoresPorColumnasNormalizados[columna].shift();
+            }
+            return newItem;
+        });
+        console.log(datosNormalizados);
+        this.list3 = datosNormalizados;
+        
     }
 
-    pestana(event:any) {
-        if(event === 3){
-            this.tratamientoDatos.forEach((tratamientoDato) => {
-                let administrarColumna = this.administrarColumnas.find((administrarColumna) => administrarColumna.header === tratamientoDato.header);
-                if (administrarColumna) {
-                    tratamientoDato.hide = administrarColumna.hide;
+    pestana() {
+        
+        this.tratamientoDatos.forEach((tratamientoDato) => {
+            let caracteristicas = this.administrarColumnas.find((caracteristicas) => caracteristicas.header === tratamientoDato.header);
+            let fechas = this.tiposFechas.find((fechas) => fechas.header === tratamientoDato.header);
+            if (caracteristicas) {
+                if(caracteristicas.header === 'value') {
+                    tratamientoDato.codificar = '';
                 }
-              });
-        }
+                tratamientoDato.hide = caracteristicas.hide;
+            }
+            if(fechas) {
+                tratamientoDato.codificar = '';
+                console.log(tratamientoDato);
+                tratamientoDato.hide = fechas.hide;
+            }
+            });
+    
         console.log(this.tratamientoDatos);
         
     }
 
+    encode() {
+        let valoresPorColumnas = {};
+        for (let columna in this.list3[0]) {
+            valoresPorColumnas[columna] = this.list3.map(item => item[columna]);
+        }
+        console.log(valoresPorColumnas);
+
+        
+        // let data = {
+        //     fruits: ["pear", "mango", "pawpaw", "mango", "bean"],
+        //     Count: [20, 30, 89, 12, 30],
+        //     Country: ["NG", "NG", "GH", "RU", "RU"]
+        // }
+        let diccionario = [];
+        Object.keys(valoresPorColumnas).forEach((key) => {
+            console.log(key);
+            let df = new dfd.DataFrame(valoresPorColumnas)
+            let encode = new dfd.OneHotEncoder()
+            
+            encode.fit(df[key])
+            console.log(encode);
+            
+            let sf_enc = encode.transform(df[key].values)
+            console.log(sf_enc)
+            
+            var resultado=[];
+
+            sf_enc.forEach(element => {
+                resultado.push(element.indexOf(1))
+                
+            });
+            console.log('Resultado:',resultado)
+            console.log(encode.$labels);
+            diccionario.push({[key]: encode.$labels});
+            
+        });
+        console.log('GUARDAMOS DICCIONARIO: ', diccionario);
+        
+        
+    }
 // -------------------------------------------------------------------------------------------------------------------------------
 
 

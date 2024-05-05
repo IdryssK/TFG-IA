@@ -92,6 +92,16 @@
                     <!-- Tercera columna de la segunda columna -->
                     <div class="col-span-1 flex justify-end items-end">
                         <!-- Contenido de la tercera columna -->
+                        <button class="py-2 px-4" mat-flat-button (click)="encode()">
+                            <ng-container *ngIf = isReload>
+                                <span class="absolute top-[-18px] right-0 left-[47px] flex items-center justify-center h-3">
+                                    <span class="flex items-center justify-center shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-gray-500 text-primary text-xs font-medium">
+                                        ★
+                                    </span>
+                                </span>
+                            </ng-container>
+                            generar
+                        </button>
                         <button (click)="toggleContainers()" class="px-2 rounded">
                             <mat-icon [svgIcon]="'heroicons_outline:arrows-pointing-out'"></mat-icon>
                         </button>
@@ -110,7 +120,7 @@
             <div id="leftContainer" [ngClass]="{'hidden': isHidden}" class="flex-auto w-1/2 border border-red"
                 style="height: 723px;">
                 <!-- Pestañas -->
-                <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;" (selectedTabChange)="pestana($event.index)" >
+                <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;" >
                     <!-- Filtros -->
                     <mat-tab label="Filtros">
                         <div class="flex flex-col h-[639px] bg-card shadow rounded overflow-hidden">
@@ -274,9 +284,9 @@
                     </mat-tab>
                     <mat-tab label="Tratamiento de datos">
                        
-                        <div class="h-[639px] relative overflow-x-auto">
+                        <div class="h-[639px] rounded relative overflow-x-auto">
                             
-                            <div class="mat-elevation-z8 h-[598px] bg-card rounded">
+                            <div class="mat-elevation-z8 h-[639px] bg-card rounded">
                                 <table mat-table [dataSource]="tratamientoDatos" class="w-full">
     
                                     <!-- Nombre Column -->
@@ -291,7 +301,7 @@
                                         <td mat-cell *matCellDef="let element" class="px-6 py-4">
                                             <div class="flex items-center">
                                                 <mat-form-field>
-                                                    <mat-select [(value)]="element.nulos" (selectionChange)="markAsModified(); isReload = true;">
+                                                    <mat-select [(value)]="element.nulos" (selectionChange)="element.nulos === 'Eliminar' ? element.valorSustituir = '' : null; markAsModified(); isReload = true;" [disabled]="element.nulos === '' ">
                                                         <mat-option value="Eliminar">Eliminar</mat-option>
                                                         <mat-option value="Sustituir">Sustituir</mat-option>
                                                     </mat-select>
@@ -308,7 +318,7 @@
                                         <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Codificar</th>
                                         <td mat-cell *matCellDef="let element" class="px-6 py-4">
                                             <mat-form-field>
-                                                <mat-select [(value)]="element.codificar">
+                                                <mat-select [(value)]="element.codificar" [disabled]="element.codificar === '' ">
                                                     <mat-option value="one-hot">one-hot</mat-option>
                                                 </mat-select>
                                             </mat-form-field>
@@ -395,7 +405,6 @@
                     <mat-tab label="Tratamiento de datos">
                         <mtx-grid class="h-[639px] rounded" [data]="list3" #grid 
                                     [columns]="columns3"
-                                    [columnResizable]="true" 
                                     [columnMenuButtonColor]="'primary'"
                                     [pageSizeOptions]="[5,10,20,30]" 
                                     [noResultText]="'No hay resultados'">
