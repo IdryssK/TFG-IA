@@ -23,19 +23,13 @@ app.use('/api/users', require('./routes/user'));
 // Login
 app.use('/api/login', require('./routes/auth'));
 
-// Datasets
-app.use('/api/datasets', require('./routes/dataset'));
 
 // Configuraciones
 app.use('/api/configuraciones', require('./routes/configuracion'));
 
+// Datasets
+app.use('/api/datasets', require('./routes/dataset'));
+
 app.listen(process.env.PORT, () => {
     console.log('Servidor corriendo en el puerto ', process.env.PORT);
-});
-
-
-app.get('/', (req, res) => {
-    res.json({
-        msg: 'API activa'
-    });
 });

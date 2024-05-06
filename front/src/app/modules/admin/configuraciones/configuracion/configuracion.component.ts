@@ -35,6 +35,9 @@ import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones
 import { FuseConfirmationService } from '@fuse/services/confirmation/confirmation.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import * as dfd from 'danfojs';
+// import { Parser } from 'json2csv';
+import { writeFile } from 'fs';
+import { DatasetsService } from 'app/core/datasets/datasets.service';
 
 @Component({
     selector     : 'app-configuracion',
@@ -105,7 +108,7 @@ export class ConfiguracionComponent implements OnInit
     /**
      * Constructor
      */
-    constructor(private _fuseAlertService: FuseAlertService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
+    constructor(private _fuseAlertService: FuseAlertService, private datasetService: DatasetsService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
 
 // -----------------------------------PESTAÑAS------------------------------------------------------------------
 
@@ -139,23 +142,18 @@ export class ConfiguracionComponent implements OnInit
     
     filteredItems: string[] = this.values.slice();
     selectedValues = new FormControl([]);
-    selectedValues2;
     selectedValueByTag: {[tag: string]: any[]} = {};
     allValueByTag: {[tag: string]: any[]} = {};
     filteredValues: string[] = [];
 
-    //tabla
-    dataSource: MatTableDataSource<any>;
-    displayedColumns: string[];
-    allColumns: string[]; 
-    columnStates: { [key: string]: boolean } = {};
 
-    // tabla FILTROS
+    // TABLA 0
     @ViewChild('grid') grid!: MtxGrid;
     columns: MtxGridColumn[] = [];
     list = [];
     administrarColumnas: any[] = [];
 
+    // TABLA 1
     columns1: MtxGridColumn[] = [];
     list1 = [];
     
@@ -164,6 +162,7 @@ export class ConfiguracionComponent implements OnInit
     columns2: MtxGridColumn[] = [];
     list2 = [];
     
+    // TABLA 3
     tratamientoDatos: any = [];
     columns3: MtxGridColumn[] = [];
     list3 = [];
@@ -185,21 +184,9 @@ export class ConfiguracionComponent implements OnInit
         Tabla2TiposFechas: [[]],
         Tabla3TratamientoDatos: [[]],
     });
-    
-    
-    
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // ----------------------------------------------------------------------------------------------------
 
 
-
-
-// --------------------------------------------FILTROS---------------------------------------------------------
-    
-    @ViewChild('select') select: MatSelect;
-
-    allSelected=false;
+// --------------------------------------------FILTROS---------------------------------------------------------------------------
 
     isContentOpen: boolean = true; 
     toggleContent() {
@@ -312,12 +299,18 @@ export class ConfiguracionComponent implements OnInit
 // -------------------------------------------------------------------------------------------------------------------------------
 
     async editar(idx) {
-        this.configuracionService.getConfiguracion(idx).subscribe(async (response) => {
-            let prueba = JSON.parse(response.configuracion.CONF_Data);
-            this.setFormValues(prueba);
-            await this.setFiltros(prueba);
-            this.setTablas(prueba);
-        });
+        this.configuracionService.getConfiguracion(idx).subscribe(
+            async (response) => {
+            let datos = JSON.parse(response.configuracion.CONF_Data);
+            this.setFormValues(datos);
+            await this.setFiltros(datos);
+            this.setTablas(datos);
+            },
+            (error) => {
+            console.error(error);
+            this.router.navigate(['/configuraciones/lista']);
+            }
+        );
     }
 
     setFormValues(prueba) {
@@ -395,7 +388,7 @@ export class ConfiguracionComponent implements OnInit
         await this.llamadasApi();
         this.tabla1();
         this.tabla2();
-        this.pestana();
+        // this.pestana();
         this.tabla3();
         this.isReload = false;
     }
@@ -435,7 +428,6 @@ export class ConfiguracionComponent implements OnInit
             console.log(this.list);
             
             // para que no tengan la misma referencia y les afecte los cambios a uno y otro
-            // this.administrarColumnas = JSON.parse(JSON.stringify(this.columns));
             this.cdr.detectChanges();
             
         },
@@ -454,6 +446,7 @@ export class ConfiguracionComponent implements OnInit
 
     
 // --------------------------------------------TABLA 1----------------------------------------------------------------------------
+
     // Ocultar columna 
     showColumn(e: any, column: any) {
         this.markAsModified();
@@ -489,9 +482,6 @@ export class ConfiguracionComponent implements OnInit
     }
    
 
-
-
-
 // -------------------------------------------------------------------------------------------------------------------------------
 
 // --------------------------------------------TABLA 2----------------------------------------------------------------------------
@@ -518,13 +508,11 @@ export class ConfiguracionComponent implements OnInit
         }
         console.log(this.tiposFechas);
     }
-
-    tabla2 (){
-        console.log('tabla2')
+    getColumnValue(item: any, columnName: string): any {
         const columnFunctions = {
             'epoch': (item) => moment.utc(item.time).valueOf(),
             'dia': (item) => moment.utc(item.time).date(),
-            'mes': (item) => moment.utc(item.time).month() + 1, // En moment.js, los meses empiezan en 0
+            'mes': (item) => moment.utc(item.time).month() + 1,
             'año': (item) => moment.utc(item.time).year(),
             'dia de la semana': (item) => moment.utc(item.time).day(),
             'semana': (item) => moment.utc(item.time).week(),
@@ -537,8 +525,18 @@ export class ConfiguracionComponent implements OnInit
                 const minutes = time.minutes() / 60;
                 const seconds = time.seconds() / 6000;
                 return parseFloat((hours + minutes + seconds).toFixed(4));
+            }
+        };
+
+        if (columnFunctions.hasOwnProperty(columnName)) {
+            return columnFunctions[columnName](item);
+        } else {
+            return null;
+        }
     }
-};
+    tabla2 (){
+        console.log('tabla2')
+        
         
 
         // Copia columns1 a columns2
@@ -560,7 +558,7 @@ export class ConfiguracionComponent implements OnInit
             const newItem = { ...item };
             this.tiposFechas.forEach(column => {
                if(column.hide === false){
-                   newItem[column.header] = columnFunctions[column.header](item);
+                   newItem[column.header] = this.getColumnValue(item, column.header);
                }
             
             });
@@ -573,140 +571,42 @@ export class ConfiguracionComponent implements OnInit
 
 // --------------------------------------------TABLA 3----------------------------------------------------------------------------
 
-
-    ojito = 'option2';
-    normalizar = false;
     displayedColumns2: string[] = ['columna', 'nulos', 'codificar', 'normalizar'];
-    dataJEJE = [
-        {
-            "epoch": 1714518000000,
-            "time": "1",
-            "uid": " MLU02080001",
-            "value": 5.761,
-            "metric": "kWh",
-            "typemeter": "SmartEnergy",
-            "alias": "6339609",
-            "lat": 38.37997,
-            "lon": -0.52714,
-            "cota": 0,
-            "description": "Consumo de energia en kWh por hora",
-            "description_origin": "Nuevo Invernadero",
-            "name": "1h",
-            "organizationid": "UA UNIVERSIDAD DE ALICANTE",
-            "origin": "ElectricMeters UA",
-        },
-        {
-            "epoch": 1714521600000,
-            "time": "2",
-            "uid": null,
-            "value": null,
-            "metric": "kWh",
-            "typemeter": "SmartEnergy",
-            "alias": "6339609",
-            "lat": 38.37997,
-            "lon": -0.52714,
-            "cota": 0,
-            "description": "Consumo de energia en kWh por hora",
-            "description_origin": "Nuevo Invernadero",
-            "name": "1h",
-            "organizationid": "UA UNIVERSIDAD DE ALICANTE",
-            "origin": "ElectricMeters UA",
-        },
-        {
-            "epoch": 1714521600000,
-            "time": "3",
-            "uid": null,
-            "value": 5310.39,
-            "metric": "kWh",
-            "typemeter": "SmartEnergy",
-            "alias": "6339609",
-            "lat": 38.37997,
-            "lon": -0.52714,
-            "cota": 0,
-            "description": "Consumo de energia en kWh por mes",
-            "description_origin": "Nuevo Invernadero",
-            "name": "1M",
-            "organizationid": "UA UNIVERSIDAD DE ALICANTE",
-            "origin": "ElectricMeters UA",
-        }
-    ]
 
-    normalizamos() {
-        console.log(this.dataJEJE);
-    }
-    tabla3(){
-        console.log('tabla3');
-        // console.log(this.tratamientoDatos);
-
-        //recorremos list2 y si en alguna linea la columna "value" es igual a 5.761, la cambiamos por null
-
-        this.list2.forEach((item) => {
-            if(item.value === 5.761) {
-                item.value = null;
-                // console.log(true);
-            }
-            if(item.time === '2024-05-01T00:00:00Z') {
-                item.time = null;
-            }
-        });
-        this.list2.forEach((item) => {
-            if(item.value === null) {
-                // console.log(true);
-            }
-        });
-
-        this.columns3 = this.tratamientoDatos.map((column: any) => {
-            return { header: column.header, field: column.header, hide: column.hide, show: column.show};
-        });
-        var datosCodificar;
-        var datosNulos;
-        // --------------- TRATAR NULOS ---------------------
-         datosNulos = this.list2.map((item: any) => {
-            // console.log(item);
+    tratarNulos(list, tratamientoDatos) {
+        return list.map((item: any) => {
             const newItem: any = {};
             let noMete = false;
-            const columns = this.tratamientoDatos.filter((column: any) => !column.hide);
+            const columns = tratamientoDatos.filter((column: any) => !column.hide);
             for (let i = 0; i < columns.length; i++) {
                 const column = columns[i];
-                // console.log('ESTAMOS EN LA COLUMNA: ', column.header, ' -----------------');
-                // console.log(column);
                 if (item.hasOwnProperty(column.header)) {
                     if (column.nulos === 'Eliminar' && item[column.header] === null) {
-                        // console.log('Eliminando nulos de ', column.header);
-                        // no se guarda en newItem y se va al siguiente
                         noMete = true;
                         break;
                     }
                     if (column.nulos === 'Sustituir' && item[column.header] === null) {
-                        // console.log('Sustituyendo nulos de ', column.header);
-                        // se guarda en newItem con el valor de valorSustituir
                         item[column.header] = parseInt(column.valorSustituir);
                     }
-
                     newItem[column.header] = item[column.header];
-                    // console.log(newItem);
                 }
             }
             return noMete ? null : newItem;
         }).filter(item => item !== null);
-        
-        console.log(datosNulos);
+    }
 
-        // --------------- CODIFICAR ---------------------
+    codificar(datosNulos, tratamientoDatos) {
         let valoresPorColumnas = {};
-
-        for (let columna in this.tratamientoDatos) {
-            if (this.tratamientoDatos[columna].codificar === 'one-hot' && this.tratamientoDatos[columna].hide === false) {
-                let nombreColumna = this.tratamientoDatos[columna].header;
+        for (let columna in tratamientoDatos) {
+            if (tratamientoDatos[columna].codificar === 'one-hot' && tratamientoDatos[columna].hide === false) {
+                let nombreColumna = tratamientoDatos[columna].header;
                 valoresPorColumnas[nombreColumna] = datosNulos.map(item => item[nombreColumna]);
             }
         }
-
         let valoresPorColumnasCodificados = {};
         Object.keys(valoresPorColumnas).forEach((key) => {
             let df = new dfd.DataFrame(valoresPorColumnas)
             let encode = new dfd.OneHotEncoder()
-            
             encode.fit(df[key])
             let sf_enc = encode.transform(df[key].values)
             var resultado=[];
@@ -715,106 +615,72 @@ export class ConfiguracionComponent implements OnInit
             });
             valoresPorColumnasCodificados[key] = resultado;
         });
-        console.log(valoresPorColumnasCodificados);
-
-        // remplace los valores de las columnas codificadas en datosNulos
-        datosCodificar = datosNulos.map((item) => {
+        return datosNulos.map((item) => {
             const newItem = { ...item };
             for (let columna in valoresPorColumnasCodificados) {
                 newItem[columna] = valoresPorColumnasCodificados[columna].shift();
             }
             return newItem;
         });
-        console.log(datosCodificar);
+    }
 
-        // --------------- NORMALIZAR ---------------------
+    normalizar(datosCodificar, tratamientoDatos) {
         let valoresPorColumnasNormalizados = {};
-        for (let columna in this.tratamientoDatos) {
-            if (this.tratamientoDatos[columna].normalizar === true && this.tratamientoDatos[columna].hide === false) {
-                let nombreColumna = this.tratamientoDatos[columna].header;
+        for (let columna in tratamientoDatos) {
+            if (tratamientoDatos[columna].normalizar === true && tratamientoDatos[columna].hide === false) {
+                let nombreColumna = tratamientoDatos[columna].header;
                 let valores = datosCodificar.map(item => item[nombreColumna]);
-                console.log(valores);
                 let min = Math.min(...valores);
                 let max = Math.max(...valores);
                 valoresPorColumnasNormalizados[nombreColumna] = valores.map(valor => (valor - min) / (max - min));
             }
         }
-        console.log(valoresPorColumnasNormalizados);
-        // reemplace los valores de las columnas normalizadas en datosCodificar
-        let datosNormalizados = datosCodificar.map((item) => {
+        return datosCodificar.map((item) => {
             const newItem = { ...item };
             for (let columna in valoresPorColumnasNormalizados) {
                 newItem[columna] = valoresPorColumnasNormalizados[columna].shift();
             }
             return newItem;
         });
-        console.log(datosNormalizados);
-        this.list3 = datosNormalizados;
-        
     }
 
-    pestana() {
-        
-        this.tratamientoDatos.forEach((tratamientoDato) => {
-            let caracteristicas = this.administrarColumnas.find((caracteristicas) => caracteristicas.header === tratamientoDato.header);
-            let fechas = this.tiposFechas.find((fechas) => fechas.header === tratamientoDato.header);
-            if (caracteristicas) {
-                if(caracteristicas.header === 'value') {
-                    tratamientoDato.codificar = '';
-                }
-                tratamientoDato.hide = caracteristicas.hide;
+    tabla3(){
+        console.log('tabla3');
+        this.list2.forEach((item) => {
+            if(item.value === 5.761) {
+                item.value = null;
             }
-            if(fechas) {
-                tratamientoDato.codificar = '';
-                console.log(tratamientoDato);
-                tratamientoDato.hide = fechas.hide;
+            if(item.time === '2024-05-01T00:00:00Z') {
+                item.time = null;
             }
-            });
-    
-        console.log(this.tratamientoDatos);
-        
-    }
-
-    encode() {
-        let valoresPorColumnas = {};
-        for (let columna in this.list3[0]) {
-            valoresPorColumnas[columna] = this.list3.map(item => item[columna]);
-        }
-        console.log(valoresPorColumnas);
-
-        
-        // let data = {
-        //     fruits: ["pear", "mango", "pawpaw", "mango", "bean"],
-        //     Count: [20, 30, 89, 12, 30],
-        //     Country: ["NG", "NG", "GH", "RU", "RU"]
-        // }
-        let diccionario = [];
-        Object.keys(valoresPorColumnas).forEach((key) => {
-            console.log(key);
-            let df = new dfd.DataFrame(valoresPorColumnas)
-            let encode = new dfd.OneHotEncoder()
-            
-            encode.fit(df[key])
-            console.log(encode);
-            
-            let sf_enc = encode.transform(df[key].values)
-            console.log(sf_enc)
-            
-            var resultado=[];
-
-            sf_enc.forEach(element => {
-                resultado.push(element.indexOf(1))
-                
-            });
-            console.log('Resultado:',resultado)
-            console.log(encode.$labels);
-            diccionario.push({[key]: encode.$labels});
-            
         });
-        console.log('GUARDAMOS DICCIONARIO: ', diccionario);
-        
-        
+        this.columns3 = this.tratamientoDatos.map((column: any) => {
+            return { header: column.header, field: column.header, hide: column.hide, show: column.show};
+        });
+        let datosNulos = this.tratarNulos(this.list2, this.tratamientoDatos);
+        let datosCodificar = this.codificar(datosNulos, this.tratamientoDatos);
+        this.list3 = this.normalizar(datosCodificar, this.tratamientoDatos);
     }
+
+    pestana(tab: any) {
+        if(tab === 3){
+            this.tratamientoDatos.forEach((tratamientoDato) => {
+                let caracteristicas = this.administrarColumnas.find((caracteristicas) => caracteristicas.header === tratamientoDato.header);
+                let fechas = this.tiposFechas.find((fechas) => fechas.header === tratamientoDato.header);
+                if (caracteristicas) {
+                    if(caracteristicas.header === 'value') {
+                        tratamientoDato.codificar = '';
+                    }
+                    tratamientoDato.hide = caracteristicas.hide;
+                }
+                if(fechas) {
+                    tratamientoDato.codificar = '';
+                    tratamientoDato.hide = fechas.hide;
+                }
+            });        
+        }
+    }
+
 // -------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -844,9 +710,10 @@ export class ConfiguracionComponent implements OnInit
                     console.log(response);
                     this._fuseAlertService.show('success-save');
                     this.primerForm.markAsPristine();
+                    this.router.navigate(['/configuraciones/configuracion/' + response.resultado ]);
                 });
             }
-            else {
+            else { 
                 this.configuracionService.updateConfiguracion(this.idx, this.primerForm.value).subscribe((response) => {
                     console.log(response);
                     this._fuseAlertService.show('success-update');
@@ -898,6 +765,72 @@ export class ConfiguracionComponent implements OnInit
         this.isReload = true;
     }
 // -------------------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------GENERAR DATOS---------------------------------------------------------------------
+
+    async obtenerDatos() {
+        const response = await this.apiSmartUaService.getDataSmartUa(this.token, this.count_value, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end).toPromise();
+        const data = response.result;
+        const datasetCol =  data.columns.map((column: string) => {
+            return { header: column, field: column, hide: false, show: true};
+        });
+
+        const columnas = data.columns;
+        const valores = data.values;
+
+        const datosProcesados = valores.map((fila: any[]) => {
+            const filaProcesada: any = {};
+            columnas.forEach((columna: string, indice: number) => {
+                filaProcesada[columna] = fila[indice];
+            });
+            return filaProcesada;
+        });
+        return { datasetCol, datasetList: datosProcesados };
+}
+
+    filtrarColumnas(datasetList, columnFilter) {
+        const columns = columnFilter.filter(column => !column.hide);
+        return datasetList.map(item => {
+            const newItem = {};
+            columns.forEach(column => {
+                newItem[column.header] = item[column.header];
+            });
+            return newItem;
+        });
+    }
+
+    async generar() {
+        console.log(this.count_value);
+
+        const { datasetCol, datasetList } = await this.obtenerDatos();
+
+        console.log(datasetList);
+
+        const data1 = this.filtrarColumnas(datasetList, this.administrarColumnas);
+        console.log(data1);
+
+        const data2 = data1.map(item => {
+            const newItem = { ...item };
+            this.tiposFechas.forEach(column => {
+                if (!column.hide) {
+                    newItem[column.header] = this.getColumnValue(item, column.header);
+                }
+            });
+            return newItem;
+        });
+        console.log(data2);
+
+        let datosNulos = this.tratarNulos(data2, this.tratamientoDatos);
+        let datosCodificar = this.codificar(datosNulos, this.tratamientoDatos);
+        let data3 = this.normalizar(datosCodificar, this.tratamientoDatos);
+
+        console.log(data3);
+        this.datasetService.saveDataset(data3, this.idx).subscribe((response) => {
+            console.log(response);
+
+        });
+
+    }
+
 }
 
 

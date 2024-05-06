@@ -27,7 +27,7 @@ const obtenerConfiguraciones = async (req, res) => {
         const [configuraciones, total] = await getAllConfiguraciones(data);
         
         res.status(200).json({
-            msg: 'getUsuarios',
+            msg: 'getConfiguraciones',
             configuraciones,
             page:{
                 desde,
@@ -39,7 +39,7 @@ const obtenerConfiguraciones = async (req, res) => {
         console.error(error);
 
         res.status(500).json({
-            msg: 'Error al listar usuariosss'
+            msg: 'Error al listar configuraciones'
         });
     }
 };
@@ -76,7 +76,7 @@ const crearConfiguracion = async (req, res) => {
         console.log(existeCONF);
         if( existeCONF !== null ){
             res.status(400).json({
-                msg: 'El email ya existe'
+                msg: 'La configuracion ya existe'
             });
             return;
         }
@@ -112,7 +112,6 @@ const actualizarConfiguracion = async (req, res) => {
 
         // Comprueba que haya un usuario con ese ID.
         let config = await getConfiguracionById(uid);
-        console.log('DESPUES DE BUSCAR EL USUARIO')
         if( config === null ){
             // Si no lo hay, responde con not found sin cuerpo.
             res.status(400).json({

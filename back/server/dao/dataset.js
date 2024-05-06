@@ -1,26 +1,41 @@
-const dbConsult = require('../database/db');
+const { dbConsult } = require("../database/db");
 
 
 // Función para obtener un dataset por su ID
-async function datasetByIdx(datasetId) {
-    const sql = `SELECT * FROM dataset WHERE Dataset_Idx = ?`;
-    const values = [datasetId];
-
+async function datasetByIdx(idx) {
     try {
-        const result = await dbConsult(sql, values);
-        return result;
+        const query = 'SELECT * FROM dataset WHERE DS_Idx = ?';
+        
+        const values = [idx];
+        const [result] = await dbConsult(query, values);
+        return result.length === 0 ? null : result[0];
     } catch (error) {
         throw error;
     }
 }
 
 // Función para obtener todos los datasets
-async function datasetList() {
-    const sql = `SELECT * FROM dataset`;
-    console.log('paso por dateasetList');
+async function getAllDatasets(data) {
     try {
-        const result = await dbConsult(sql);
-        return result;
+        let paramsQuery = [];
+        let query = `SELECT DS_Idx, DS_CONF_Idx, DS_Ruta, DS_Upd_When FROM dataset`;
+
+        if(data.querySearch){
+            query += ` WHERE DS_Ruta LIKE ?`;
+            paramsQuery.push(data.querySearch);
+        }
+
+        // Se realiza una busqueda de todos los usuarios para poder hacer la paginación
+        const [total] = await dbConsult(query, paramsQuery);
+
+        query += ` LIMIT ?, ?`;
+
+        paramsQuery.push(data.desde);
+        paramsQuery.push(data.registropp);
+
+        const [datasets] = await dbConsult(query, paramsQuery);
+
+        return datasets.length === 0 ? [[], total.length] : [datasets, total.length];
     } catch (error) {
         throw error;
     }
@@ -28,66 +43,36 @@ async function datasetList() {
 
 // Función para crear un dataset
 async function crearDataset(dataset) {
-    const sql = `INSERT INTO dataset (Dataset_Nombre, Dataset_Token, Dataset_Desde, Dataset_Hasta, Dataset_Filtros, Dataset_Columnas, Dataset_Fechas, Dataset_Datos) 
-                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [
-        dataset.Dataset_Nombre,
-        dataset.Dataset_Token,
-        dataset.Dataset_Desde,
-        dataset.Dataset_Hasta,
-        dataset.Dataset_Filtros,
-        dataset.Dataset_Columnas,
-        dataset.Dataset_Fechas,
-        dataset.Dataset_Datos
-    ];
-
     try {
-        const result = await dbConsult(sql, values);
-        return result;
+        const query = `INSERT INTO dataset (${Object.keys(dataset).join(',')}) VALUES (?)`;
+        const values = [Object.values(dataset)];
+        const [result] = await dbConsult(query, values);
+        return result.insertId;
     } catch (error) {
-        throw error;
+        throw new Error('Error al crear el dataset');
     }
 }
 
 
 // Función para editar un dataset
-async function editarDataset(datasetId, dataset) {
+async function editarDataset(dataset) {
     try {
-        await datasetByIdx(datasetId); // Call datasetByIdx function passing the datasetId as parameter
-        const sql = `UPDATE dataset 
-                             SET Dataset_Nombre = ?, Dataset_Token = ?, Dataset_Desde = ?, Dataset_Hasta = ?, 
-                                     Dataset_Filtros = ?, Dataset_Columnas = ?, Dataset_Fechas = ?, Dataset_Datos = ? 
-                             WHERE Dataset_Idx = ?`;
-        const values = [
-            dataset.Dataset_Nombre,
-            dataset.Dataset_Token,
-            dataset.Dataset_Desde,
-            dataset.Dataset_Hasta,
-            dataset.Dataset_Filtros,
-            dataset.Dataset_Columnas,
-            dataset.Dataset_Fechas,
-            dataset.Dataset_Datos,
-            datasetId
-        ];
-
-        const result = await dbConsult(sql, values);
-        return result;
+        const query = 'UPDATE dataset SET ? WHERE DS_Idx = ?' ;
+        const values = [dataset, dataset.CONF_Idx];
+        await dbConsult(query, values);
     } catch (error) {
-        throw error;
+        throw new Error('Error al actualizar la dataset');
     }
 }
 
 // Función para borrar un dataset
-async function borrarDataset(datasetId) {
+async function borrarDataset(idx) {
     try {
-        await datasetByIdx(datasetId); // Call datasetByIdx function passing the datasetId as parameter
-        const sql = `DELETE FROM dataset WHERE Dataset_Idx = ?`;
-        const values = [datasetId];
-
-        const result = await dbConsult(sql, values);
-        return result;
+        const query = 'DELETE FROM dataset WHERE DS_Idx = ?';
+        const values = [idx];
+        await dbConsult(query, values);
     } catch (error) {
-        throw error;
+        throw new Error('Error al eliminar la dataset');
     }
 }
 
@@ -96,5 +81,5 @@ module.exports = {
     editarDataset,
     borrarDataset,
     datasetByIdx,
-    datasetList
+    getAllDatasets,
 };

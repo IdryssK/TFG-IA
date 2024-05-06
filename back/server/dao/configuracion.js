@@ -32,7 +32,7 @@ async function getAllConfiguraciones(data) {
 const getConfiguracionById = async(id) => {
     console.log(id);
     try {
-        const query = 'SELECT CONF_Idx, CONF_Nombre, CONF_Data, CONF_Upd_When CONF FROM configuracion WHERE CONF_Idx = ?';
+        const query = 'SELECT CONF_Idx, CONF_Nombre, CONF_Data, CONF_Upd_When FROM configuracion WHERE CONF_Idx = ?';
         
         const values = [id];
         const [result] = await dbConsult(query, values);

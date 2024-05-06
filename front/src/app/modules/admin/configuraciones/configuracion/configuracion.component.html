@@ -22,7 +22,7 @@
     
     <form class="pt-2" [formGroup]="primerForm" >
         
-        <div class="flex flex-row">
+        <div class="flex flex-row mb-2">
             <!-- Primera columna - Mitad de la pantalla -->
             <div class="w-1/2">
                 <div class="grid grid-cols-3">
@@ -63,48 +63,51 @@
                 <!-- Dividir en 3 columnas -->
                 <div class="grid grid-cols-3">
                     <!-- Primera columna de la segunda columna -->
-                    <div class="col-span-1 px-2 py-1 mr-2">
+                    <div class="col-span-1">
                         <!-- Contenido de la primera columna -->
-                        <button class="py-2 px-4" mat-flat-button (click)="cargarTabla()">
-                            <ng-container *ngIf = isReload>
-                                <span class="absolute top-[-18px] right-0 left-[47px] flex items-center justify-center h-3">
-                                    <span class="flex items-center justify-center shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-gray-500 text-primary text-xs font-medium">
-                                        ★
+                        <div class="flex justify-start items-end items-center ml-6">
+
+                            <button class="py-2 px-4" mat-flat-button (click)="cargarTabla()">
+                                <ng-container *ngIf = isReload>
+                                    <span class="absolute top-[-18px] right-0 left-[47px] flex items-center justify-center h-3">
+                                        <span class="flex items-center justify-center shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-gray-500 text-primary text-xs font-medium">
+                                            ★
+                                        </span>
                                     </span>
-                                </span>
-                            </ng-container>
-                            Cargar
-                        </button>
-                        <span *ngIf="count_value !== 0" class="ml-2 text-gray-600">
-                            Resultados: <strong>{{ count_value }}</strong>
-                        </span>
+                                </ng-container>
+                                Cargar
+                            </button>
+                            <span *ngIf="count_value !== 0" class="ml-2 text-gray-600">
+                                Resultados: <strong>{{ count_value }}</strong>
+                            </span>
+                        </div>
                     </div>
 
                     <!-- Segunda columna de la segunda columna -->
-                    <div class="col-span-1  flex justify-center items-center">
+                    <div class="col-span-1">
                         <!-- Contenido de la segunda columna -->
-                        <label for="limite">Limite:
-                            <input id="limite" type="number" class="border rounded px-2 py-1 mr-2" placeholder="100"
-                                formControlName="limit"> 
-                        </label>
+                        <div class="flex justify-end items-end items-center">
+
+                            <label for="limite">Limite:
+                                <input id="limite" type="number" class="border rounded px-2 py-1 mr-2" placeholder="100"
+                                    formControlName="limit"> 
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Tercera columna de la segunda columna -->
-                    <div class="col-span-1 flex justify-end items-end">
+                    <div class="col-span-1">
                         <!-- Contenido de la tercera columna -->
-                        <button class="py-2 px-4" mat-flat-button (click)="encode()">
-                            <ng-container *ngIf = isReload>
-                                <span class="absolute top-[-18px] right-0 left-[47px] flex items-center justify-center h-3">
-                                    <span class="flex items-center justify-center shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-gray-500 text-primary text-xs font-medium">
-                                        ★
-                                    </span>
-                                </span>
-                            </ng-container>
-                            generar
-                        </button>
-                        <button (click)="toggleContainers()" class="px-2 rounded">
-                            <mat-icon [svgIcon]="'heroicons_outline:arrows-pointing-out'"></mat-icon>
-                        </button>
+                        <div class="flex justify-end items-end items-center mr-6">
+
+                            <button class="" mat-flat-button (click)="generar()" mat-flat-button 
+                            [color]="'primary'"  [disabled]="!primerForm.pristine">
+                                Generar
+                            </button>
+                            <button (click)="toggleContainers()" class="px-2 rounded">
+                                <mat-icon [svgIcon]="'heroicons_outline:arrows-pointing-out'"></mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -120,7 +123,7 @@
             <div id="leftContainer" [ngClass]="{'hidden': isHidden}" class="flex-auto w-1/2 border border-red"
                 style="height: 723px;">
                 <!-- Pestañas -->
-                <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;" >
+                <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;" (selectedTabChange)="pestana($event.index)">
                     <!-- Filtros -->
                     <mat-tab label="Filtros">
                         <div class="flex flex-col h-[639px] bg-card shadow rounded overflow-hidden">
@@ -291,7 +294,7 @@
     
                                     <!-- Nombre Column -->
                                     <ng-container matColumnDef="columna">
-                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Nombre</th>
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Columna</th>
                                         <td mat-cell *matCellDef="let element" class="px-6 py-4 font-bold text-gray-900 whitespace-nowrap dark:text-white border-r">{{element.header}}</td>
                                     </ng-container>
     
@@ -365,17 +368,6 @@
                     <mat-tab label="Filtros">
                         <div class="flex flex-col items-center justify-center h-full">
                             <div class="w-full  rounded">
-                                <!-- <table mat-table [dataSource]="dataSource" class="rounded-sm">
-                                <!-- Agregar columnas 
-                                <ng-container *ngFor="let column of displayedColumns; let i = index" [matColumnDef]="column">
-                                    <th mat-header-cell *matHeaderCellDef class="sticky text-primary-400">{{ column }}</th>
-                                    <td mat-cell *matCellDef="let element" >{{ element[i] }}</td>
-                                </ng-container>
-                
-                                <!-- Definir las filas 
-                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                            </table> -->
                                 <mtx-grid class="h-[639px] rounded" [data]="list" #grid 
                                     [columns]="columns"
                                     [columnMenuButtonColor]="'primary'"
