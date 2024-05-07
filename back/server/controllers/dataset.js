@@ -50,6 +50,7 @@ const getDatasets = async (req, res) => {
 
 // Función para obtener todos los datasets
 const getDatasetByIdx = async (req, res) => {
+    console.log(req.params);
     const idx = req.params.id;
     try {
 
@@ -74,21 +75,11 @@ const getDatasetByIdx = async (req, res) => {
 // Función para crear un dataset
 const createDataset = async (req, res) => {
     const {...object} = req.body;
-    // console.log(object)
     try {
-        // Comprueba si el dataset ya existe
-        // const existeDS = await getDatasetByIdx(object.DS_Idx);
-        // console.log(existeDS);
-        // if( existeDS !== null ){
-        //     res.status(400).json({
-        //         msg: 'El dataset ya existe'
-        //     });
-        //     return;
-        // }
-
         let data = {
             DS_CONF_Idx: object.DS_CONF_Idx,
             DS_Ruta: "",
+            DS_Ruta_Dic: "", // New field for dictionary path
             DS_Upd_When: new Date(),
         }
 
@@ -100,6 +91,12 @@ const createDataset = async (req, res) => {
         const ruta = `../../front/src/assets/datasets/${filename}`;
         data.DS_Ruta = '/assets/datasets/' + filename;
 
+        // Convert dictionary to JSON and save it on the server
+        const diccionario = JSON.stringify(object.DS_Diccionario);
+        const diccionarioFilename = `diccionario_${object.DS_CONF_Idx}_${timestamp}.json`;
+        const diccionarioRuta = `../../front/src/assets/diccionarios/${diccionarioFilename}`;
+        data.DS_Ruta_Dic = '/assets/diccionarios/' + diccionarioFilename;
+
         const resultado = await crearDataset(data);
 
         writeFile(ruta, csv, (error) => {
@@ -108,9 +105,18 @@ const createDataset = async (req, res) => {
                 res.status(500).json({ error: 'Error al guardar el dataset' });
             } else {
                 console.log(`Archivo CSV guardado con éxito en ${ruta}`);
-                res.status(200).json({
-                    msg: 'Dataset creado',
-                    resultado
+                // Save dictionary file
+                writeFile(diccionarioRuta, diccionario, (error) => {
+                    if (error) {
+                        console.error('Error al escribir el archivo de diccionario:', error);
+                        res.status(500).json({ error: 'Error al guardar el diccionario' });
+                    } else {
+                        console.log(`Archivo de diccionario guardado con éxito en ${diccionarioRuta}`);
+                        res.status(200).json({
+                            msg: 'Dataset y diccionario creados',
+                            resultado
+                        });
+                    }
                 });
             }
         });
@@ -173,7 +179,7 @@ const deleteDataset = async (req, res) => {
     try{
         
         // Se comprueba que haya un usuario con ese ID.
-        let dataset = await getdatasetiguracionById(idx);
+        let dataset = await datasetByIdx(idx);
         if( dataset === null ){
             // Si no lo hay, responde con not found sin cuerpo.
             res.status(404);

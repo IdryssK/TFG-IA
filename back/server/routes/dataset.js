@@ -19,7 +19,8 @@ validateJWT, getDatasetByIdx);
 // POST create dataset
 router.post('/', [
     check('DS_CONF_Idx', 'Tiene que tener un idx de la configuracion').notEmpty(),
-    check('DS_Dataset', 'Tiene que tener el dataset').notEmpty()
+    check('DS_Dataset', 'Tiene que tener el dataset').notEmpty(),
+    check('DS_Diccionario', 'Tiene que tener diccionario').notEmpty()
 ],
 validateJWT, createDataset);
 

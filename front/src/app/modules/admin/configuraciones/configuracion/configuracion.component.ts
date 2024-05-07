@@ -38,6 +38,9 @@ import * as dfd from 'danfojs';
 // import { Parser } from 'json2csv';
 import { writeFile } from 'fs';
 import { DatasetsService } from 'app/core/datasets/datasets.service';
+import { ProgressService } from 'app/core/progressBar/progressBar.service';
+import { ProgressDialogComponent } from '../../progressdialog/progressdialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector     : 'app-configuracion',
@@ -95,7 +98,7 @@ import { DatasetsService } from 'app/core/datasets/datasets.service';
                     MtxDatetimepickerInput,
                     MtxDatetimepickerToggle,
                     MtxGrid,
-                    MatSlideToggleModule
+                    MatSlideToggleModule,
                  ],
 })
 export class ConfiguracionComponent implements OnInit
@@ -108,7 +111,7 @@ export class ConfiguracionComponent implements OnInit
     /**
      * Constructor
      */
-    constructor(private _fuseAlertService: FuseAlertService, private datasetService: DatasetsService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
+    constructor(private dialog: MatDialog, private progressService: ProgressService, private _fuseAlertService: FuseAlertService, private datasetService: DatasetsService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {}
 
 // -----------------------------------PESTAÑAS------------------------------------------------------------------
 
@@ -574,6 +577,7 @@ export class ConfiguracionComponent implements OnInit
     displayedColumns2: string[] = ['columna', 'nulos', 'codificar', 'normalizar'];
 
     tratarNulos(list, tratamientoDatos) {
+        this.progressService.changeProgress(45);
         return list.map((item: any) => {
             const newItem: any = {};
             let noMete = false;
@@ -596,13 +600,17 @@ export class ConfiguracionComponent implements OnInit
     }
 
     codificar(datosNulos, tratamientoDatos) {
+        this.progressService.changeProgress(55);
         let valoresPorColumnas = {};
+        let datosCodificarDiccionario = {};
+
         for (let columna in tratamientoDatos) {
             if (tratamientoDatos[columna].codificar === 'one-hot' && tratamientoDatos[columna].hide === false) {
                 let nombreColumna = tratamientoDatos[columna].header;
                 valoresPorColumnas[nombreColumna] = datosNulos.map(item => item[nombreColumna]);
             }
         }
+
         let valoresPorColumnasCodificados = {};
         Object.keys(valoresPorColumnas).forEach((key) => {
             let df = new dfd.DataFrame(valoresPorColumnas)
@@ -614,17 +622,26 @@ export class ConfiguracionComponent implements OnInit
                 resultado.push(element.indexOf(1))
             });
             valoresPorColumnasCodificados[key] = resultado;
+
+            // Guardar el diccionario de etiquetas
+            datosCodificarDiccionario[key] = encode.$labels;
         });
-        return datosNulos.map((item) => {
+
+        let datosCodificar = datosNulos.map((item) => {
             const newItem = { ...item };
             for (let columna in valoresPorColumnasCodificados) {
                 newItem[columna] = valoresPorColumnasCodificados[columna].shift();
             }
             return newItem;
         });
+
+        // Devolver ambos arrays
+        return [datosCodificar, datosCodificarDiccionario];
     }
 
     normalizar(datosCodificar, tratamientoDatos) {
+        
+        this.progressService.changeProgress(65);
         let valoresPorColumnasNormalizados = {};
         for (let columna in tratamientoDatos) {
             if (tratamientoDatos[columna].normalizar === true && tratamientoDatos[columna].hide === false) {
@@ -658,7 +675,7 @@ export class ConfiguracionComponent implements OnInit
             return { header: column.header, field: column.header, hide: column.hide, show: column.show};
         });
         let datosNulos = this.tratarNulos(this.list2, this.tratamientoDatos);
-        let datosCodificar = this.codificar(datosNulos, this.tratamientoDatos);
+        let [datosCodificar] = this.codificar(datosNulos, this.tratamientoDatos);
         this.list3 = this.normalizar(datosCodificar, this.tratamientoDatos);
     }
 
@@ -768,6 +785,7 @@ export class ConfiguracionComponent implements OnInit
 // --------------------------------------------GENERAR DATOS---------------------------------------------------------------------
 
     async obtenerDatos() {
+        this.progressService.changeProgress(25);
         const response = await this.apiSmartUaService.getDataSmartUa(this.token, this.count_value, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end).toPromise();
         const data = response.result;
         const datasetCol =  data.columns.map((column: string) => {
@@ -797,10 +815,21 @@ export class ConfiguracionComponent implements OnInit
             return newItem;
         });
     }
+    progress: number = 0;
 
     async generar() {
+        this.progressService.changeProgress(0);
+        const dialogRef = this.dialog.open(ProgressDialogComponent, {
+            disableClose: true
+        });
+        await this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
+        .toPromise().then((response) => {
+            this.progressService.changeProgress(15);
+            this.count_value = response.result.values[0][1];
+            this.cdr.detectChanges();
+        });
         console.log(this.count_value);
-
+        
         const { datasetCol, datasetList } = await this.obtenerDatos();
 
         console.log(datasetList);
@@ -809,6 +838,7 @@ export class ConfiguracionComponent implements OnInit
         console.log(data1);
 
         const data2 = data1.map(item => {
+            this.progressService.changeProgress(35);
             const newItem = { ...item };
             this.tiposFechas.forEach(column => {
                 if (!column.hide) {
@@ -820,15 +850,23 @@ export class ConfiguracionComponent implements OnInit
         console.log(data2);
 
         let datosNulos = this.tratarNulos(data2, this.tratamientoDatos);
-        let datosCodificar = this.codificar(datosNulos, this.tratamientoDatos);
+
+        let [datosCodificar, datosCodificarDiccionario] = this.codificar(datosNulos, this.tratamientoDatos);
+
         let data3 = this.normalizar(datosCodificar, this.tratamientoDatos);
 
         console.log(data3);
-        this.datasetService.saveDataset(data3, this.idx).subscribe((response) => {
+        this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx).subscribe((response) => {
             console.log(response);
+            this.progressService.changeProgress(100); // Update progress to 100%
+                dialogRef.close();
+            },
+            (error) => {
+                console.error(error);
+            });
 
-        });
-
+        // Use datosCodificarDiccionario as needed
+        console.log(datosCodificarDiccionario);
     }
 
 }

@@ -16,6 +16,12 @@
         "title" : "Datasets list",
         "search-bar" : "Search for a dataset...",
         "new" : "Add",
-        "operations" : "Operations"
+        "operations" : "Operations",
+        "columns" : {
+            "configuration" : "Configuration",
+            "name" : "Name",
+            "dicc" : "Dictionary",
+            "date" : "Date"
+        }
     }
 }

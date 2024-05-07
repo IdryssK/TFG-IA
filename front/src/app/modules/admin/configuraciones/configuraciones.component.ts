@@ -102,6 +102,7 @@ export class ConfiguracionesComponent implements OnInit{
   getList() {
     this.isLoading = true;
     // hacer llamada a userService.getUsers()
+    console.log(this.query)
     this.configService.configuracionList(this.query).subscribe(data => {
       console.log(data);
       let configList = data.configuraciones.map(config => ({

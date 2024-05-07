@@ -26,12 +26,13 @@ export class DatasetsService {
     );
   }
 
-  saveDataset(data, idx): Observable<any> {
+  saveDataset(data, diccionario, idx): Observable<any> {
     let params = {
       "DS_CONF_Idx": idx,
-      "DS_Dataset": data
+      "DS_Dataset": data,
+      "DS_Diccionario": diccionario
     };
-    return this.http.post<any>(`${environment.apiUrl}/datasets`, params, this.cabeceras).pipe(
+    return this.http.post<any>(`${environment.apiUrl}/datasets`, params, this.cabeceras, ).pipe(
       map((response) => response),
     );
   }

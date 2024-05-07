@@ -13,8 +13,10 @@ const app = express();
 //dbConnection();
 
 app.use(cors()); 
-app.use( express.json() );// Soporte para cuerpos codificados en JSON
 app.use(bodyParser.json({ limit: '50mb' })); // Soporte para cuerpos JSON
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+app.use( express.json() );// Soporte para cuerpos codificados en JSON
 // === Rutas
 
 // Usuarios

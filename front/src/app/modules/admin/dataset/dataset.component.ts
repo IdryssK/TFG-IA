@@ -17,7 +17,9 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
 import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 import { CommonModule } from '@angular/common';
-
+import { DatasetsService } from 'app/core/datasets/datasets.service';
+import { HttpClient } from '@angular/common/http';
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-dataset',
   standalone: true,
@@ -29,21 +31,61 @@ export class DatasetComponent implements OnInit{
   searchInputControl: UntypedFormControl = new UntypedFormControl();
   
 
-  constructor(private userService : UserService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
+  constructor(private http: HttpClient, private datasetService : DatasetsService, private fb: FormBuilder, private translocoService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
+  columns: MtxGridColumn[] = [];
   ngOnInit(): void {
-    //this.getList();
-
-    this.transoloService.langChanges$.subscribe(() => {
-  
-      let t = translate('user.operations');
-      console.log(translate('user.operations'))
-    });
+    this.getList();
+   this.columns = [ 
+      { header: 'Idx', field: 'DS_Idx' },
+      { header: this.traducir('datasets.columns.configuration'), field: 'CONF_Nombre' },
+      { header: this.traducir('datasets.columns.name'), field: 'DS_Ruta' },
+      { header: this.traducir('datasets.columns.dicc'), field: 'DS_Ruta_Dic', class: 'role-column'},
+      { header: this.traducir('datasets.columns.date'), field: 'DS_Upd_When', class: 'role-column'},
+      {
+        header: this.traducir('datasets.operations'),
+        field: 'operation',
+        width: '240px',
+        pinned: 'right',
+        right: '2px',
+        type: 'button',
+        buttons: [
+          {
+            type: 'icon',
+            text: 'copy',
+            icon: 'download',
+            color: 'primary',
+            tooltip: 'Copy',
+            click: (row) => this.dowloadDataset(row.DS_Idx),
+          },
+          {
+            type: 'icon',
+            text: 'delete',
+            icon: 'delete',
+            tooltip: 'Delete',
+            color: 'warn',
+            click: (row) => this.borrarDataset(row.DS_Idx),
+          },
+        ],
+      },
+     ];
+    this.translocoService
+      .selectTranslate("datasets.columns.configuration", {})
+      .subscribe(console.log);
     
   }
 
+  traducir(key: string): string {
+    let translatedValue: string;
+    this.translocoService
+      .selectTranslate(key, {})
+      .subscribe((value) => {
+        translatedValue = value;
+      });
+    return translatedValue;
+  }
 
-  columns: MtxGridColumn[] = [  ];
+  
 
   searchForm = this.fb.group({
     searchQuery: ['']
@@ -62,7 +104,26 @@ export class DatasetComponent implements OnInit{
 
   getList() {
     this.isLoading = true;
-    // hacer llamada a userService.getUsers()
+    console.log(this.query);
+
+    this.datasetService.getDatasets(this.query).subscribe(
+      (response) => {
+        console.log(response);
+        let configList = response.datasets.map(config => ({
+          DS_Idx: config.DS_Idx,
+          CONF_Nombre: config.CONF_Nombre,
+          DS_Ruta: config.DS_Ruta.split('/').pop(),
+          DS_Ruta_Dic: config.DS_Ruta_Dic.split('/').pop(),
+          DS_Upd_When: config.DS_Upd_When,
+        }));
+        this.list = configList;
+        this.total = response.page.total;
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   
   }
 
@@ -75,8 +136,7 @@ export class DatasetComponent implements OnInit{
     this.getList();
   }
   
-  borrarUsuario(idx: number) {
-    console.log(this.userService.get());
+  borrarDataset(idx: number) {
     // if (uid === this.userService.()) {
     //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});
     //   return;
@@ -93,7 +153,7 @@ export class DatasetComponent implements OnInit{
     confirmation.afterClosed().subscribe((result) => {
         // If the confirm button pressed...
         if ( result === 'confirmed' ) {  
-          this.userService.deleteUser(idx).subscribe(
+          this.datasetService.deleteDataset(idx).subscribe(
             () => {
               
               this.getList();
@@ -121,5 +181,22 @@ export class DatasetComponent implements OnInit{
     this.query.query = this.lastSearch;
     this.getList();
   }
+  dowloadDataset(idx) {
+    console.log(idx)
+    this.datasetService.getDataset(parseInt(idx)).subscribe(dataset => {
+      console.log(dataset)
+      const url = dataset.dataset.DS_Ruta; // Assumes that getDataset returns an object with a DS_Ruta property
+
+      if (!url) {
+        console.error('URL no existe');
+        return;
+      }
+
+      this.http.get(url, { responseType: 'blob' }).subscribe((res: any) => {
+        const blob = new Blob([res], { type: 'text/csv' }); // Creates a blob with the data
+        saveAs(blob, `${dataset.dataset.DS_Ruta.split('/').pop()}`); // Uses the file-saver library to download the file
+      });
+    });
+}
 
 }

@@ -16,6 +16,12 @@
         "title" : "Lista de datasets",
         "search-bar" : "Busca un dataset...",
         "new" : "Añadir",
-        "operations" : "Operaciones"
+        "operations" : "Operaciones",
+        "columns" : {
+            "configuration" : "Configuración",
+            "name" : "Nombre",
+            "dicc" : "Diccionario",
+            "date" : "Fecha"
+        }
     }
 }
