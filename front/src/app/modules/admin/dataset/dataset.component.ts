@@ -20,6 +20,7 @@ import { CommonModule } from '@angular/common';
 import { DatasetsService } from 'app/core/datasets/datasets.service';
 import { HttpClient } from '@angular/common/http';
 import { saveAs } from 'file-saver';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-dataset',
   standalone: true,
@@ -33,59 +34,52 @@ export class DatasetComponent implements OnInit{
 
   constructor(private http: HttpClient, private datasetService : DatasetsService, private fb: FormBuilder, private translocoService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
-  columns: MtxGridColumn[] = [];
   ngOnInit(): void {
     this.getList();
-   this.columns = [ 
-      { header: 'Idx', field: 'DS_Idx' },
-      { header: this.traducir('datasets.columns.configuration'), field: 'CONF_Nombre' },
-      { header: this.traducir('datasets.columns.name'), field: 'DS_Ruta' },
-      { header: this.traducir('datasets.columns.dicc'), field: 'DS_Ruta_Dic', class: 'role-column'},
-      { header: this.traducir('datasets.columns.date'), field: 'DS_Upd_When', class: 'role-column'},
-      {
-        header: this.traducir('datasets.operations'),
-        field: 'operation',
-        width: '240px',
-        pinned: 'right',
-        right: '2px',
-        type: 'button',
-        buttons: [
-          {
-            type: 'icon',
-            text: 'copy',
-            icon: 'download',
-            color: 'primary',
-            tooltip: 'Copy',
-            click: (row) => this.dowloadDataset(row.DS_Idx),
-          },
-          {
-            type: 'icon',
-            text: 'delete',
-            icon: 'delete',
-            tooltip: 'Delete',
-            color: 'warn',
-            click: (row) => this.borrarDataset(row.DS_Idx),
-          },
-        ],
-      },
-     ];
+
     this.translocoService
       .selectTranslate("datasets.columns.configuration", {})
       .subscribe(console.log);
     
   }
 
-  traducir(key: string): string {
-    let translatedValue: string;
-    this.translocoService
-      .selectTranslate(key, {})
-      .subscribe((value) => {
-        translatedValue = value;
-      });
-    return translatedValue;
+  traducir(key: string): Observable<string> {
+    return this.translocoService.selectTranslate(key, {});
   }
 
-  
+  columns: MtxGridColumn[] = [ 
+    { header: 'Idx', field: 'DS_Idx' },
+    { header: this.traducir('datasets.columns.configuration'), field: 'CONF_Nombre' },
+    { header: this.traducir('datasets.columns.name'), field: 'DS_Ruta' },
+    { header: this.traducir('datasets.columns.dicc'), field: 'DS_Ruta_Dic', class: 'role-column'},
+    { header: this.traducir('datasets.columns.date'), field: 'DS_Upd_When', class: 'role-column'},
+    {
+      header: this.traducir('datasets.operations'),
+      field: 'operation',
+      width: '240px',
+      pinned: 'right',
+      right: '2px',
+      type: 'button',
+      buttons: [
+        {
+          type: 'icon',
+          text: 'Download',
+          icon: 'download',
+          color: 'primary',
+          tooltip: 'Download',
+          click: (row) => this.dowloadDataset(row.DS_Idx),
+        },
+        {
+          type: 'icon',
+          text: 'delete',
+          icon: 'delete',
+          tooltip: 'Delete',
+          color: 'warn',
+          click: (row) => this.borrarDataset(row.DS_Idx),
+        },
+      ],
+    },
+   ];
 
   searchForm = this.fb.group({
     searchQuery: ['']

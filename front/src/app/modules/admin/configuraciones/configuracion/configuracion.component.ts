@@ -440,7 +440,7 @@ export class ConfiguracionComponent implements OnInit
 
         await this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
         .toPromise().then((response) => {
-            // console.log(response);
+            console.log(response);
             this.count_value = response.result.values[0][1];
             this.cdr.detectChanges();
         });
@@ -727,6 +727,7 @@ export class ConfiguracionComponent implements OnInit
                     console.log(response);
                     this._fuseAlertService.show('success-save');
                     this.primerForm.markAsPristine();
+                    this.idx = response.resultado;
                     this.router.navigate(['/configuraciones/configuracion/' + response.resultado ]);
                 });
             }
@@ -826,7 +827,7 @@ export class ConfiguracionComponent implements OnInit
         .toPromise().then((response) => {
             this.progressService.changeProgress(15);
             this.count_value = response.result.values[0][1];
-            this.cdr.detectChanges();
+            // this.cdr.detectChanges();
         });
         console.log(this.count_value);
         
