@@ -24,9 +24,10 @@ export class ProgressDialogComponent implements OnInit {
   form: FormGroup;
   state: string;
   success: boolean;
+  error: boolean;
   constructor(private apiSmartUaService: ApiSmartUaService, private progressService: ProgressService, private datasetService: DatasetsService, public dialogRef: MatDialogRef<ProgressDialogComponent>,) { 
     this.form = new FormGroup({
-      nombre: new FormControl('asd', Validators.required),
+      nombre: new FormControl('', Validators.required),
     }); }
     token: string;
     selectedValueByTag: {[tag: string]: any[]} = {};
@@ -41,6 +42,7 @@ export class ProgressDialogComponent implements OnInit {
     this.success = false;
     console.log(this.generating);
     console.log(this.success);
+    this.progressService.changeProgress(0)
     this.progressService.currentState.subscribe(state => this.state = state);
     this.progressService.progress.subscribe(state => this.progress = state );
     
@@ -119,19 +121,21 @@ export class ProgressDialogComponent implements OnInit {
       if(this.progress === 100) {
         console.log('Dataset guardado correctamente')
           setTimeout(() => {
+            this.progressService.changeProgress(0)
             this.success = true;
             this.generating = false;
           }, 1000);
       }
       console.log(this.success);
       } catch (error) {
-        console.error(error);
+        this.error = true;
       }
     
   }
 
   aceptar() {
     // Aquí va el código para manejar cuando el usuario acepta
+    this.error = false;
     this.dialogRef.close();
   }
   cancelar() {

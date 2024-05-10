@@ -8,7 +8,7 @@
         </mat-form-field>
         <mat-dialog-actions class="w-full justify-center">
           <button mat-flat-button [color]="'accent'" (click)="cancelar()">Cancelar</button>
-          <button class="" mat-flat-button (click)="generar()" mat-flat-button 
+          <button class="" mat-flat-button (click)="generar()" mat-flat-button type="submit"
                   [color]="'primary'"  [disabled]="form.pristine">
                       Generar
           </button>
@@ -16,7 +16,7 @@
       </mat-dialog-content>
     </div>
 </div>
-<div class="w-96 h-32" *ngIf="generating && progress !== 105">
+<div class="w-96 h-32" *ngIf="generating && progress !== 105 && !error">
     <h2 mat-dialog-title>Generando... ({{progress}}%)</h2>
     <mat-dialog-content>
     <mtx-progress [type]="'success'"
@@ -38,4 +38,15 @@
         </mat-dialog-content>
     </div>
     
+</div>
+<div class="w-96 h-42" *ngIf="error">
+  <div class="flex flex-col items-center justify-center h-full">
+      <h2 mat-dialog-title>Hay un problema con el <strong>token</strong> o la <strong>OPEN Api</strong></h2>
+      <mat-dialog-content>
+          <mat-dialog-actions>
+          <button  mat-flat-button [color]="'warn'"(click)="aceptar()">Aceptar</button>
+          </mat-dialog-actions>
+      </mat-dialog-content>
+  </div>
+  
 </div>

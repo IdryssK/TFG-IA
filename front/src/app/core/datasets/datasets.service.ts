@@ -164,36 +164,41 @@ export class DatasetsService {
         return [datosCodificar, datosCodificarDiccionario];
   }
 
+  contarValoresDiferentes(arr: number[]): number {
+    const conjunto = new Set(arr);
+    return conjunto.size;
+  }
   async normalizar(data: any, tratamientoDatos: any) {
     console.log('Normalizando')
 
-    // Pre-calculate Vmin and Vmax for each column
-    const columnStats = {};
+    // Calculate unique values and steps for each column outside the map loop
+    const columnData = {};
     for (let columna in tratamientoDatos) {
-      if (tratamientoDatos[columna].normalizar === true && tratamientoDatos[columna].hide === false) {
-        let nombreColumna = tratamientoDatos[columna].header;
-        let values = data.map(item => item[nombreColumna]);
-        columnStats[nombreColumna] = {
-          Vmin: values.reduce((a, b) => Math.min(a, b)),
-          Vmax: values.reduce((a, b) => Math.max(a, b)),
-        };
-      }
+        if (tratamientoDatos[columna].normalizar === true && tratamientoDatos[columna].hide === false) {
+            let nombreColumna = tratamientoDatos[columna].header;
+            let numElementos = this.contarValoresDiferentes(data.map(item => item[nombreColumna]));
+            let Vini = parseInt(tratamientoDatos[columna].min)
+            let Vfin = parseInt(tratamientoDatos[columna].max)
+            let paso = (Vfin - Vini) / (numElementos - 1);
+
+            columnData[nombreColumna] = { paso, Vini };
+        }
     }
 
     return data.map((item, index) => {
-      const newItem = { ...item };
-      for (let columna in tratamientoDatos) {
-        if (tratamientoDatos[columna].normalizar === true && tratamientoDatos[columna].hide === false) {
-          let nombreColumna = tratamientoDatos[columna].header;
-          let { Vmin, Vmax } = columnStats[nombreColumna];
-          let Rmin = parseInt(tratamientoDatos[columna].min);
-          let Rmax = parseInt(tratamientoDatos[columna].max);
+        const newItem = { ...item };
+        for (let columna in tratamientoDatos) {
+            if (tratamientoDatos[columna].normalizar === true && tratamientoDatos[columna].hide === false) {
+                let nombreColumna = tratamientoDatos[columna].header;
 
-          // Apply the new normalization formula
-          newItem[nombreColumna] = ((item[nombreColumna] - Vmin) / (Vmax - Vmin)) * (Rmax - Rmin) + Rmin;
+                // Use the precalculated step and Vini values
+                let { paso, Vini } = columnData[nombreColumna];
+
+                // Apply the new normalization formula
+                newItem[nombreColumna] = Vini + (item[nombreColumna] * paso);
+            }
         }
-      }
-      return newItem;
+        return newItem;
     });
   }
 

@@ -18,11 +18,35 @@ import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco'
 import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones.service';
 import { FuseAlertComponent, FuseAlertService, FuseAlertType } from '@fuse/components/alert';
 import { environment } from 'environments/environment';
+import { provideMomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import * as moment from 'moment';
+
 @Component({
   selector: 'app-configuraciones',
   standalone: true,
   templateUrl: './configuraciones.component.html',
   styleUrl: './configuraciones.component.scss',
+  providers: [provideMomentDatetimeAdapter({
+    parse: {
+    dateInput: 'YYYY-MM-DD',
+    monthInput: 'MMMM',
+    yearInput: 'YYYY',
+    timeInput: 'HH:mm',
+    datetimeInput: 'YYYY-MM-DD HH:mm',
+    },
+    display: {
+    dateInput: 'YYYY-MM-DD',
+    monthInput: 'MMMM',
+    yearInput: 'YYYY',
+    timeInput: 'HH:mm',
+    datetimeInput: 'YYYY-MM-DD HH:mm',
+    monthYearLabel: 'YYYY MMMM',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+    popupHeaderDateLabel: 'MMM DD, ddd',
+    },
+    }),
+],
   imports: [FuseAlertComponent, NgIf, TranslocoModule,ReactiveFormsModule , LanguagesComponent, RouterLink, MatFormFieldModule, MatIconModule, MatInputModule, MatTableModule, MatSortModule, MatPaginatorModule, MatButtonModule, FormsModule, MtxGrid],
 })
 export class ConfiguracionesComponent implements OnInit{
@@ -111,7 +135,7 @@ export class ConfiguracionesComponent implements OnInit{
       let configList = data.configuraciones.map(config => ({
         idx: config.CONF_Idx,
         nombre: config.CONF_Nombre,
-        updWhen: config.CONF_Upd_When
+        updWhen: moment(config.CONF_Upd_When).format('YYYY-MM-DD HH:mm:ss')
       }));
       this.total = data.page.total;
       this.isLoading = false;

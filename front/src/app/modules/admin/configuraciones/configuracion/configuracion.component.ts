@@ -139,7 +139,8 @@ export class ConfiguracionComponent implements OnInit
     };
     guardado: boolean;
     actualizado: boolean;
-    
+    validFechas: boolean;
+
     selectedTime: Date | null = null;
     filterForm: FormGroup = this.fb.group({
     });
@@ -191,14 +192,14 @@ export class ConfiguracionComponent implements OnInit
         token: ['', Validators.required],
         start: ['', new UntypedFormControl()],
         end: ['', new UntypedFormControl()],
-        limit: ['', Validators.required],
+        limit: [''],
         filtros :[this.selectedValueByTag], 
         Tabla1AdministrarColumnas: [[]],
         Tabla2TiposFechas: [[]],
         Tabla3TratamientoDatos: [[]],
     });
 
-
+    
 // --------------------------------------------FILTROS---------------------------------------------------------------------------
 
     isContentOpen: boolean = true; 
@@ -380,6 +381,20 @@ export class ConfiguracionComponent implements OnInit
         this.isModified = false;
         this.isReload = false;
 
+
+        this.primerForm.valueChanges.subscribe(values => {
+            const startDate = new Date(values.start);
+            const endDate = new Date(values.end);
+        
+            // Check if start date is after end date
+            if (startDate > endDate) {
+              this.primerForm.get('start').setValue('');  
+              this.validFechas = true;
+            } else {
+              this.validFechas = false;
+            }
+          });
+
         this.tags = environment.filters;
         this.idx = this.route.snapshot.params['idx'];
         console.log(this.idx);
@@ -427,7 +442,7 @@ export class ConfiguracionComponent implements OnInit
         
         let limite = this.primerForm.get('limit')?.value
         limite = limite === '' ? 100 : limite;
-
+        
         this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
         .toPromise().then((response) => {
            

@@ -22,6 +22,7 @@ import { HttpClient } from '@angular/common/http';
 import { saveAs } from 'file-saver';
 import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
+import * as moment from 'moment';
 @Component({
   selector: 'app-dataset',
   standalone: true,
@@ -120,7 +121,7 @@ export class DatasetComponent implements OnInit{
           CONF_Nombre: config.DS_Nombre,
           DS_Ruta: config.DS_Ruta.split('/').pop(),
           DS_Ruta_Dic: config.DS_Ruta_Dic.split('/').pop(),
-          DS_Upd_When: config.DS_Upd_When,
+          DS_Upd_When: moment(config.DS_Upd_When).format('YYYY-MM-DD HH:mm:ss'),
         }));
         this.list = configList;
         this.total = response.page.total;
