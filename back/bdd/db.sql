@@ -4,7 +4,7 @@ CREATE OR REPLACE TABLE configuracion (
 	CONF_Data JSON,
 	CONF_Upd_When DATETIME
 
-)
+);
 
 CREATE OR REPLACE TABLE usuario (
 	User_Idx INT PRIMARY KEY AUTO_INCREMENT,
@@ -15,8 +15,11 @@ CREATE OR REPLACE TABLE usuario (
 
 CREATE OR REPLACE TABLE dataset (
 	DS_Idx INT PRIMARY KEY AUTO_INCREMENT,
+	DS_Nombre VARCHAR(50),
 	DS_CONF_Idx INT,
 	DS_Ruta VARCHAR(255),
 	DS_Ruta_Dic VARCHAR(255),
 	DS_Upd_When DATETIME
 );
+
+INSERT INTO `usuario` (`User_Idx`, `User_Email`, `User_Password`, `User_Rol`) VALUES (1, 'Nuevo@email.com', '$2a$10$uScKiTuBDp0T2jdpatwb7OJNtfl.IT6YTOj.W8J3nUBF5dt7y1B0a', 1);
