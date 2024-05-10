@@ -20,16 +20,15 @@ async function getAllDatasets(data) {
         let paramsQuery = [];
         let query = `SELECT 
                         DS_Idx,
-                        CONF_Nombre,
+                        DS_Nombre,
                         DS_Ruta,
                         DS_Ruta_Dic,
                         DS_Upd_When 
                     FROM dataset
-                    LEFT JOIN configuracion 
-                        ON configuracion.CONF_Idx = dataset.DS_CONF_Idx`;
+                    `;
 
         if(data.querySearch){
-            query += ` WHERE DS_Ruta LIKE ?`;
+            query += ` WHERE DS_Nombre LIKE ?`;
             paramsQuery.push(data.querySearch);
         }
 

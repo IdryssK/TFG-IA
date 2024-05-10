@@ -14,6 +14,7 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+import {MatSelectModule} from '@angular/material/select';
 
 @Component({
     selector     : 'app-create-user',
@@ -21,7 +22,7 @@ import { User } from 'app/core/user/user.types';
     encapsulation: ViewEncapsulation.None,
     animations   : fuseAnimations,
     standalone   : true,
-    imports      : [RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
+    imports      : [MatSelectModule, RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
 })
 export class CreateUserComponent implements OnInit
 {
@@ -59,6 +60,7 @@ export class CreateUserComponent implements OnInit
         this.signUpForm = this._formBuilder.group({
             email     : ['', [Validators.required, Validators.email]],
             password  : ['', Validators.required],
+            rol: ['', Validators.required],
                 },
         );
     }
@@ -73,9 +75,10 @@ export class CreateUserComponent implements OnInit
     create(): void {
         this.signUpForm.controls['email'].disable();
         this.signUpForm.controls['password'].disable();
+        this.signUpForm.controls['rol'].disable();
         console.log(this.signUpForm.disabled);
         
-        this.authService.signUp({ email: this.signUpForm.value.email, password: this.signUpForm.value.password })
+        this.authService.signUp({ email: this.signUpForm.value.email, password: this.signUpForm.value.password, rol: this.signUpForm.value.rol})
             .subscribe(
                 (data) => {
                     // Success

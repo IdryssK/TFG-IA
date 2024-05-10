@@ -18,9 +18,9 @@
         "new" : "Add",
         "operations" : "Operations",
         "columns" : {
-            "configuration" : "Configuration",
-            "name" : "Name",
-            "dicc" : "Dictionary",
+            "name" : "Dataset name",
+            "file" : "File name",
+            "dicc" : "Dictionary name",
             "date" : "Date"
         }
     }

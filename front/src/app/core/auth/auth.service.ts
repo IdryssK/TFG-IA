@@ -152,7 +152,7 @@ export class AuthService
      *
      * @param user
      */
-    signUp(user: { email: string; password: string }): Observable<any>
+    signUp(user: { email: string; password: string; rol: number }): Observable<any>
     {
         return this._httpClient.post('http://localhost:3000/api/users', user, this.cabeceras);
     }

@@ -15,7 +15,7 @@
             <div class="flex items-center h-20 pt-6 px-8">
                 <img
                     class="w-24"
-                    src="assets/images/logo/TFG-Mockups.png"
+                    src="assets/images/logo/logo_1.png"
                     alt="Logo image">
             </div>
         </ng-container>
@@ -33,14 +33,14 @@
                 <div class="hidden lg:flex">
                     <img
                         class="dark:hidden w-24"
-                        src="assets/images/logo/logo-text.svg">
+                        src="assets/images/logo/logo-text.png">
                     <img
                         class="hidden dark:flex w-24"
-                        src="assets/images/logo/logo-text-on-dark.svg">
+                        src="assets/images/logo/logo-text-on-dark.png">
                 </div>
                 <img
                     class="flex lg:hidden w-8"
-                    src="assets/images/logo/logo.svg">
+                    src="assets/images/logo/logo_1.png">
             </div>
             <!-- Horizontal navigation -->
             <fuse-horizontal-navigation
@@ -63,8 +63,8 @@
         <!-- Components -->
         <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
             <languages></languages>
-            <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
-            
+            <!-- <fuse-fullscreen class="hidden md:block"></fuse-fullscreen> -->
+
             <user></user>
         </div>
     </div>
@@ -77,8 +77,8 @@
     </div>
 
     <!-- Footer -->
-    <div class="relative flex flex-0 items-center w-full h-14 sm:h-15 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden">
-        <span class="font-medium text-secondary">Idryss Kachermi - Smart University &copy; {{currentYear}}</span>
+    <div class="relative flex flex-0 items-center w-full h-14 sm:h-15 px-4 md:px-6 z-5 border-t bg-card dark:bg-transparent print:hidden">
+        <span class="font-medium text-secondary">{{footer}} &copy; {{currentYear}}</span>
     </div>
 
 </div>

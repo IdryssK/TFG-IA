@@ -12,16 +12,18 @@ import { Navigation } from 'app/core/navigation/navigation.types';
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { Subject, takeUntil } from 'rxjs';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-
+import { environment } from 'environments/environment.development';
+import { SettingsComponent } from 'app/layout/common/settings/settings.component';
 @Component({
     selector     : 'modern-layout',
     templateUrl  : './modern.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [FuseLoadingBarComponent, LanguagesComponent, NgIf, FuseVerticalNavigationComponent, FuseHorizontalNavigationComponent, MatButtonModule, MatIconModule, FuseFullscreenComponent, UserComponent, RouterOutlet],
+    imports      : [SettingsComponent, FuseLoadingBarComponent, LanguagesComponent, NgIf, FuseVerticalNavigationComponent, FuseHorizontalNavigationComponent, MatButtonModule, MatIconModule, FuseFullscreenComponent, UserComponent, RouterOutlet],
 })
 export class ModernLayoutComponent implements OnInit, OnDestroy
 {
+    footer = environment.footer;
     isScreenSmall: boolean;
     navigation: Navigation;
     private _unsubscribeAll: Subject<any> = new Subject<any>();

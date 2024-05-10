@@ -17,6 +17,7 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
 import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { ConfiguracionesService } from 'app/core/configuraciones/configuraciones.service';
 import { FuseAlertComponent, FuseAlertService, FuseAlertType } from '@fuse/components/alert';
+import { environment } from 'environments/environment';
 @Component({
   selector: 'app-configuraciones',
   standalone: true,
@@ -26,8 +27,9 @@ import { FuseAlertComponent, FuseAlertService, FuseAlertType } from '@fuse/compo
 })
 export class ConfiguracionesComponent implements OnInit{
   searchInputControl: UntypedFormControl = new UntypedFormControl();
-  
-
+  per_page: number = environment.per_page;
+  per_page_options = environment.per_page_options;
+  eliminado: boolean;
   constructor(private _fuseAlertService: FuseAlertService, private userService : UserService, private configService: ConfiguracionesService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {}
   
   ngOnInit(): void {
@@ -43,9 +45,10 @@ export class ConfiguracionesComponent implements OnInit{
 
 
   columns: MtxGridColumn[] = [
-    { header: 'Idx', field: 'idx' },
-    { header: 'Nombre', field: 'nombre' },
-    { header: 'Ultima modificación', field: 'updWhen', class: 'role-column'},
+    { header: '', field: 'prueba'},
+    { header: 'Idx', field: 'idx', sortable: 'idx', sortProp: { id: 'idx', start: 'asc' }, type: 'number' , pinned: 'left'},
+    { header: 'Nombre', field: 'nombre', sortable: 'nombre', sortProp: { id: 'nombre', start: 'asc' }, pinned: 'left'},
+    { header: 'Ultima modificación', field: 'updWhen', sortable: 'updWhen', sortProp: { id: 'updWhen', start: 'asc' }, pinned: 'left'},
     {
       header: translate('user.operations'),
       field: 'operation',
@@ -95,7 +98,7 @@ export class ConfiguracionesComponent implements OnInit{
 
   query = {
     page: 0,
-    per_page: 15,
+    per_page: this.per_page,
     query:''
   };
 
@@ -156,7 +159,7 @@ export class ConfiguracionesComponent implements OnInit{
           this.configService.deleteConfiguracion(idx).subscribe(data => {
             console.log(data);
             this.getList();
-            this._fuseAlertService.show('success-delete');
+            this.eliminado = true;
           });
         }
         else {

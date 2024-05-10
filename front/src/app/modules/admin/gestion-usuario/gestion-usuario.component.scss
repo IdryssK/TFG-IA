@@ -1,6 +1,9 @@
 :host ::ng-deep {
   
   .mtx-grid {
+    .mat-mdc-header-cell {
+      z-index: 5 !important;
+    }
     .mat-badge-after .mat-badge-content {
       right: 0;
     }

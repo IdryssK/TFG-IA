@@ -50,7 +50,7 @@ export class FuseAlertService
         {
             return;
         }
-
+        console.log('dismiss-----');
         // Execute the observable
         this._onDismiss.next(name);
     }
@@ -67,7 +67,7 @@ export class FuseAlertService
         {
             return;
         }
-
+        console.log('show-----')
         // Execute the observable
         this._onShow.next(name);
     }

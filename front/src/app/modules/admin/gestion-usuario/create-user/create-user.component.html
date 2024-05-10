@@ -3,7 +3,7 @@
         <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
             <!-- Logo -->
             <div class="w-12">
-                <img src="assets/images/logo/logo.svg">
+                <img src="assets/images/logo/logo_1.png">
             </div>
 
             <!-- Title -->
@@ -46,7 +46,13 @@
                         Please enter a valid email address
                     </mat-error>
                 </mat-form-field>
-
+                <mat-form-field class="w-full">
+                    <mat-label>Rol</mat-label>
+                    <mat-select formControlName="rol">
+                        <mat-option value=1>Admin</mat-option>
+                        <mat-option value=0 >Usuario</mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <!-- Password field -->
                 <mat-form-field class="w-full">
                     <mat-label>Password</mat-label>

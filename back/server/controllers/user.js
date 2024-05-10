@@ -144,11 +144,11 @@ const createUsers = async( req , res = response ) => {
             });
             return;
         }
-
+        console.log(object)
         let data = {
             User_Email: object.email,
             User_Password: object.password,
-            User_Rol: ( object.role === 0 || object.role === 1 ? object.role : 0 )
+            User_Rol: object.rol
         }
         console.log(data)
         // Genera una cadena aleatoria.

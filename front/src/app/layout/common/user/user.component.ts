@@ -1,5 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass, NgIf,NgFor } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
+import { FuseDrawerComponent } from '@fuse/components/drawer';
+import { FuseConfig, FuseConfigService, Scheme, Theme, Themes } from '@fuse/services/config';
 
 @Component({
     selector       : 'user',
@@ -17,10 +19,15 @@ import { Subject, takeUntil } from 'rxjs';
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs       : 'user',
     standalone     : true,
-    imports        : [MatButtonModule, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule],
+    imports        : [MatButtonModule, NgFor, FuseDrawerComponent, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule],
 })
 export class UserComponent implements OnInit, OnDestroy
 {
+    config: FuseConfig;
+    layout: string;
+    scheme: 'dark' | 'light';
+    theme: string;
+    themes: Themes;
     /* eslint-disable @typescript-eslint/naming-convention */
     static ngAcceptInputType_showAvatar: BooleanInput;
     /* eslint-enable @typescript-eslint/naming-convention */
@@ -37,6 +44,7 @@ export class UserComponent implements OnInit, OnDestroy
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _userService: UserService,
+        private _fuseConfigService: FuseConfigService,
     )
     {
     }
@@ -60,6 +68,14 @@ export class UserComponent implements OnInit, OnDestroy
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+            // Subscribe to config changes
+        this._fuseConfigService.config$
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((config: FuseConfig) =>
+        {
+            // Store the config
+            this.config = config;
+        });
     }
 
     /**
@@ -97,5 +113,45 @@ export class UserComponent implements OnInit, OnDestroy
     signOut(): void
     {
         this._router.navigate(['/sign-out']);
+    }
+
+
+    /**
+     * Set the layout on the config
+     *
+     * @param layout
+     */
+    setLayout(layout: string): void
+    {
+        // Clear the 'layout' query param to allow layout changes
+        this._router.navigate([], {
+            queryParams        : {
+                layout: null,
+            },
+            queryParamsHandling: 'merge',
+        }).then(() =>
+        {
+            // Set the config
+            this._fuseConfigService.config = {layout};
+        });
+    }
+    /**
+     * Set the scheme on the config
+     *
+     * @param scheme
+     */
+    setScheme(scheme: Scheme): void
+    {
+        this._fuseConfigService.config = {scheme};
+    }
+
+    /**
+     * Set the theme on the config
+     *
+     * @param theme
+     */
+    setTheme(theme: Theme): void
+    {
+        this._fuseConfigService.config = {theme};
     }
 }

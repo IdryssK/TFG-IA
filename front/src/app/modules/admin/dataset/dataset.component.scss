@@ -1,5 +1,8 @@
 :host ::ng-deep {
     .mtx-grid {
+      .mat-mdc-header-cell {
+        z-index: 5 !important;
+      }
       .mat-badge-after .mat-badge-content {
         right: 0;
       }
@@ -8,9 +11,7 @@
         top: 0;
       }
     
-      .mat-sort-header-container {
-        color: rgba(255, 196, 88, 0.953);
-      }
+
   
       
       .mat-mdc-paginator-container {

@@ -7,13 +7,16 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ProgressService {
-  private progress = new BehaviorSubject<number>(0);
+  private stateSource = new BehaviorSubject('idle');
+  currentState = this.stateSource.asObservable();
 
-  getProgress() {
-    return this.progress.asObservable();
+  changeState(state: string) {
+    this.stateSource.next(state);
   }
+  private progressSource = new BehaviorSubject<number>(0);
+  progress = this.progressSource.asObservable();
 
   changeProgress(value: number) {
-    this.progress.next(value);
+    this.progressSource.next(value);
   }
 }

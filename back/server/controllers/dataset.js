@@ -5,8 +5,10 @@ const {crearDataset,
     datasetByIdx,
     getAllDatasets,} = require('../dao/dataset');
 const { Parser } = require( 'json2csv');
-const { writeFile } = require( 'fs');
-    
+const { writeFile, unlink } = require( 'fs');
+const fs = require('fs').promises;
+
+require('dotenv').config();
 
 
 // Función para obtener un dataset por su ID
@@ -78,6 +80,7 @@ const createDataset = async (req, res) => {
     try {
         let data = {
             DS_CONF_Idx: object.DS_CONF_Idx,
+            DS_Nombre: object.DS_Nombre,
             DS_Ruta: "",
             DS_Ruta_Dic: "", // New field for dictionary path
             DS_Upd_When: new Date(),
@@ -88,14 +91,15 @@ const createDataset = async (req, res) => {
         const csv = json2csvParser.parse(object.DS_Dataset);
         const timestamp = data.DS_Upd_When.getTime();
         const filename = `dataset_${object.DS_CONF_Idx}_${timestamp}.csv`;
-        const ruta = `../../front/src/assets/datasets/${filename}`;
-        data.DS_Ruta = '/assets/datasets/' + filename;
+        const ruta = process.env.DATASETPATH+`${filename}`;
+        console.log(ruta);
+        data.DS_Ruta = ruta;
 
         // Convert dictionary to JSON and save it on the server
         const diccionario = JSON.stringify(object.DS_Diccionario);
         const diccionarioFilename = `diccionario_${object.DS_CONF_Idx}_${timestamp}.json`;
-        const diccionarioRuta = `../../front/src/assets/diccionarios/${diccionarioFilename}`;
-        data.DS_Ruta_Dic = '/assets/diccionarios/' + diccionarioFilename;
+        const diccionarioRuta = process.env.DICCIONARYPATH+`${diccionarioFilename}`;
+        data.DS_Ruta_Dic = diccionarioRuta;
 
         const resultado = await crearDataset(data);
 
@@ -186,7 +190,11 @@ const deleteDataset = async (req, res) => {
             res.send();
             return;
         }
-
+        console.log(dataset.DS_Ruta);
+        let ruta = `../../front/src/${dataset.DS_Ruta}`; // Ruta del archivo
+        await fs.unlink(dataset.DS_Ruta);
+        await fs.unlink(dataset.DS_Ruta_Dic);
+        // unlink(dataset.DS_Ruta_Dic);
         // Se elimina usuario.
         await borrarDataset(idx);
 

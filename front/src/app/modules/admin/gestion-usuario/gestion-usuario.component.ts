@@ -17,6 +17,7 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
 import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { FuseAlertService, FuseAlertComponent } from '@fuse/components/alert';
 import { NavigationService } from 'app/core/navigation/navigation.service';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-gestion-usuario',
@@ -27,8 +28,10 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 })
 export class GestionUsuarioComponent implements OnInit{
   searchInputControl: UntypedFormControl = new UntypedFormControl();
-  
-
+  per_page: number = environment.per_page;
+  per_page_options = environment.per_page_options;
+  eliminado:boolean;
+  editarYo:boolean;
   constructor(private userService : UserService, private nav: NavigationService, private _fuseAlertService: FuseAlertService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
   ngOnInit(): void {
@@ -49,12 +52,15 @@ export class GestionUsuarioComponent implements OnInit{
   };
 
   columns: MtxGridColumn[] = [
-    { header: 'Idx', field: 'idx' },
-    { header: 'Email', field: 'email' },
+    { header: '', field: 'prueba'},
+    { header: 'Idx', field: 'idx' ,minWidth: 400, maxWidth: 500, sortable: 'idx', sortProp: { id: 'idx', start: 'asc' }, type: 'number', pinned: 'left'},
+    { header: 'Email', field: 'email', sortable: 'email', sortProp: { id: 'email', start: 'asc' }, pinned: 'left'},
     { 
       header: 'Role', 
       field: 'role', 
-      formatter: (data: any) => data.role === 'admin' ? `<span class="admin">${data.role}</span>` : `<span class="usuario">${data.role}</span>`
+      formatter: (data: any) => data.role === 'admin' ? `<span class="admin">${data.role}</span>` : `<span class="usuario">${data.role}</span>`,
+      sortable: 'role',
+      sortProp: { id: 'role', start: 'asc' }, pinned: 'left'
     },
     {
       header: translate('user.operations'),
@@ -95,7 +101,7 @@ export class GestionUsuarioComponent implements OnInit{
 
   query = {
     page: 0,
-    per_page: 5,
+    per_page: this.per_page,
     query:''
   };
 
@@ -135,7 +141,7 @@ export class GestionUsuarioComponent implements OnInit{
     if (idxLogged && idxLogged === idx) {
       // Show error message
       console.log('Cannot edit your own user');
-      this._fuseAlertService.show('error-edit-own-user');
+      this.editarYo = true;
       setTimeout(() => {
         // this._fuseAlertService.dismiss('error-edit-own-user');
       }, 1500);
@@ -155,7 +161,7 @@ export class GestionUsuarioComponent implements OnInit{
       idxLogged = user.User_Idx;
     });
     if(idxLogged === idx){
-      this._fuseAlertService.show('error-delete-own-user');
+      this.editarYo = true;
       setTimeout(() => {
         // this._fuseAlertService.dismiss('error-delete-own-user');
       }, 1500);
@@ -179,6 +185,7 @@ export class GestionUsuarioComponent implements OnInit{
               () => {
                 
                 this.getList();
+                this.eliminado = true;
               },
               (error) => {
                 console.error(error);
