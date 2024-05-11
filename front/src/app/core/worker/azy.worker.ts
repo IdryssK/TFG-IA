@@ -127,6 +127,10 @@ async function codificar(data: any, tratamientoDatos: any) {
     return [datosCodificar, datosCodificarDiccionario];
 }
 
+function contarValoresDiferentes(arr: number[]): number {
+    const conjunto = new Set(arr);
+    return conjunto.size;
+}
 
 async function normalizar ( data: any, tratamientoDatos: any ){
 	console.log('Normalizando')
@@ -136,7 +140,7 @@ async function normalizar ( data: any, tratamientoDatos: any ){
     for (let columna in tratamientoDatos) {
         if (tratamientoDatos[columna].normalizar === true && tratamientoDatos[columna].hide === false) {
             let nombreColumna = tratamientoDatos[columna].header;
-            let numElementos = this.contarValoresDiferentes(data.map(item => item[nombreColumna]));
+            let numElementos = contarValoresDiferentes(data.map(item => item[nombreColumna]));
             let Vini = parseInt(tratamientoDatos[columna].min)
             let Vfin = parseInt(tratamientoDatos[columna].max)
             let paso = (Vfin - Vini) / (numElementos - 1);
