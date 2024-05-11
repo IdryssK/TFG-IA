@@ -42,6 +42,7 @@ import { ProgressService } from 'app/core/progressBar/progressBar.service';
 import { ProgressDialogComponent } from '../../progressdialog/progressdialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs';
+import { WorkerService } from 'app/core/worker/worker.service';
 
 @Component({
     selector     : 'app-configuracion',
@@ -113,7 +114,7 @@ export class ConfiguracionComponent implements OnInit
     /**
      * Constructor
      */
-    constructor(private dialog: MatDialog, private progressService: ProgressService, private _fuseAlertService: FuseAlertService, private datasetService: DatasetsService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {
+    constructor(private dialog: MatDialog, private workerService: WorkerService,private progressService: ProgressService, private _fuseAlertService: FuseAlertService, private datasetService: DatasetsService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {
         this.router.events.pipe(
             filter(event => event instanceof NavigationStart)
           ).subscribe(() => {
@@ -140,6 +141,8 @@ export class ConfiguracionComponent implements OnInit
     guardado: boolean;
     actualizado: boolean;
     validFechas: boolean;
+    worker:string;
+    result: any = [];
 
     selectedTime: Date | null = null;
     filterForm: FormGroup = this.fb.group({
@@ -153,7 +156,6 @@ export class ConfiguracionComponent implements OnInit
     tags: any = [];
     values: any = [];
     inputs: any = [];
-    
     filteredItems: string[] = this.values.slice();
     selectedValues = new FormControl([]);
     selectedValueByTag: {[tag: string]: any[]} = {};
@@ -855,7 +857,12 @@ export class ConfiguracionComponent implements OnInit
         const dialogRef = this.dialog.open(ProgressDialogComponent, {
             disableClose: true
         });
+        // this.workerService.postMessage('VENGA VA PORFAVOR');
         
+        // this.workerService.workerMessage.subscribe((message) => {
+        //     console.log('Received message from worker:', message);
+        //   });
+
         // await this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
         // .toPromise().then((response) => {
         //     this.progressService.changeProgress(15);
@@ -902,7 +909,31 @@ export class ConfiguracionComponent implements OnInit
         // // Use datosCodificarDiccionario as needed
         // console.log(datosCodificarDiccionario);
     }
+    async work(){
+        // let result;
+        // console.log(this.tratamientoDatos);
+        // if(typeof Worker !== 'undefined') {
+        //     const worker = new Worker(new URL('./work.worker.ts', import.meta.url), { type: 'module' });  
+        //     worker.postMessage(this.tratamientoDatos);
+        //     worker.onmessage = ({ data }) => {
+        //         this.result = data.joder;
+        //         console.log('mira: ', this.result); 
+        //     };
+        //     worker.onerror = (error) => {
+        //         console.error('Error from worker:', error);
+        //     };
+        // } else {
+        //     console.log('Web Workers are not supported in this environment.');
+        // }
+        // if(result !== undefined){
+        //     return result;
+        // }
+        this.workerService.workerMessage.subscribe((message) => {
+            console.log('Received message from worker:', message);
+          });
 
+        this.workerService.postMessage('VENGA VA PORFAVOR');
+    }
 }
 
 

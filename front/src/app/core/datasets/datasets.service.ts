@@ -125,44 +125,40 @@ export class DatasetsService {
   }
 
   async codificar(data: any, tratamientoDatos: any) {
-        console.log('Codificando')
+    console.log('Codificando')
+
     let valoresPorColumnas = {};
-        let datosCodificarDiccionario = {};
+    let datosCodificarDiccionario = {};
+    let valoresPorColumnasCodificados = {};
 
-        for (let columna in tratamientoDatos) {
-            if (tratamientoDatos[columna].codificar === 'one-hot' && tratamientoDatos[columna].hide === false) {
-                let nombreColumna = tratamientoDatos[columna].header;
-                valoresPorColumnas[nombreColumna] = data.map(item => item[nombreColumna]);
-            }
-        }
+    for (let columna in tratamientoDatos) {
+        if (tratamientoDatos[columna].codificar === 'one-hot' && tratamientoDatos[columna].hide === false) {
+            let nombreColumna = tratamientoDatos[columna].header;
+            valoresPorColumnas[nombreColumna] = data.map(item => item[nombreColumna]);
 
-        let valoresPorColumnasCodificados = {};
-        Object.keys(valoresPorColumnas).forEach((key) => {
-            let df = new dfd.DataFrame(valoresPorColumnas)
-            let encode = new dfd.OneHotEncoder()
-            encode.fit(df[key])
-            let sf_enc = encode.transform(df[key].values)
-            var resultado=[];
-            sf_enc.forEach(element => {
-                resultado.push(element.indexOf(1))
-            });
-            valoresPorColumnasCodificados[key] = resultado;
+            let df = new dfd.DataFrame(valoresPorColumnas);
+            let encode = new dfd.OneHotEncoder();
+            encode.fit(df[nombreColumna]);
+            let sf_enc = encode.transform(df[nombreColumna].values);
+            valoresPorColumnasCodificados[nombreColumna] = sf_enc.map(element => element.indexOf(1));
 
             // Guardar el diccionario de etiquetas
-            datosCodificarDiccionario[key] = encode.$labels;
-        });
+            datosCodificarDiccionario[nombreColumna] = encode.$labels;
+        }
+    }
 
-        let datosCodificar = data.map((item) => {
-            const newItem = { ...item };
-            for (let columna in valoresPorColumnasCodificados) {
-                newItem[columna] = valoresPorColumnasCodificados[columna].shift();
-            }
-            return newItem;
-        });
+    let datosCodificar = data.map((item) => {
+        const newItem = { ...item };
+        for (let columna in valoresPorColumnasCodificados) {
+            newItem[columna] = valoresPorColumnasCodificados[columna].shift();
+        }
+        return newItem;
+    });
 
-        // Devolver ambos arrays
-        return [datosCodificar, datosCodificarDiccionario];
-  }
+    // Devolver ambos arrays
+    return [datosCodificar, datosCodificarDiccionario];
+}
+
 
   contarValoresDiferentes(arr: number[]): number {
     const conjunto = new Set(arr);

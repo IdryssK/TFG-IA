@@ -17,6 +17,10 @@
     </div>
 </div>
 <div class="w-96 h-32" *ngIf="generating && progress !== 105 && !error">
+  
+  
+  <!-- <div *ngIf="success"><h1>{{ mensajeRecibido |json }}</h1></div> -->
+  
     <h2 mat-dialog-title>Generando... ({{progress}}%)</h2>
     <mat-dialog-content>
     <mtx-progress [type]="'success'"
@@ -28,7 +32,7 @@
     </mtx-progress>  
 </mat-dialog-content>
 </div>
-<div class="w-96 h-42" *ngIf="progress === 105">
+<div class="w-96 h-42" *ngIf="success">
     <div class="flex flex-col items-center justify-center h-full">
         <h2 mat-dialog-title>Dataset "{{nombre}}" generado correctamente</h2>
         <mat-dialog-content>

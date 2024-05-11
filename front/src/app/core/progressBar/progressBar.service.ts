@@ -17,6 +17,7 @@ export class ProgressService {
   progress = this.progressSource.asObservable();
 
   changeProgress(value: number) {
+    console.log('Cambiando progreso: ', value);
     this.progressSource.next(value);
   }
 }

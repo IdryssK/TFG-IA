@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ApiSmartUaService } from 'app/core/smartUa/api-smart-ua.service';
 import { DatasetsService } from 'app/core/datasets/datasets.service';
+import { WorkerService } from 'app/core/worker/worker.service';
 @Component({
   selector: 'app-progressdialog',
   templateUrl: './progressdialog.component.html',
@@ -25,10 +26,17 @@ export class ProgressDialogComponent implements OnInit {
   state: string;
   success: boolean;
   error: boolean;
-  constructor(private apiSmartUaService: ApiSmartUaService, private progressService: ProgressService, private datasetService: DatasetsService, public dialogRef: MatDialogRef<ProgressDialogComponent>,) { 
+  mensajeRecibido: any;
+  
+  constructor(private cdr: ChangeDetectorRef, private workerService: WorkerService, private apiSmartUaService: ApiSmartUaService, private progressService: ProgressService, private datasetService: DatasetsService, public dialogRef: MatDialogRef<ProgressDialogComponent>,) { 
     this.form = new FormGroup({
       nombre: new FormControl('', Validators.required),
-    }); }
+    }); 
+    this.workerService.workerMessage.subscribe((mensaje) => {
+      this.mensajeRecibido = mensaje;
+    });
+    
+  }
     token: string;
     selectedValueByTag: {[tag: string]: any[]} = {};
     tiposFechas: any = [];
@@ -38,6 +46,7 @@ export class ProgressDialogComponent implements OnInit {
     idx: any; 
     nombre: string
   ngOnInit(): void {
+    this.cdr.detectChanges();
     this.generating = false;
     this.success = false;
     console.log(this.generating);
@@ -62,7 +71,6 @@ export class ProgressDialogComponent implements OnInit {
     this.generating = true;
     this.nombre = this.form.get('nombre').value;
     console.log(this.success);
-    try {
       console.log(this.primerForm.start, this.primerForm.end);
       // this.progressService.changeState('Recogiendo datos...');
       await this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.start, this.primerForm.end)
@@ -79,60 +87,45 @@ export class ProgressDialogComponent implements OnInit {
       const data1 = [...datasetList];
       console.log(data1)
       this.progressService.changeProgress(35);
-      // this.progressService.changeState('Tratamiento de fechas...');
-
-      const data2 = data1.map(item => {
-        const newItem = { ...item };
-        this.tiposFechas.forEach(column => {
-          if (column.hide === false) {
-            newItem[column.header] = this.datasetService.getColumnValue(item, column.header);
-          }
-        });
-        return newItem;
-      });
-      // this.progressService.changeState('Tratando nulos...');
-      console.log(data2);
-      this.progressService.changeProgress(50);
-
-      let datosNulos = await this.datasetService.tratarNulos(data2, this.tratamientoDatos);
-      this.progressService.changeProgress(60);
-      // this.progressService.changeState('Codificando...');
-      console.log(datosNulos);
-
-      let [datosCodificar, datosCodificarDiccionario] = await  this.datasetService.codificar(datosNulos, this.tratamientoDatos);
-      this.progressService.changeProgress(80);
-      // this.progressService.changeState('Normalizando...');
-
-      let data3 = await this.datasetService.normalizar(datosCodificar, this.tratamientoDatos);
-      this.progressService.changeProgress(90);
-      console.log(data3)
-      // this.progressService.changeState('Guardando...');
-      this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx, this.nombre).subscribe((response) => {
-        this.progressService.changeProgress(100); // Update progress to 100%
-      }
       
-      ,
-      (error) => {
-        console.error(error);
-      });
-      setTimeout(() => {
-        this.progressService.changeProgress(105)
-      }, 4000);
-      if(this.progress === 100) {
-        console.log('Dataset guardado correctamente')
+//---------------------------------------------------------------------------------------------------
+      let data = { tiposFechas: this.tiposFechas, data1, tratamientoDatos: this.tratamientoDatos };
+      this.workerService.postMessage(data);
+      this.progressService.changeProgress(55);
+      this.workerService.workerMessage.subscribe((message) => {
+          console.log('Received message from worker:', message);
+
+          this.mensajeRecibido = message;
+          const {data3, datosCodificarDiccionario} = this.mensajeRecibido
+
+    // Comprueba si this.mensajeRecibido no es undefined
+        this.success = this.mensajeRecibido !== undefined;
+          this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx, this.nombre).subscribe((response) => {
+            this.progressService.changeProgress(100); // Update progress to 100%
+          },(error) => {
+            console.error(error);
+          });
           setTimeout(() => {
-            this.progressService.changeProgress(0)
-            this.success = true;
-            this.generating = false;
-          }, 1000);
-      }
-      console.log(this.success);
-      } catch (error) {
-        this.error = true;
-      }
+            this.progressService.changeProgress(105)
+          }, 4000);
+          if(this.progress === 100) {
+            console.log('Dataset guardado correctamente')
+              	setTimeout(() => {
+					this.progressService.changeProgress(0)
+					this.success = true;
+					this.generating = false;
+              }, 1000);
+          }
+          console.log(this.success);
+        });
+      // this.progressService.changeState('Guardando...');
+      
     
   }
-
+  enviarMensaje() {
+    // Envía un mensaje al Web Worker a través del servicio
+    
+  }
   aceptar() {
     // Aquí va el código para manejar cuando el usuario acepta
     this.error = false;
