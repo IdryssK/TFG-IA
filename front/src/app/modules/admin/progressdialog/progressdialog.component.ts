@@ -79,13 +79,23 @@ export class ProgressDialogComponent implements OnInit {
         this.count_value = response.result.values[0][1];
       });
       this.progressService.changeProgress(15);
+      this.progressService.changeProgress(16);
+      this.progressService.changeProgress(17);
+      this.progressService.changeProgress(18);
+      this.progressService.changeProgress(19);
+      this.progressService.changeProgress(20);
+      this.progressService.changeProgress(21);
+      this.progressService.changeProgress(22);
+      this.progressService.changeProgress(23);
+      this.progressService.changeProgress(24);
+
 
 
       this.progressService.changeProgress(25);
 
       const { datasetCol, datasetList } =  await this.datasetService.obtenerDatos(this.token, this.count_value, this.selectedValueByTag,  this.primerForm.start, this.primerForm.end);  
       const data1 = [...datasetList];
-      console.log(data1)
+    //   console.log(data1)
       this.progressService.changeProgress(35);
       
 //---------------------------------------------------------------------------------------------------
@@ -93,33 +103,39 @@ export class ProgressDialogComponent implements OnInit {
       this.workerService.postMessage(data);
       this.progressService.changeProgress(55);
       this.workerService.workerMessage.subscribe((message) => {
-          console.log('Received message from worker:', message);
+        //   console.log('Received message from worker:', message);
 
           this.mensajeRecibido = message;
           const {data3, datosCodificarDiccionario} = this.mensajeRecibido
 
+		  this.progressService.changeProgress(80);
+		  this.progressService.changeProgress(81);
+		  this.progressService.changeProgress(82);
+		  this.progressService.changeProgress(83);
+		  this.progressService.changeProgress(84);
+		  this.progressService.changeProgress(85);
+		  this.progressService.changeProgress(86);
+		  this.progressService.changeProgress(87);
+		  this.progressService.changeProgress(88);
+		  this.progressService.changeProgress(89);
     // Comprueba si this.mensajeRecibido no es undefined
-        this.success = this.mensajeRecibido !== undefined;
           this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx, this.nombre).subscribe((response) => {
-            this.progressService.changeProgress(100); // Update progress to 100%
+            this.progressService.changeProgress(100);
+
+			// console.log(this.progress)
+			if(this.progress === 100){
+
+				console.log('Dataset guardado correctamente')
+				setTimeout(() => {
+					this.success = true;
+				}, 1500); 
+			}
           },(error) => {
             console.error(error);
           });
-          setTimeout(() => {
-            this.progressService.changeProgress(105)
-          }, 4000);
-          if(this.progress === 100) {
-            console.log('Dataset guardado correctamente')
-              	setTimeout(() => {
-					this.progressService.changeProgress(0)
-					this.success = true;
-					this.generating = false;
-              }, 1000);
-          }
-          console.log(this.success);
         });
       // this.progressService.changeState('Guardando...');
-      
+      console.log(this.progress)
     
   }
   enviarMensaje() {

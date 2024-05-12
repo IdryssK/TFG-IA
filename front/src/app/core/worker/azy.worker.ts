@@ -70,7 +70,7 @@ function getColumnValue(item: any, columnName: string) {
 
 
 function tratarNulos(data, tratamientoDatos) {
-	console.log('Tratando nulos')
+	console.log('TRATAMOS LOS NULOS Y SE NOS QUEDA ESTOS DATOS:')
     return data.map((item: any) => {
       const newItem: any = {};
       let noMete = false;
@@ -92,39 +92,62 @@ function tratarNulos(data, tratamientoDatos) {
     }).filter(item => item !== null);
 }
 
-async function codificar(data: any, tratamientoDatos: any) {
-    console.log('Codificando')
 
+function agruparValoresPorColumna(data: any, tratamientoDatos: any) {
+	console.log('AGRUPANDO VALORES POR COLUMNA')
     let valoresPorColumnas = {};
-    let datosCodificarDiccionario = {};
-    let valoresPorColumnasCodificados = {};
 
     for (let columna in tratamientoDatos) {
         if (tratamientoDatos[columna].codificar === 'one-hot' && tratamientoDatos[columna].hide === false) {
             let nombreColumna = tratamientoDatos[columna].header;
             valoresPorColumnas[nombreColumna] = data.map(item => item[nombreColumna]);
-
-            let df = new dfd.DataFrame(valoresPorColumnas);
-            let encode = new dfd.OneHotEncoder();
-            encode.fit(df[nombreColumna]);
-            let sf_enc = encode.transform(df[nombreColumna].values);
-            valoresPorColumnasCodificados[nombreColumna] = sf_enc.map(element => element.indexOf(1));
-
-            // Guardar el diccionario de etiquetas
-            datosCodificarDiccionario[nombreColumna] = encode.$labels;
         }
     }
 
-    let datosCodificar = data.map((item) => {
-        const newItem = { ...item };
+    return valoresPorColumnas;
+}
+
+function* mapToIndices(sf_enc) {
+	for (let element of sf_enc) {
+		yield element.indexOf(1);
+	}
+}
+
+async function codificar(data: any, tratamientoDatos: any) {
+    console.log('Codificando')
+
+    let valoresPorColumnas = agruparValoresPorColumna(data, tratamientoDatos);
+    let datosCodificarDiccionario = {};
+    let valoresPorColumnasCodificados = {};
+
+    // Filtrar tratamientoDatos antes del bucle
+    tratamientoDatos = tratamientoDatos.filter(item => item.codificar === 'one-hot' && item.hide !== true);
+
+    // Crear DataFrame una vez fuera del bucle
+    let df = new dfd.DataFrame(valoresPorColumnas);
+
+	
+
+    for(let i = 0; i < tratamientoDatos.length; i++) {
+        let nombreColumna = tratamientoDatos[i].header;
+        let encode = new dfd.OneHotEncoder();
+        encode.fit(df[nombreColumna]);
+        let sf_enc = encode.transform(df[nombreColumna].values);
+        for (let j = 0; j < sf_enc.length; j++) {
+			sf_enc[j] = sf_enc[j].indexOf(1);
+		}
+        // Guardar el diccionario de etiquetas
+        datosCodificarDiccionario[nombreColumna] = encode.$labels;
+    }
+
+    for(let i = 0; i < data.length; i++) {
         for (let columna in valoresPorColumnasCodificados) {
-            newItem[columna] = valoresPorColumnasCodificados[columna].shift();
+            data[i][columna] = valoresPorColumnasCodificados[columna][i];
         }
-        return newItem;
-    });
+    }
 
     // Devolver ambos arrays
-    return [datosCodificar, datosCodificarDiccionario];
+    return [data, datosCodificarDiccionario];
 }
 
 function contarValoresDiferentes(arr: number[]): number {
@@ -169,13 +192,6 @@ async function normalizar ( data: any, tratamientoDatos: any ){
 addEventListener('message', async ({ data }) => {
 	
 	let {tiposFechas, data1, tratamientoDatos} = data;
-	console.log(tiposFechas);
-	console.log(data1);
-	const keysData1 = Object.keys(data1[0]);
-	tratamientoDatos = tratamientoDatos.filter(item => keysData1.includes(item.header));
-	console.log(tratamientoDatos);
-
-
 
 	const data2 = data1.map(item => {
 		const newItem = { ...item };
@@ -187,12 +203,26 @@ addEventListener('message', async ({ data }) => {
 		return newItem;
 	});
 	// this.progressService.changeState('Tratando nulos...');
-	console.log(data2);
-
-	let datosNulos = tratarNulos(data2, tratamientoDatos);
-	// this.progressService.changeState('Codificando...');
-	console.log(datosNulos);
 	
+	//quitamos los columnas de tratamientoDatos que no sean igaules que data2.header = tratamientoDatos.header
+	const keysData2 = Object.keys(data2[0]);
+	tratamientoDatos = tratamientoDatos.filter(item => keysData2.includes(item.header) && item.hide !== true);
+
+	const headersTratamientoDatos = tratamientoDatos.map(item => item.header);
+	const datosReady = data2.map(item => {
+		let newItem = {};
+		headersTratamientoDatos.forEach(header => {
+			if(item.hasOwnProperty(header)) {
+				newItem[header] = item[header];
+			}
+		});
+		return newItem;
+	});
+	// console.log(datosReady);
+	
+
+	let datosNulos = tratarNulos(datosReady, tratamientoDatos);
+
 	let [datosCodificar, datosCodificarDiccionario] = await codificar(datosNulos, tratamientoDatos);
 	let data3 = await normalizar(datosCodificar, tratamientoDatos);
 

@@ -16,21 +16,21 @@
       </mat-dialog-content>
     </div>
 </div>
-<div class="w-96 h-32" *ngIf="generating && progress !== 105 && !error">
+<div class="w-96 h-32" *ngIf="generating && !error && !success">
   
   
   <!-- <div *ngIf="success"><h1>{{ mensajeRecibido |json }}</h1></div> -->
   
     <h2 mat-dialog-title>Generando... ({{progress}}%)</h2>
     <mat-dialog-content>
-    <mtx-progress [type]="'success'"
-    [value]="progress"
-    [striped]="'striped'" [animate]="'animate'"
-    [height]="16 + 'px'"
-    >
-    {{16>=14 ? progress + '%' : ''}}
-    </mtx-progress>  
-</mat-dialog-content>
+      <mtx-progress [type]="'success'"
+      [value]="progress"
+      [striped]="'striped'" [animate]="'animate'"
+      [height]="16 + 'px'"
+      >
+      {{16>=14 ? progress + '%' : ''}}
+      </mtx-progress>  
+    </mat-dialog-content>
 </div>
 <div class="w-96 h-42" *ngIf="success">
     <div class="flex flex-col items-center justify-center h-full">
