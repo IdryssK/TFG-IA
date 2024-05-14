@@ -77,12 +77,12 @@
             [columns]="columns"
             [length]="total"
             [loading]="isLoading"
-            [rowStriped]="true"
           [pageOnFront]="false"
           [pageIndex]="query.page"
           [pageSize]="per_page"
           [pageSizeOptions]="per_page_options"
           (page)="getNextPage($event)"
+          [noResultText]="'noResult' | transloco"
           >
 
 

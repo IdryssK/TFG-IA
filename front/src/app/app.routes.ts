@@ -77,7 +77,7 @@ export const appRoutes: Route[] = [
         children: [
             {path: 'configuraciones', loadChildren: () => import('app/modules/admin/configuraciones/configuraciones.routes')},
             {path: 'datasets', loadChildren: () => import('app/modules/admin/dataset/dataset.routes')},
-            {path: 'example2', loadChildren: () => import('app/modules/admin/example2/example2.routes')},
+            {path: 'entrenamientos', loadChildren: () => import('app/modules/admin/example2/example2.routes')},
             {path: 'algoritmos', loadChildren: () => import('app/modules/admin/algoritmos/algoritmos.routes')},
             {path: 'gestion-usuario',canActivate: [AdminGuard], loadChildren: () => import('app/modules/admin/gestion-usuario/gestion-usuario.routes')},
         ]

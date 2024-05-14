@@ -2,17 +2,17 @@
     <div class="w-full sm:w-auto py-8 px-4 sm:p-12 sm:rounded-2xl sm:shadow sm:bg-card">
         <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
             <!-- Logo -->
-            <!-- <div class="w-12">
+            <div class="w-12">
                 <img src="assets/images/logo/logo_1.png">
-            </div> -->
+            </div>
 
             <!-- Title -->
-            <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">Editar Usuario</div>
+            <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">{{'userEdit.title' | transloco}}</div>
             <div class="flex items-baseline mt-0.5 font-medium">
-                <div>Quieres crear una nueva cuenta?</div>
+                <div>{{'userEdit.subTitle' | transloco}}</div>
                 <a
                     class="ml-1 text-primary-500 hover:underline"
-                    [routerLink]="['/gestion-usuario/crear']">Creala aquí
+                    [routerLink]="['/gestion-usuario/crear']">{{'userEdit.subTitle2' | transloco}}
                 </a>
             </div>
 
@@ -40,23 +40,23 @@
                         matInput
                         [formControlName]="'email'">
                     <mat-error *ngIf="datosForm.get('email').hasError('required')">
-                        Email is required
+                        {{'userEdit.emailErrObl' | transloco}}
                     </mat-error>
                     <mat-error *ngIf="datosForm.get('email').hasError('email')">
-                        Please enter a valid email address
+                        {{'userEdit.emailErrVal' | transloco}}
                     </mat-error>
                 </mat-form-field>
                 <mat-form-field class="w-full">
-                    <mat-label>Rol</mat-label>
+                    <mat-label>Role</mat-label>
                     <mat-select formControlName="rol" [(value)]="selected">
                         <mat-option value="1">Admin</mat-option>
-                        <mat-option value="0" >Usuario</mat-option>
+                        <mat-option value="0" >{{'userEdit.user' | transloco}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 
                 <!-- Password field -->
                 <mat-form-field class="w-full">
-                    <mat-label>Password</mat-label>
+                    <mat-label>{{'userEdit.pass' | transloco}}</mat-label>
                     <input
                         id="password"
                         matInput
@@ -79,7 +79,7 @@
                             [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
                     <mat-error>
-                        Password is required
+                        {{'userEdit.passErr' | transloco}}
                     </mat-error>
                 </mat-form-field>
 
@@ -90,10 +90,10 @@
                         [color]="'bg-warn-400'"
                         (click)="cancelar()">
                         <span *ngIf="datosForm.pristine">
-                            Cancelar
+                            {{'userEdit.cancelar' | transloco}}
                         </span>
                         <span *ngIf="!datosForm.pristine">
-                            Restablecer
+                            {{'userEdit.restablecer' | transloco}}
                         </span>
                     </button>
                     <!-- Submit button -->
@@ -104,8 +104,8 @@
                         [color]="'primary'"
                         (click)="update()">
                         <span *ngIf="!datosForm.disabled">
-                            Guardar
-                        </span>
+                            {{'userEdit.crear' | transloco}}
+                        </span> 
                         <mat-progress-spinner
                             *ngIf="datosForm.disabled"
                             [diameter]="24"

@@ -1,20 +1,47 @@
 {
     "hola" : "Hello",
     "user" : {
-        "title" : "List of users",
-        "search-bar" : "Search for a user...",
+        "title" : "User list",
+        "search-bar" : "Search a user...",
         "new" : "Add",
         "operations" : "Operations"
+    },
+    "userCreate" : {
+        "title" : "Add user",
+        "emailErrObl" : "Email is required",
+        "emailErrVal" : "Enter a valid email address",
+        "user" : "User",
+        "pass" : "Password",
+        "passErr" : "Password is required",
+        "cancelar" : "Cancel",
+        "crear" : "Create"
+    },
+    "userEdit" : {
+        "title" : "Edit user",
+        "subTitle" : "Don't have an account?",
+        "subTitle2" : "Create here",
+        "emailErrObl" : "Email is required",
+        "emailErrVal" : "Enter a valid email address",
+        "user" : "User",
+        "pass" : "Password",
+        "passErr" : "Password is required",
+        "cancelar" : "Cancel",
+        "restablecer" : "Reset",
+        "crear" : "Save"
     },
     "configuraciones" : {
-        "title" : "Configurations list",
-        "search-bar" : "Search for a configuration...",
+        "title" : "Configuration list",
+        "search-bar" : "Search a configuration...",
         "new" : "Add",
-        "operations" : "Operations"
+        "operations" : "Operations",
+        "columns" : {
+            "name" : "Configuration name",
+            "date" : "Last modification"
+        }
     },
     "datasets" : {
-        "title" : "Datasets list",
-        "search-bar" : "Search for a dataset...",
+        "title" : "Dataset list",
+        "search-bar" : "Search a dataset...",
         "new" : "Add",
         "operations" : "Operations",
         "columns" : {
@@ -23,5 +50,84 @@
             "dicc" : "Dictionary name",
             "date" : "Date"
         }
+    },
+    "toolTip" : {
+        "copy": "Copy",
+        "edit": "Edit",
+        "delete": "Delete",
+        "csv": "Download CSV",
+        "json": "Download JSON"
+    },
+    "nav" : {
+        "config" : "CONFIGURATIONS",
+        "dataset" : "DATASETS",
+        "entreno" : "TRAININGS",
+        "algoritm" : "ALGORITHMS",
+        "user" : "USER MANAGEMENT"
+    },
+    "config" : {
+        "botones" : {
+            "cancelar" : "Cancel",
+            "guardar" : "Save",
+            "restablecer" : "Reset",
+            "generar" : "Generate",
+            "cargar" : "Load",
+            "resultados" : "Results"
+        },
+        "tabs" : {
+            "filtros" : "Filters",
+            "selectCaract" : "Feature selection",
+            "tratamientF" : "Date processing",
+            "tratamientD" : "Data processing"
+        },
+        "form" : {
+            "datosInfo" : "Information data",
+            "nombre" : "Name",
+            "nombreHolder" : "Collection name",
+            "nombreErr" : "Name is mandatory",
+            "tokenHolder" : "Collection token",
+            "tokenErr" : "Token is mandatory",
+            "desde" : "From",
+            "hasta" : "To",
+            "filtro" : "Filter",
+            "limite" : "Limit",
+            "selectAll" : "Select all"
+        },
+        "alertas" : {
+            "guardar" : "The configuration has been saved successfully!",
+            "actualizar" : "The configuration has been updated successfully!",
+            "fechas" : "'From' date cannot be later than 'To' date"
+        },
+        "tab12" : {
+            "titleD" : "Deselect the columns you do not want",
+            "titleF" : "Select the date types"
+        },
+        "tab3" : {
+            "columna" : "Column",
+            "nulos" : "Nulls",
+            "nulosE" : "Remove",
+            "nulosS" : "Replace",
+            "codif" : "Encode",
+            "normal" : "Normalize"
+        }
+        
+        
+    },
+    "noResult" : "No results",
+    "modal" : {
+        "title" : "Dataset name",
+        "titleHolder" : "My new dataset",
+        "titleErr" : "Name is mandatory",
+        "cancelar" : "Cancel",
+        "generar" : "Generate",
+        "generando" : "Generating",
+        "generadoCorrect" : "generated successfully",
+        "generandoErr" : "There is a problem with the token or the OPEN Api",
+        "aceptar" : "Accept"
+    },
+    "confirmation" : {
+        "title" : "Reset changes",
+        "message" : "Are you sure you want to reset the changes? Unsaved changes will be lost.",
+        "label" : "Reset"
     }
 }

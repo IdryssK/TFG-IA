@@ -6,7 +6,7 @@ import { UserService } from 'app/core/user/user.service';
 export const defaultNavigationAdmin: FuseNavigationItem[] = [
     {
         id   : 'configuraciones',
-        title: 'CONFIGURACIONES',
+        title: 'CONFIGURATION',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
         link : '/configuraciones',
@@ -15,28 +15,28 @@ export const defaultNavigationAdmin: FuseNavigationItem[] = [
         id   : 'datasets',
         title: 'DATASETS',
         type : 'basic',
-        icon : 'heroicons_outline:chart-pie',
+        icon : 'heroicons_outline:circle-stack',
         link : '/datasets',
     },
     {
         id   : 'entrenamientos',
-        title: 'ENTRENAMIENTOS',
+        title: 'TRAINING',
         type : 'basic',
-        icon : 'heroicons_outline:chart-pie',
+        icon : 'heroicons_outline:bolt',
         link : '/entrenamientos'
     },
     {
         id   : 'algoritmos',
-        title: 'ALGORITMOS',
+        title: 'ALGORITHMS',
         type : 'basic',
-        icon : 'heroicons_outline:chart-pie',
+        icon : 'heroicons_outline:beaker',
         link : '/algoritmos'
     },
     {
         id   : 'gestion',
-        title: 'GESTION USUARIOS',
+        title: 'USER MANAGEMENT',
         type : 'basic',
-        icon : 'heroicons_outline:chart-pie',
+        icon : 'heroicons_outline:shield-check',
         link : '/gestion-usuario'
     }
 ];
@@ -44,7 +44,7 @@ export const defaultNavigationAdmin: FuseNavigationItem[] = [
 export const horizontalNavigationAdmin: FuseNavigationItem[] = [
     {
         id   : 'configuraciones',
-        title: 'CONFIGURACIONES',
+        title: 'CONFIGURATION',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
         link : '/configuraciones',
@@ -58,21 +58,21 @@ export const horizontalNavigationAdmin: FuseNavigationItem[] = [
     },
     {
         id   : 'entrenamientos',
-        title: 'ENTRENAMIENTOS',
+        title: 'TRAINING',
         type : 'basic',
         icon : 'heroicons_outline:bolt',
-        link : '/example2'
+        link : '/entrenamientos'
     },
     {
         id   : 'algoritmos',
-        title: 'ALGORITMOS',
+        title: 'ALGORITHMS',
         type : 'basic',
         icon : 'heroicons_outline:beaker',
         link : '/algoritmos'
     },
     {
         id   : 'gestion',
-        title: 'GESTION USUARIOS',
+        title: 'USER MANAGEMENT',
         type : 'basic',
         icon : 'heroicons_outline:shield-check',
         link : '/gestion-usuario'
@@ -81,7 +81,7 @@ export const horizontalNavigationAdmin: FuseNavigationItem[] = [
 export const defaultNavigationUser: FuseNavigationItem[] = [
     {
         id   : 'configuraciones',
-        title: 'CONFIGURACIONES',
+        title: 'CONFIGURATION',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
         link : '/configuraciones',
@@ -95,16 +95,16 @@ export const defaultNavigationUser: FuseNavigationItem[] = [
     },
     {
         id   : 'entrenamientos',
-        title: 'ENTRENAMIENTOS',
+        title: 'TRAINING',
         type : 'basic',
-        icon : 'heroicons_outline:chart-pie',
+        icon : 'heroicons_outline:bolt',
         link : '/entrenamientos'
     },
     {
         id   : 'algoritmos',
-        title: 'ALGORITMOS',
+        title: 'ALGORITHMS',
         type : 'basic',
-        icon : 'heroicons_outline:chart-pie',
+        icon : 'heroicons_outline:beaker',
         link : '/algoritmos'
     }
 ];
@@ -112,7 +112,7 @@ export const defaultNavigationUser: FuseNavigationItem[] = [
 export const horizontalNavigationUser: FuseNavigationItem[] = [
     {
         id   : 'configuraciones',
-        title: 'CONFIGURACIONES',
+        title: 'CONFIGURATION',
         type : 'basic',
         icon : 'heroicons_outline:wrench-screwdriver',
         link : '/configuraciones',
@@ -126,14 +126,14 @@ export const horizontalNavigationUser: FuseNavigationItem[] = [
     },
     {
         id   : 'entrenamientos',
-        title: 'ENTRENAMIENTOS',
+        title: 'TRAINING',
         type : 'basic',
         icon : 'heroicons_outline:bolt',
-        link : '/example2'
+        link : '/entrenamientos'
     },
     {
         id   : 'algoritmos',
-        title: 'ALGORITMOS',
+        title: 'ALGORITHMS',
         type : 'basic',
         icon : 'heroicons_outline:beaker',
         link : '/algoritmos'

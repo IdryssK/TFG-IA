@@ -18,6 +18,7 @@ import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco'
 import { FuseAlertService, FuseAlertComponent } from '@fuse/components/alert';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { environment } from 'environments/environment';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-gestion-usuario',
@@ -32,7 +33,7 @@ export class GestionUsuarioComponent implements OnInit{
   per_page_options = environment.per_page_options;
   eliminado:boolean;
   editarYo:boolean;
-  constructor(private userService : UserService, private nav: NavigationService, private _fuseAlertService: FuseAlertService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
+  constructor(private translocoService: TranslocoService ,private userService : UserService, private nav: NavigationService, private _fuseAlertService: FuseAlertService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {
   }
   ngOnInit(): void {
     this.getList();
@@ -44,6 +45,10 @@ export class GestionUsuarioComponent implements OnInit{
     });
     this._fuseAlertService.dismiss('error-delete-own-user');
     
+  }
+
+  traducir(key: string): Observable<string> {
+    return this.translocoService.selectTranslate(key, {});
   }
 
   rowClassFormatter: MtxGridRowClassFormatter = {
@@ -63,7 +68,7 @@ export class GestionUsuarioComponent implements OnInit{
       sortProp: { id: 'role', start: 'asc' }, pinned: 'left'
     },
     {
-      header: translate('user.operations'),
+      header: this.traducir('user.operations'),
       field: 'operation',
       width: '240px',
       pinned: 'right',
@@ -75,14 +80,14 @@ export class GestionUsuarioComponent implements OnInit{
           text: 'edit',
           icon: 'edit',
           class: 'success',
-          tooltip: 'Edit',
+          tooltip: this.traducir('toolTip.edit'),
           click: (row) => this.editar(row.idx),
         },
         {
           type: 'icon',
           text: 'delete',
           icon: 'delete',
-          tooltip: 'Delete',
+          tooltip: this.traducir('toolTip.delete'),
           color: 'warn',
           click: (row) => this.borrarUsuario(row.idx),
         },
@@ -168,35 +173,67 @@ export class GestionUsuarioComponent implements OnInit{
       return;
     }
     else {
-      
-      const confirmation = this._fuseConfirmationService.open({
-        title  : 'Eliminar usuario',
-        message: '¿Estas seguro de que quieres eliminar el usuario?',
-        actions: {
-            confirm: {
-                label: 'Eliminar',
+        if(this.translocoService.getActiveLang() === 'en') {
+          const confirmation = this._fuseConfirmationService.open({
+            title  : 'Delete user',
+            message: 'Are you sure you want to delete the user?',
+            actions: {
+                confirm: {
+                    label: 'Delete',
+                }
             },
-        },
-      });
-      confirmation.afterClosed().subscribe((result) => {
-          // If the confirm button pressed...
-          if ( result === 'confirmed' ) {  
-            this.userService.deleteUser(idx).subscribe(
-              () => {
-                
-                this.getList();
-                this.eliminado = true;
-              },
-              (error) => {
-                console.error(error);
-                // Handle the error here
+          });
+          confirmation.afterClosed().subscribe((result) => {
+              // If the confirm button pressed...
+              if ( result === 'confirmed' ) {  
+                this.userService.deleteUser(idx).subscribe(
+                  () => {
+                    
+                    this.getList();
+                    this.eliminado = true;
+                  },
+                  (error) => {
+                    console.error(error);
+                    // Handle the error here
+                  }
+                );
               }
-            );
-          }
-          else {
-            console.log('no se ha eliminado el usuario');
-          }
-      });
+              else {
+                console.log('no se ha eliminado el usuario');
+              }
+          });
+        }
+        else if(this.translocoService.getActiveLang() === 'es') {
+          const confirmation = this._fuseConfirmationService.open({
+            title  : 'Eliminar usuario',
+            message: '¿Estas seguro de que quieres eliminar el usuario?',
+            actions: {
+                confirm: {
+                    label: 'Eliminar',
+                },
+            },
+          });
+          confirmation.afterClosed().subscribe((result) => {
+              // If the confirm button pressed...
+              if ( result === 'confirmed' ) {  
+                this.userService.deleteUser(idx).subscribe(
+                  () => {
+                    
+                    this.getList();
+                    this.eliminado = true;
+                  },
+                  (error) => {
+                    console.error(error);
+                    // Handle the error here
+                  }
+                );
+              }
+              else {
+                console.log('no se ha eliminado el usuario');
+              }
+          });
+        }
+      
     }
     // if (uid === this.userService.()) {
     //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});

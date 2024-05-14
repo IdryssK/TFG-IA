@@ -5,8 +5,7 @@
     </svg>
     <span class="sr-only">Info</span>
     <div class="ms-3 text-sm font-medium">
-        La fecha "Desde" no puede ser mayor a la fecha "Hasta"
-    </div>
+        {{ 'config.alertas.fechas' | transloco }}    </div>
     <button type="button" (click)="validFechas = false"class="ms-auto -mx-1.5 -my-1.5 bg-yellow-50 text-yellow-500 rounded-lg focus:ring-2 focus:ring-yellow-400 p-1.5 hover:bg-yellow-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-yellow-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
       <span class="sr-only">Close</span>
       <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -20,8 +19,7 @@
     </svg>
     <span class="sr-only">Info</span>
     <div class="ms-3 text-sm font-medium">
-        Se ha actualizado correctamente la configuración!
-    </div>
+        {{ 'config.alertas.actualizar' | transloco }}    </div>
     <button type="button" (click)="actualizado = false"class="ms-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
       <span class="sr-only">Close</span>
       <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -35,8 +33,7 @@
     </svg>
     <span class="sr-only">Info</span>
     <div class="ms-3 text-sm font-medium">
-        Se ha guardado correctamente la configuración!
-    </div>
+        {{ 'config.alertas.guardar' | transloco }}    </div>
     <button type="button" (click)="guardado = false"class="ms-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
       <span class="sr-only">Close</span>
       <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -59,10 +56,10 @@
                             mat-flat-button 
                             (click)="cancelar()">
                                 <span *ngIf="primerForm.pristine">
-                                    Cancelar
+                                    {{ 'config.botones.cancelar' | transloco }}
                                 </span>
                                 <span *ngIf="!primerForm.pristine">
-                                    Restablecer
+                                    {{ 'config.botones.restablecer' | transloco }}
                                 </span>
                             </button>
                             <button 
@@ -72,7 +69,7 @@
                             [color]="'primary'" 
                             type="submit" 
                             (click)="guardarDataSet()">
-                                <span>Guardar</span>
+                                <span>{{ 'config.botones.guardar' | transloco }}</span>
                                 <mat-progress-spinner
                                     *ngIf="primerForm.disabled"
                                     [diameter]="24"
@@ -102,10 +99,10 @@
                                         </span>
                                     </span>
                                 </ng-container>
-                                Cargar
+                                {{ 'config.botones.cargar' | transloco }}
                             </button>
                             <span *ngIf="count_value !== 0" class="ml-2 text-gray-600">
-                                Resultados: <strong>{{ count_value }}</strong>
+                                {{ 'config.botones.resultados' | transloco }}: <strong>{{ count_value }}</strong>
                             </span>
                         </div>
                     </div>
@@ -115,7 +112,7 @@
                         <!-- Contenido de la segunda columna -->
                         <div class="flex justify-end items-end items-center">
 
-                            <label for="limite">Limite:
+                            <label for="limite">{{ 'config.form.limite' | transloco }}:
                                 <input id="limite" type="number" class="border rounded px-2 py-1 mr-2" placeholder="100"
                                     formControlName="limit"> 
                         
@@ -130,7 +127,7 @@
 
                             <button class="" mat-flat-button (click)="generar()" mat-flat-button 
                             [color]="'primary'"  [disabled]="!primerForm.pristine">
-                                Generar
+                            {{ 'config.botones.generar' | transloco }}
                             </button>
                             <button (click)="toggleContainers()" class="px-2 rounded">
                                 <mat-icon [svgIcon]="'heroicons_outline:arrows-pointing-out'"></mat-icon>
@@ -153,11 +150,11 @@
                 <!-- Pestañas -->
                 <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;" (selectedTabChange)="pestana($event.index)">
                     <!-- Filtros -->
-                    <mat-tab label="Filtros">
+                    <mat-tab label="{{'config.tabs.filtros' | transloco}} ">
                         <div class="flex flex-col h-[639px] bg-card shadow rounded overflow-hidden">
                             <div>
                                 <div class="flex items-center bg-gray-50 dark:bg-gray-700 p-4 mb-4 border-b flex">
-                                    <p class="text-lg font-medium">Datos de información</p>
+                                    <p class="text-lg font-medium">{{ 'config.form.datosInfo' | transloco }}</p>
                                     <button *ngIf="isContentOpen" mat-icon-button matTooltip="Basic" (click)="toggleContent()">
                                         <mat-icon class="icon-size-6 text-primary-500"
                                             [svgIcon]="'heroicons_solid:arrow-up-circle'"></mat-icon>
@@ -170,26 +167,25 @@
                                 <div *ngIf="isContentOpen">
                                     <div class="flex px-8">
                                         <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
-                                            <mat-label>Nombre</mat-label>
+                                            <mat-label>{{ 'config.form.nombre' | transloco }}</mat-label>
                                             <input matInput formControlName="nombre" [placeholder]="'Mi nuevo dataset'">
-                                            <mat-hint>Nombre de la colección</mat-hint>
+                                            <mat-hint>{{ 'config.form.nombreHolder' | transloco }}</mat-hint>
                                             <mat-error *ngIf="primerForm.get('nombre').hasError('required')">
-                                                Nombre es obligatorio
+                                                {{ 'config.form.nombreErr' | transloco }}
                                             </mat-error>
                                         </mat-form-field>
                                         <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
                                             <mat-label>Token</mat-label>
                                             <input matInput formControlName="token" [placeholder]="'Token de la colección'">
-                                            <mat-hint>Token de la colección</mat-hint>
+                                            <mat-hint>{{ 'config.form.tokenHolder' | transloco }}</mat-hint>
                                             <mat-error *ngIf="primerForm.get('token').hasError('required')">
-                                                Token es obligatorio
-                                            </mat-error>
+                                                {{ 'config.form.tokenErr' | transloco }}                                            </mat-error>
                                         </mat-form-field>
                                     </div>
         
                                     <div class="flex px-8">
                                         <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
-                                            <mat-label>Desde</mat-label>
+                                            <mat-label>{{ 'config.form.desde' | transloco }}</mat-label>
                                             <mtx-datetimepicker #datetimePicker type="datetime" mode="auto"
                                                 multiYearSelector="false" startView="month" timeInterval="1" timeInput="true">
                                             </mtx-datetimepicker>
@@ -200,7 +196,7 @@
                                                 [for]="datetimePicker"></mtx-datetimepicker-toggle>
                                         </mat-form-field>
                                         <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto">
-                                            <mat-label>Hasta</mat-label>
+                                            <mat-label>{{ 'config.form.hasta' | transloco }}</mat-label>
                                             <mtx-datetimepicker #datetimePicker2 type="datetime" mode="auto"
                                                 multiYearSelector="false" startView="month" timeInterval="1" timeInput="true">
                                             </mtx-datetimepicker>
@@ -218,7 +214,7 @@
 
                             <!-- <p>{{datetime.value}} - {{datetime2.value}}</p> -->
                             <div class="flex items-center bg-gray-50 dark:bg-gray-700 py-2 px-4 my-4 border-b">
-                                <h1 class="text-lg font-medium">Filtros</h1>
+                                <h1 class="text-lg font-medium">{{ 'config.form.filtro' | transloco }}s</h1>
                                 <button mat-icon-button matTooltip="Basic" (click)="addInput()">
                                     <mat-icon class="icon-size-6 text-primary-500"
                                         [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
@@ -233,7 +229,7 @@
                                 <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
                                     <!-- TAG -->
                                     <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
-                                        <mat-label>Filtro {{i+1}}</mat-label>
+                                        <mat-label>{{ 'config.form.filtro' | transloco }} {{i+1}}</mat-label>
 
                                         <mat-select [value]="input">
                                             <mat-option (onSelectionChange)="onSelectChangeTag($event, i)"
@@ -260,7 +256,7 @@
                                                 </ng-template>
                                             </mat-select-trigger>
                                             <!-- <input matInput placeholder="Filtrar opciones" (input)="filterOptions($event.target.value, inputs[i])"> -->
-                                            <mat-option (click)="seleccionarTodo(inputs[i])">-- Seleccionar todo --</mat-option>
+                                            <mat-option (click)="seleccionarTodo(inputs[i])">-- {{ 'config.form.selectAll' | transloco }} --</mat-option>
                                             <mat-option value="{{value}}"
                                                 *ngFor="let value of allValueByTag[inputs[i]]">{{value}}</mat-option>
                                         </mat-select>
@@ -275,9 +271,9 @@
                            
                         </div>
                     </mat-tab>
-                    <mat-tab label="Selección de caracteristicas ">
+                    <mat-tab label="{{'config.tabs.selectCaract' | transloco}}">
                         <div class="flex flex-col items-center h-[639px] bg-card rounded">
-                            <h3 class="mb-24 mt-6">Deselecciona las columnas que no deseas</h3>
+                            <h3 class="mb-24 mt-6">{{ 'config.tab12.titleD' | transloco }}</h3>
                             <div class="flex flex-col items-center justify-center">
 
                                 <ul class="grid grid-cols-2 gap-4 px-3 pb-3 overflow-y-auto text-xl text-gray-700 dark:text-gray-200">
@@ -295,9 +291,9 @@
 
 
                     </mat-tab>
-                    <mat-tab label="Tratamiento de fechas">
+                    <mat-tab label="{{'config.tabs.tratamientF' | transloco}}">
                         <div class="flex flex-col items-center h-[639px] bg-card rounded">
-                            <h3 class="mb-24 mt-6">Selecciona los tipos de fechas</h3>
+                            <h3 class="mb-24 mt-6">{{ 'config.tab12.titleF' | transloco }}</h3>
                             <div class="flex flex-col items-center justify-center">
 
                                 <ul  class="grid grid-cols-2 gap-4 px-3 pb-3 overflow-y-auto text-xl text-gray-700 dark:text-gray-200">
@@ -313,7 +309,7 @@
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Tratamiento de datos">
+                    <mat-tab label="{{'config.tabs.tratamientD' | transloco}}">
                        
                         <div class="h-[639px] rounded relative overflow-x-auto">
                             
@@ -322,19 +318,19 @@
     
                                     <!-- Nombre Column -->
                                     <ng-container matColumnDef="columna">
-                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Columna</th>
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">{{ 'config.tab3.columna' | transloco }}</th>
                                         <td mat-cell *matCellDef="let element" class="px-6 py-4 font-bold text-gray-900 whitespace-nowrap dark:text-white border-r">{{element.header}}</td>
                                     </ng-container>
     
                                     <!-- Nulos Column -->
                                     <ng-container matColumnDef="nulos">
-                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Nulos</th>
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">{{ 'config.tab3.nulos' | transloco }}</th>
                                         <td mat-cell *matCellDef="let element" class="px-6 py-4">
                                             <div class="flex items-center">
                                                 <mat-form-field>
                                                     <mat-select [(value)]="element.nulos" (selectionChange)="element.nulos === 'Eliminar' ? element.valorSustituir = '' : null; markAsModified(); isReload = true;" [disabled]="element.nulos === '' ">
-                                                        <mat-option value="Eliminar">Eliminar</mat-option>
-                                                        <mat-option value="Sustituir">Sustituir</mat-option>
+                                                        <mat-option value="Eliminar">{{ 'config.tab3.nulosE' | transloco }}</mat-option>
+                                                        <mat-option value="Sustituir">{{ 'config.tab3.nulosS' | transloco }}</mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
                                                 <mat-form-field class="ml-1 p-1 w-20">
@@ -346,7 +342,7 @@
     
                                     <!-- Codificar Column -->
                                     <ng-container matColumnDef="codificar">
-                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Codificar</th>
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">{{ 'config.tab3.codif' | transloco }}</th>
                                         <td mat-cell *matCellDef="let element" class="px-6 py-4">
                                             <mat-form-field>
                                                 <mat-select [(value)]="element.codificar" [disabled]="element.codificar === '' ">
@@ -358,7 +354,7 @@
     
                                     <!-- Normalizar Column -->
                                     <ng-container matColumnDef="normalizar">
-                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">Normalizar</th>
+                                        <th mat-header-cell *matHeaderCellDef class="px-6 py-3 text-primary">{{ 'config.tab3.normal' | transloco }}</th>
                                         <td mat-cell *matCellDef="let element" class="px-6 py-4">
                                             <div class="flex items-center">
                                                 <div class="flex items-center mb-4">
@@ -393,41 +389,41 @@
 
                 <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index">
                     <!-- Filtros -->
-                    <mat-tab label="Filtros">
+                    <mat-tab label="{{'config.tabs.filtros' | transloco}}">
                         <div class="flex flex-col items-center justify-center h-full">
                             <div class="w-full  rounded">
                                 <mtx-grid class="h-[639px] rounded" [data]="list" #grid 
                                     [columns]="columns"
                                     [columnMenuButtonColor]="'primary'"
                                     [pageSizeOptions]="per_page_options" 
-                                    [noResultText]="'No hay resultados'">
+                                    [noResultText]="'noResult' | transloco">
                                 </mtx-grid>
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Selección de caracteristicas ">
+                    <mat-tab label="{{'config.tabs.selectCaract' | transloco}}">
 
                         <mtx-grid class="h-[639px] rounded" [data]="list1" #grid 
                                     [columns]="columns1"
                                     [columnMenuButtonColor]="'primary'"
                                     [pageSizeOptions]="per_page_options" 
-                                    [noResultText]="'No hay resultados'">
+                                    [noResultText]="'noResult' | transloco">
                         </mtx-grid>
                     </mat-tab>
-                    <mat-tab label="Tratamiento de fechas">
+                    <mat-tab label="{{'config.tabs.tratamientF' | transloco}}">
                         <mtx-grid class="h-[639px] rounded" [data]="list2" #grid 
                                     [columns]="columns2"
                                     [columnMenuButtonColor]="'primary'"
                                     [pageSizeOptions]="per_page_options" 
-                                    [noResultText]="'No hay resultados'">
+                                    [noResultText]="'noResult' | transloco">
                         </mtx-grid>
                     </mat-tab>
-                    <mat-tab label="Tratamiento de datos">
+                    <mat-tab label="{{'config.tabs.tratamientD' | transloco}}">
                         <mtx-grid class="h-[639px] rounded" [data]="list3" #grid 
                                     [columns]="columns3"
                                     [columnMenuButtonColor]="'primary'"
                                     [pageSizeOptions]="per_page_options" 
-                                    [noResultText]="'No hay resultados'">
+                                    [noResultText]="'noResult' | transloco">
                         </mtx-grid>
                     </mat-tab>
                 </mat-tab-group>

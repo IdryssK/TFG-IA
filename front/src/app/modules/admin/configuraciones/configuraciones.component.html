@@ -66,7 +66,7 @@
             [pageSize]="query.per_page"
             [pageSizeOptions]="per_page_options"
             (page)="getNextPage($event)"
-            [noResultText]="'No hay resultados'"
+            [noResultText]="'noResult' | transloco"
             >
   
   

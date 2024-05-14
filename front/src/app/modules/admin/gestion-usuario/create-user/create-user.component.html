@@ -7,7 +7,7 @@
             </div>
 
             <!-- Title -->
-            <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">Añadir Usuario</div>
+            <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">{{'userCreate.title' | transloco}}</div>
             <!-- <div class="flex items-baseline mt-0.5 font-medium">
                 <div>Already have an account?</div>
                 <a
@@ -40,22 +40,20 @@
                         matInput
                         [formControlName]="'email'">
                     <mat-error *ngIf="signUpForm.get('email').hasError('required')">
-                        Email is required
-                    </mat-error>
+                        {{'userCreate.emailErrObl' | transloco}}                    </mat-error>
                     <mat-error *ngIf="signUpForm.get('email').hasError('email')">
-                        Please enter a valid email address
-                    </mat-error>
+                        {{'userCreate.emailErrVal' | transloco}}                    </mat-error>
                 </mat-form-field>
                 <mat-form-field class="w-full">
-                    <mat-label>Rol</mat-label>
+                    <mat-label>Role</mat-label>
                     <mat-select formControlName="rol">
                         <mat-option value=1>Admin</mat-option>
-                        <mat-option value=0 >Usuario</mat-option>
+                        <mat-option value=0 >{{'userCreate.user' | transloco}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- Password field -->
                 <mat-form-field class="w-full">
-                    <mat-label>Password</mat-label>
+                    <mat-label>{{'userCreate.pass' | transloco}}</mat-label>
                     <input
                         id="password"
                         matInput
@@ -77,8 +75,7 @@
                             [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
                     <mat-error>
-                        Password is required
-                    </mat-error>
+                        {{'userCreate.passErr' | transloco}}                    </mat-error>
                 </mat-form-field>
 
                 <div class="flex">
@@ -89,7 +86,7 @@
                         [disabled]="signUpForm.disabled"
                         [routerLink]="'/gestion-usuario/lista'">
                         <span >
-                            Cancelar
+                            {{'userCreate.cancelar' | transloco}}
                         </span>
                     </button>
                     <!-- Submit button -->
@@ -100,8 +97,7 @@
                         [color]="'primary'"
                         (click)="create()">
                         <span *ngIf="!signUpForm.disabled">
-                            Crear
-                        </span>
+                            {{'userCreate.crear' | transloco}}                         </span>
                         <mat-progress-spinner
                         *ngIf="signUpForm.disabled"
                         [diameter]="24"

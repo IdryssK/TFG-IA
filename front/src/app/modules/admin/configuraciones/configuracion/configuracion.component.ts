@@ -41,8 +41,9 @@ import { DatasetsService } from 'app/core/datasets/datasets.service';
 import { ProgressService } from 'app/core/progressBar/progressBar.service';
 import { ProgressDialogComponent } from '../../progressdialog/progressdialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { filter } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { WorkerService } from 'app/core/worker/worker.service';
+import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 @Component({
     selector     : 'app-configuracion',
@@ -101,6 +102,7 @@ import { WorkerService } from 'app/core/worker/worker.service';
                     MtxDatetimepickerToggle,
                     MtxGrid,
                     MatSlideToggleModule,
+                    TranslocoModule
                  ],
 })
 export class ConfiguracionComponent implements OnInit
@@ -114,7 +116,7 @@ export class ConfiguracionComponent implements OnInit
     /**
      * Constructor
      */
-    constructor(private dialog: MatDialog, private workerService: WorkerService,private progressService: ProgressService, private _fuseAlertService: FuseAlertService, private datasetService: DatasetsService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {
+    constructor(private translocoService: TranslocoService, private dialog: MatDialog, private workerService: WorkerService,private progressService: ProgressService, private _fuseAlertService: FuseAlertService, private datasetService: DatasetsService, private _fuseConfirmationService: FuseConfirmationService, private configuracionService: ConfiguracionesService,private fb: FormBuilder, private apiSmartUaService: ApiSmartUaService, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private router: Router) {
         this.router.events.pipe(
             filter(event => event instanceof NavigationStart)
           ).subscribe(() => {
@@ -123,6 +125,10 @@ export class ConfiguracionComponent implements OnInit
           });
     }
 
+
+    traducir(key: string): Observable<string> {
+        return this.translocoService.selectTranslate(key, {});
+    }
 // -----------------------------------PESTAÑAS------------------------------------------------------------------
 
     selectedTabIndex = 0; // Índice de la pestaña seleccionada
@@ -790,26 +796,76 @@ export class ConfiguracionComponent implements OnInit
         if(this.primerForm.pristine) {
           this.router.navigate(['/configuraciones']);
         } else {
-          const confirmation = this._fuseConfirmationService.open({
-                title  : 'Restablecer cambios',
-                message: 'Estas seguro de que quieres restablecer los cambios? Se perderán los cambios no guardados.',
-                actions: {
-                    confirm: {
-                        label: 'Resablecer',
+            console.log(this.translocoService.getActiveLang());
+            if(this.translocoService.getActiveLang() === 'en') {
+                const confirmation = this._fuseConfirmationService.open({
+                    title  : 'Reset changes',
+                    message: 'Are you sure you want to reset the changes? Unsaved changes will be lost.',
+                    actions: {
+                        confirm: {
+                            label: 'Reset',
+                        },
                     },
-                },
-            });
-            confirmation.afterClosed().subscribe((result) => {
-                // If the confirm button pressed...
-                if ( result === 'confirmed' ) {  
-                    this.isReload = false;
-                    this.primerForm.reset();
-                    this.inputs = [];
-                    if(this.idx !== 'nuevo'){
-                        this.editar(this.idx);
+                });
+                confirmation.afterClosed().subscribe((result) => {
+                    // If the confirm button pressed...
+                    if ( result === 'confirmed' ) {  
+                        this.isReload = false;
+                        this.primerForm.reset();
+                        this.inputs = [];
+                        if(this.idx !== 'nuevo'){
+                            this.editar(this.idx);
+                        }
                     }
-                }
-            });
+                });
+            }
+            else if(this.translocoService.getActiveLang() === 'es') {
+                const confirmation = this._fuseConfirmationService.open({
+                    title  : 'Restablecer cambios',
+                    message: '¿Estás seguro de que quieres restablecer los cambios? Los cambios no guardados se perderán.',
+                    actions: {
+                        confirm: {
+                            label: 'Restablecer',
+                        },
+                    },
+                });
+                confirmation.afterClosed().subscribe((result) => {
+                    // If the confirm button pressed...
+                    if ( result === 'confirmed' ) {  
+                        this.isReload = false;
+                        this.primerForm.reset();
+                        this.inputs = [];
+                        if(this.idx !== 'nuevo'){
+                            this.editar(this.idx);
+                        }
+                    }
+                });
+            }
+        //   const confirmation = this._fuseConfirmationService.open({
+        //         title  : 'Reset changes',
+        //         message: 'Are you sure you want to reset the changes? Unsaved changes will be lost.',
+        //         icon       : {
+        //             show : true,
+        //             name : 'heroicons_outline:exclamation-triangle',
+        //             color: 'warn',
+        //         },
+        //         actions: {
+        //             confirm: {
+        //                 label: 'Reset',
+        //             },
+        //         },
+        //     });
+        //     confirmation.afterClosed().subscribe((result) => {
+        //         // If the confirm button pressed...
+        //         if ( result === 'confirmed' ) {  
+        //             this.isReload = false;
+        //             this.primerForm.reset();
+        //             this.inputs = [];
+        //             if(this.idx !== 'nuevo'){
+        //                 this.editar(this.idx);
+        //             }
+        //         }
+        //     });
         }
     }
 

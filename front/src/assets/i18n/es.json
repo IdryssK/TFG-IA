@@ -6,11 +6,38 @@
         "new" : "Añadir",
         "operations" : "Operaciones"
     },
+    "userCreate" : {
+        "title" : "Añadir usuario",
+        "emailErrObl" : "Email es obligatorio",
+        "emailErrVal" : "Introduzca una dirección de correo electrónico válida",
+        "user" : "Usuario",
+        "pass" : "Contraseña",
+        "passErr" : "Contraseña es obligatorio",
+        "cancelar" : "Cancelar",
+        "crear" : "Crear"
+    },
+    "userEdit" : {
+        "title" : "Editar usuario",
+        "subTitle" : "Quieres crear una nueva cuenta?",
+        "subTitle2" : "Creala aquí",
+        "emailErrObl" : "Email es obligatorio",
+        "emailErrVal" : "Introduzca una dirección de correo electrónico válida",
+        "user" : "Usuario",
+        "pass" : "Contraseña",
+        "passErr" : "Contraseña es obligatorio",
+        "cancelar" : "Cancelar",
+        "restablecer" : "Restablecer",
+        "crear" : "Guardar"
+    },
     "configuraciones" : {
         "title" : "Lista de configuraciones",
         "search-bar" : "Busca una configuración...",
         "new" : "Añadir",
-        "operations" : "Operaciones"
+        "operations" : "Operaciones",
+        "columns" : {
+            "name" : "Nombre configuración",
+            "date" : "Ultima modificación"
+        }
     },
     "datasets" : {
         "title" : "Lista de datasets",
@@ -23,5 +50,88 @@
             "dicc" : "Nombre diccionario",
             "date" : "Fecha"
         }
+    },
+    "toolTip" : {
+        "copy": "Copiar",
+        "edit": "Editar",
+        "delete": "Borrar",
+        "csv": "Descargar CSV",
+        "json": "Descargar JSON"
+    },
+    "nav" : {
+        "config" : "CONFIGURACIONES",
+        "dataset" : "DATASETS",
+        "entreno" : "ENTRENAMIENTOS",
+        "algoritm" : "ALGORITMOS",
+        "user" : "GESTION USUARIOS"
+    },
+    "config" : {
+        "botones" : {
+            "cancelar" : "Cancelar",
+            "guardar" : "Guardar",
+            "restablecer" : "Restablecer",
+            "generar" : "Generar",
+            "cargar" : "Cargar",
+            "resultados" : "Resultados"
+        },
+        "tabs" : {
+            "filtros" : "Filtros",
+            "selectCaract" : "Selección de características",
+            "tratamientF" : "Procesamiento de fechas",
+            "tratamientD" : "Procesamiento de datos"
+        },
+        "form" : {
+            "datosInfo" : "Datos de información",
+            "nombre" : "Nombre",
+            "nombreHolder" : "Nombre de la colección",
+            "nombreErr" : "Nombre es obligatorio",
+            "tokenHolder" : "Token de la colección",
+            "tokenErr" : "Token es obligatorio",
+            "desde" : "Desde",
+            "hasta" : "Hasta",
+            "filtro" : "Filtro",
+            "limite" : "Limite",
+            "selectAll" : "Seleccionar todo"
+        },
+        "alertas" : {
+            "guardar" : "Se ha guardado correctamente la configuración!",
+            "actualizar" : "Se ha actualizado correctamente la configuración!",
+            "fechas" : "La fecha 'Desde' no puede ser mayor a la fecha 'Hasta'"
+        },
+        "tab12" : {
+            "titleD" : "Deselecciona las columnas que no deseas",
+            "titleF" : "Selecciona los tipos de fechas"
+        },
+        "tab3" : {
+            "columna" : "Columna",
+            "nulos" : "Nulos",
+            "nulosE" : "Eliminar",
+            "nulosS" : "Sustituir",
+            "codif" : "Codificar",
+            "normal" : "Normalizar"
+        }
+        
+        
+    },
+    "noResult" : "No hay resultados",
+    "modal" : {
+        "title" : "Nombre del dataset",
+        "titleHolder" : "Mi nuevo dataset",
+        "titleErr" : "Nombre es obligatorio",
+        "cancelar" : "Cancelar",
+        "generar" : "Generar",
+        "generando" : "Generando",
+        "generadoCorrect" : "generado correctamente",
+        "generandoErr" : "Hay un problema con el token o la OPEN Api",
+        "aceptar" : "Aceptar"
+    },
+    "confirmation" : {
+        "title" : "Restablacer cambios",
+        "message" : "Estas seguro de que quieres restablecer los cambios? Se perderán los cambios no guardados.",
+        "label" : "Restablecer"
     }
+    
+
+    
+     
 }

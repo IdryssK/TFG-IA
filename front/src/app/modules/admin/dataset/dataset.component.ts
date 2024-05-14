@@ -71,7 +71,7 @@ export class DatasetComponent implements OnInit{
           text: 'Download CSV',
           icon: 'table_view',
           color: 'primary',
-          tooltip: 'Download CSV',
+          tooltip: this.traducir('toolTip.csv'),
           click: (row) => this.dowloadDatasetCSV(row.DS_Idx),
         },
         {
@@ -79,14 +79,14 @@ export class DatasetComponent implements OnInit{
           text: 'Download JSON',
           icon: 'data_array',
           color: 'primary',
-          tooltip: 'Download JSON',
+          tooltip: this.traducir('toolTip.json'),
           click: (row) => this.downloadDatasetJSON(row.DS_Idx),
         },
         {
           type: 'icon',
           text: 'delete',
           icon: 'delete',
-          tooltip: 'Delete',
+          tooltip: this.traducir('toolTip.delete'),
           color: 'warn',
           click: (row) => this.borrarDataset(row.DS_Idx),
         },
@@ -148,34 +148,67 @@ export class DatasetComponent implements OnInit{
     //   Swal.fire({icon: 'warning', title: 'Oops...', text: 'No puedes eliminar tu propio usuario',});
     //   return;
     // }
-    const confirmation = this._fuseConfirmationService.open({
-      title  : 'Eliminar dataset',
-      message: '¿Estas seguro de que quieres eliminar el dataset?',
-      actions: {
-          confirm: {
-              label: 'Eliminar',
-          },
-      },
-    });
-    confirmation.afterClosed().subscribe((result) => {
-        // If the confirm button pressed...
-        if ( result === 'confirmed' ) {  
-          this.datasetService.deleteDataset(idx).subscribe(
-            () => {
-              
-              this.getList();
-              this.eliminado = true;
-            },
-            (error) => {
-              console.error(error);
-              // Handle the error here
+    if(this.translocoService.getActiveLang() === 'en') {
+      const confirmation = this._fuseConfirmationService.open({
+        title  : 'Delete dataset',
+        message: 'Are you sure you want to delete the dataset?',
+        actions: {
+            confirm: {
+                label: 'Delete',
             }
-          );
-        }
-        else {
-          console.log('no se ha eliminado el usuario');
-        }
-    });
+        },
+      });
+      confirmation.afterClosed().subscribe((result) => {
+          // If the confirm button pressed...
+          if ( result === 'confirmed' ) {  
+            this.datasetService.deleteDataset(idx).subscribe(
+              () => {
+                
+                this.getList();
+                this.eliminado = true;
+              },
+              (error) => {
+                console.error(error);
+                // Handle the error here
+              }
+            );
+          }
+          else {
+            console.log('no se ha eliminado el usuario');
+          }
+      });
+    }
+    else if(this.translocoService.getActiveLang() === 'es') {
+      const confirmation = this._fuseConfirmationService.open({
+        title  : 'Eliminar dataset',
+        message: '¿Estas seguro de que quieres eliminar el dataset?',
+        actions: {
+            confirm: {
+                label: 'Eliminar',
+            },
+        },
+      });
+      confirmation.afterClosed().subscribe((result) => {
+          // If the confirm button pressed...
+          if ( result === 'confirmed' ) {  
+            this.datasetService.deleteDataset(idx).subscribe(
+              () => {
+                
+                this.getList();
+                this.eliminado = true;
+              },
+              (error) => {
+                console.error(error);
+                // Handle the error here
+              }
+            );
+          }
+          else {
+            console.log('no se ha eliminado el usuario');
+          }
+      });
+    }
+    
     
   }
 

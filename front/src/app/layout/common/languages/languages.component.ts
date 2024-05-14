@@ -106,6 +106,7 @@ export class LanguagesComponent implements OnInit, OnDestroy
      */
     private _updateNavigation(lang: string): void
     {
+        console.log('hola');
         // For the demonstration purposes, we will only update the Dashboard names
         // from the navigation but you can do a full swap and change the entire
         // navigation data.
@@ -115,7 +116,7 @@ export class LanguagesComponent implements OnInit, OnDestroy
 
         // Get the component -> navigation data -> item
         const navComponent = this._fuseNavigationService.getComponent<FuseVerticalNavigationComponent>('mainNavigation');
-
+        console.log(navComponent);
         // Return if the navigation component does not exist
         if ( !navComponent )
         {
@@ -126,14 +127,15 @@ export class LanguagesComponent implements OnInit, OnDestroy
         const navigation = navComponent.navigation;
 
         // Get the Project dashboard item and update its title
-        const projectDashboardItem = this._fuseNavigationService.getItem('dashboards.project', navigation);
-        if ( projectDashboardItem )
+        const configItem = this._fuseNavigationService.getItem('configuraciones', navigation);
+        if ( configItem )
         {
-            this._translocoService.selectTranslate('Project').pipe(take(1))
+            console.log('he entrao')
+            this._translocoService.selectTranslate('nav.config').pipe(take(1))
                 .subscribe((translation) =>
                 {
                     // Set the title
-                    projectDashboardItem.title = translation;
+                    configItem.title = translation;
 
                     // Refresh the navigation component
                     navComponent.refresh();
@@ -141,14 +143,59 @@ export class LanguagesComponent implements OnInit, OnDestroy
         }
 
         // Get the Analytics dashboard item and update its title
-        const analyticsDashboardItem = this._fuseNavigationService.getItem('dashboards.analytics', navigation);
-        if ( analyticsDashboardItem )
+        const datasetItem = this._fuseNavigationService.getItem('datasets', navigation);
+        if ( datasetItem )
         {
-            this._translocoService.selectTranslate('Analytics').pipe(take(1))
+            this._translocoService.selectTranslate('nav.dataset').pipe(take(1))
                 .subscribe((translation) =>
                 {
                     // Set the title
-                    analyticsDashboardItem.title = translation;
+                    datasetItem.title = translation;
+
+                    // Refresh the navigation component
+                    navComponent.refresh();
+                });
+        }
+
+        // Get the Analytics dashboard item and update its title
+        const trainItem = this._fuseNavigationService.getItem('entrenamientos', navigation);
+        if ( trainItem )
+        {
+            this._translocoService.selectTranslate('nav.entreno').pipe(take(1))
+                .subscribe((translation) =>
+                {
+                    // Set the title
+                    trainItem.title = translation;
+
+                    // Refresh the navigation component
+                    navComponent.refresh();
+                });
+        }
+
+        // Get the Analytics dashboard item and update its title
+        const algoItem = this._fuseNavigationService.getItem('algoritmos', navigation);
+        if ( algoItem )
+        {
+            this._translocoService.selectTranslate('nav.algoritm').pipe(take(1))
+                .subscribe((translation) =>
+                {
+                    // Set the title
+                    algoItem.title = translation;
+
+                    // Refresh the navigation component
+                    navComponent.refresh();
+                });
+        }
+
+        // Get the Analytics dashboard item and update its title
+        const userItem = this._fuseNavigationService.getItem('gestion', navigation);
+        if ( userItem )
+        {
+            this._translocoService.selectTranslate('nav.user').pipe(take(1))
+                .subscribe((translation) =>
+                {
+                    // Set the title
+                    userItem.title = translation;
 
                     // Refresh the navigation component
                     navComponent.refresh();

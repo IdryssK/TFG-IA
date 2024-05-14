@@ -12,11 +12,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { ApiSmartUaService } from 'app/core/smartUa/api-smart-ua.service';
 import { DatasetsService } from 'app/core/datasets/datasets.service';
 import { WorkerService } from 'app/core/worker/worker.service';
+import { Observable } from 'rxjs';
+import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
 @Component({
   selector: 'app-progressdialog',
   templateUrl: './progressdialog.component.html',
   standalone: true,
-  imports: [MatProgressBarModule, MatDialogModule, MtxProgress, CommonModule, MatFormFieldModule, MatIconModule, MatInputModule, ReactiveFormsModule, MatButtonModule],
+  imports: [MatProgressBarModule, TranslocoModule, MatDialogModule, MtxProgress, CommonModule, MatFormFieldModule, MatIconModule, MatInputModule, ReactiveFormsModule, MatButtonModule],
 })
 export class ProgressDialogComponent implements OnInit {
   progress: number = 0;
@@ -28,7 +30,7 @@ export class ProgressDialogComponent implements OnInit {
   error: boolean;
   mensajeRecibido: any;
   
-  constructor(private cdr: ChangeDetectorRef, private workerService: WorkerService, private apiSmartUaService: ApiSmartUaService, private progressService: ProgressService, private datasetService: DatasetsService, public dialogRef: MatDialogRef<ProgressDialogComponent>,) { 
+  constructor(private translocoService: TranslocoService, private cdr: ChangeDetectorRef, private workerService: WorkerService, private apiSmartUaService: ApiSmartUaService, private progressService: ProgressService, private datasetService: DatasetsService, public dialogRef: MatDialogRef<ProgressDialogComponent>,) { 
     this.form = new FormGroup({
       nombre: new FormControl('', Validators.required),
     }); 
@@ -44,7 +46,14 @@ export class ProgressDialogComponent implements OnInit {
     primerForm: any;
     count_value: number;
     idx: any; 
-    nombre: string
+    nombre: string;
+
+
+
+  traducir(key: string): Observable<string> {
+  return this.translocoService.selectTranslate(key, {});
+  }
+    
   ngOnInit(): void {
     this.cdr.detectChanges();
     this.generating = false;

@@ -67,8 +67,7 @@
             [pageSize]="per_page"
             [pageSizeOptions]="per_page_options"
             (page)="getNextPage($event)"
-            [noResultText]="'No hay resultados'"
-            [rowStriped]="true">
+            [noResultText]="'noResult' | transloco">
   
   
         </mtx-grid>

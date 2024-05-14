@@ -120,34 +120,32 @@ async function codificar(data: any, tratamientoDatos: any) {
     let datosCodificarDiccionario = {};
     let valoresPorColumnasCodificados = {};
 
-    // Filtrar tratamientoDatos antes del bucle
-    tratamientoDatos = tratamientoDatos.filter(item => item.codificar === 'one-hot' && item.hide !== true);
+    for (let columna in tratamientoDatos) {
+        if (tratamientoDatos[columna].codificar === 'one-hot' && tratamientoDatos[columna].hide === false) {
+            let nombreColumna = tratamientoDatos[columna].header;
 
-    // Crear DataFrame una vez fuera del bucle
-    let df = new dfd.DataFrame(valoresPorColumnas);
+            let df = new dfd.DataFrame(valoresPorColumnas);
+            let encode = new dfd.OneHotEncoder();
+            encode.fit(df[nombreColumna]);
+            let sf_enc = encode.transform(df[nombreColumna].values);
+            valoresPorColumnasCodificados[nombreColumna] = sf_enc.map(element => element.indexOf(1));
 
-	
-
-    for(let i = 0; i < tratamientoDatos.length; i++) {
-        let nombreColumna = tratamientoDatos[i].header;
-        let encode = new dfd.OneHotEncoder();
-        encode.fit(df[nombreColumna]);
-        let sf_enc = encode.transform(df[nombreColumna].values);
-        for (let j = 0; j < sf_enc.length; j++) {
-			sf_enc[j] = sf_enc[j].indexOf(1);
-		}
-        // Guardar el diccionario de etiquetas
-        datosCodificarDiccionario[nombreColumna] = encode.$labels;
-    }
-
-    for(let i = 0; i < data.length; i++) {
-        for (let columna in valoresPorColumnasCodificados) {
-            data[i][columna] = valoresPorColumnasCodificados[columna][i];
+            // Guardar el diccionario de etiquetas
+            datosCodificarDiccionario[nombreColumna] = encode.$labels;
         }
     }
 
+    let datosCodificar = data.map((item) => {
+        const newItem = { ...item };
+        for (let columna in valoresPorColumnasCodificados) {
+            // lo meto y lo borro
+            newItem[columna] = valoresPorColumnasCodificados[columna].shift();
+        }
+        return newItem;
+    });
+
     // Devolver ambos arrays
-    return [data, datosCodificarDiccionario];
+    return [datosCodificar, datosCodificarDiccionario];
 }
 
 function contarValoresDiferentes(arr: number[]): number {

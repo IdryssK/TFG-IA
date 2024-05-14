@@ -15,6 +15,8 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import {MatSelectModule} from '@angular/material/select';
+import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { Observable } from 'rxjs';
 
 @Component({
     selector     : 'app-create-user',
@@ -22,7 +24,7 @@ import {MatSelectModule} from '@angular/material/select';
     encapsulation: ViewEncapsulation.None,
     animations   : fuseAnimations,
     standalone   : true,
-    imports      : [MatSelectModule, RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
+    imports      : [MatSelectModule, TranslocoModule, RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
 })
 export class CreateUserComponent implements OnInit
 {
@@ -42,15 +44,18 @@ export class CreateUserComponent implements OnInit
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private translocoService: TranslocoService 
     )
     {
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
+    traducir(key: string): Observable<string> {
+        return this.translocoService.selectTranslate(key, {});
+    }
+      
     /**
      * On init
      */

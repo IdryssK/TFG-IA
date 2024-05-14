@@ -15,12 +15,14 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/core/user/user.service';
 import {MatSelectModule} from '@angular/material/select';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-edit-user',
   standalone: true,
   animations   : fuseAnimations,
-  imports      : [RouterLink, MatSelectModule, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
+  imports      : [RouterLink, MatSelectModule, TranslocoModule, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
   templateUrl: './edit-user.component.html',
   styleUrl: './edit-user.component.scss'
 })
@@ -30,7 +32,8 @@ export class EditUserComponent implements OnInit {
               private userService: UserService,
               private route: ActivatedRoute,
               private _fuseConfirmationService: FuseConfirmationService,
-              private router: Router) { } 
+              private router: Router,
+              private translocoService: TranslocoService ) { } 
 
   
   alert: { type: FuseAlertType; message: string } = {
@@ -52,6 +55,10 @@ export class EditUserComponent implements OnInit {
     rol: ['', Validators.required ],
   });
 
+
+  traducir(key: string): Observable<string> {
+    return this.translocoService.selectTranslate(key, {});
+}
   ngOnInit(): void {
     this.idx = this.route.snapshot.params['id'];
     this.getUser(this.idx);

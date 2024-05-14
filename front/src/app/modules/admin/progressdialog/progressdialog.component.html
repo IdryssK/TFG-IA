@@ -1,16 +1,22 @@
 <div class="w-96 h-42" *ngIf="!generating">
     <div class="flex flex-col items-center justify-center h-full" [formGroup]="form">
-      <h2 mat-dialog-title class="mb-4">Nombre del dataset</h2>
-      <mat-dialog-content class="w-full">
+      <h2 mat-dialog-title class="mb-4">{{'modal.title' | transloco}}</h2>
+      <mat-dialog-content class="w-full"> 
         <mat-form-field class="w-full">
-          <input matInput formControlName="nombre" placeholder="Mi nuevo dataset" class="w-full">
-          <mat-error *ngIf="form.get('nombre').invalid">Nombre requerido</mat-error>
+          <input matInput formControlName="nombre" placeholder="{{'modal.titleHolder' | transloco}}" class="w-full">
+          <mat-error *ngIf="form.get('nombre').invalid">{{'modal.titleErr' | transloco}}</mat-error>
         </mat-form-field>
         <mat-dialog-actions class="w-full justify-center">
-          <button mat-flat-button [color]="'accent'" (click)="cancelar()">Cancelar</button>
+          <button mat-flat-button [color]="'accent'" (click)="cancelar()">
+            <span>
+            {{'modal.cancelar' | transloco}}
+          </span>
+           </button>
           <button class="" mat-flat-button (click)="generar()" mat-flat-button type="submit"
                   [color]="'primary'"  [disabled]="form.pristine">
-                      Generar
+                  <span>
+                    {{'modal.generar' | transloco}}
+                  </span>
           </button>
         </mat-dialog-actions>
       </mat-dialog-content>
@@ -19,9 +25,9 @@
 <div class="w-96 h-32" *ngIf="generating && !error && !success">
   
   
-  <!-- <div *ngIf="success"><h1>{{ mensajeRecibido |json }}</h1></div> -->
+  <!-- <div *ngIf="success"><h1>{{ mensajeRecibido |transloco }}</h1></div> -->
   
-    <h2 mat-dialog-title>Generando... ({{progress}}%)</h2>
+    <h2 mat-dialog-title>{{'modal.generando' | transloco}}... ({{progress}}%)</h2>
     <mat-dialog-content>
       <mtx-progress [type]="'success'"
       [value]="progress"
@@ -34,21 +40,21 @@
 </div>
 <div class="w-96 h-42" *ngIf="success">
     <div class="flex flex-col items-center justify-center h-full">
-        <h2 mat-dialog-title>Dataset "{{nombre}}" generado correctamente</h2>
+        <h2 mat-dialog-title>Dataset "{{nombre}}" {{'modal.generadoCorrect' | transloco}}</h2>
         <mat-dialog-content>
             <mat-dialog-actions>
-            <button  mat-flat-button [color]="'primary'"(click)="aceptar()">Aceptar</button>
+            <button  mat-flat-button [color]="'primary'"(click)="aceptar()">{{'modal.aceptar' | transloco}}</button>
             </mat-dialog-actions>
         </mat-dialog-content>
     </div>
     
 </div>
-<div class="w-96 h-42" *ngIf="error">
+<div class="w-96 h-42" *ngIf="error"> 
   <div class="flex flex-col items-center justify-center h-full">
-      <h2 mat-dialog-title>Hay un problema con el <strong>token</strong> o la <strong>OPEN Api</strong></h2>
+      <h2 mat-dialog-title><strong>{{'modal.generandoErr' | transloco}}</strong></h2>
       <mat-dialog-content>
           <mat-dialog-actions>
-          <button  mat-flat-button [color]="'warn'"(click)="aceptar()">Aceptar</button>
+          <button  mat-flat-button [color]="'warn'"(click)="aceptar()">{{'modal.aceptar' | transloco}}</button>
           </mat-dialog-actions>
       </mat-dialog-content>
   </div>

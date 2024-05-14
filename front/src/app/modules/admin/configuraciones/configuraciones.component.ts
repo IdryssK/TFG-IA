@@ -20,6 +20,7 @@ import { FuseAlertComponent, FuseAlertService, FuseAlertType } from '@fuse/compo
 import { environment } from 'environments/environment';
 import { provideMomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 import * as moment from 'moment';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-configuraciones',
@@ -54,7 +55,7 @@ export class ConfiguracionesComponent implements OnInit{
   per_page: number = environment.per_page;
   per_page_options = environment.per_page_options;
   eliminado: boolean;
-  constructor(private _fuseAlertService: FuseAlertService, private userService : UserService, private configService: ConfiguracionesService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {}
+  constructor(private translocoService: TranslocoService,private _fuseAlertService: FuseAlertService, private userService : UserService, private configService: ConfiguracionesService, private fb: FormBuilder, private transoloService: TranslocoService, private _fuseConfirmationService: FuseConfirmationService, private router: Router) {}
   
   ngOnInit(): void {
     this.getList();
@@ -67,14 +68,16 @@ export class ConfiguracionesComponent implements OnInit{
     
   }
 
-
+  traducir(key: string): Observable<string> {
+    return this.translocoService.selectTranslate(key, {});
+  }
   columns: MtxGridColumn[] = [
     { header: '', field: 'prueba'},
     { header: 'Idx', field: 'idx', sortable: 'idx', sortProp: { id: 'idx', start: 'asc' }, type: 'number' , pinned: 'left'},
-    { header: 'Nombre', field: 'nombre', sortable: 'nombre', sortProp: { id: 'nombre', start: 'asc' }, pinned: 'left'},
-    { header: 'Ultima modificación', field: 'updWhen', sortable: 'updWhen', sortProp: { id: 'updWhen', start: 'asc' }, pinned: 'left'},
+    { header: this.traducir('configuraciones.columns.name'), field: 'nombre', sortable: 'nombre', sortProp: { id: 'nombre', start: 'asc' }, pinned: 'left'},
+    { header: this.traducir('configuraciones.columns.date'), field: 'updWhen', sortable: 'updWhen', sortProp: { id: 'updWhen', start: 'asc' }, pinned: 'left'},
     {
-      header: translate('user.operations'),
+      header: this.traducir('user.operations'),
       field: 'operation',
       width: '240px',
       pinned: 'right',
@@ -88,7 +91,7 @@ export class ConfiguracionesComponent implements OnInit{
           // color: 'primary',
           // class: 'success',
           color: 'success',
-          tooltip: 'Copy',
+          tooltip: this.traducir('toolTip.copy'),
           click: (row) => this.copiarConfiguracion(row.idx),
         },
         {
@@ -96,14 +99,14 @@ export class ConfiguracionesComponent implements OnInit{
           text: 'edit',
           icon: 'edit',
           class: 'success',
-          tooltip: 'Edit',
+          tooltip: this.traducir('toolTip.edit'),
           click: (row) => this.router.navigate(['configuraciones/configuracion', row.idx]),
         },
         {
           type: 'icon',
           text: 'delete',
           icon: 'delete',
-          tooltip: 'Delete',
+          tooltip: this.traducir('toolTip.delete'),
           color: 'warn',
           click: (row) => this.borrarConfiguracion(row.idx),
         },
@@ -168,28 +171,56 @@ export class ConfiguracionesComponent implements OnInit{
   
   borrarConfiguracion(idx: number) {
     
-    const confirmation = this._fuseConfirmationService.open({
-      title  : 'Eliminar configuración',
-      message: '¿Estas seguro de que quieres eliminar la configuración?',
-      actions: {
-          confirm: {
-              label: 'Eliminar',
-          },
-      },
-    });
-    confirmation.afterClosed().subscribe((result) => {
-        // If the confirm button pressed...
-        if ( result === 'confirmed' ) {  
-          this.configService.deleteConfiguracion(idx).subscribe(data => {
-            console.log(data);
-            this.getList();
-            this.eliminado = true;
-          });
-        }
-        else {
-          console.log('no se ha eliminado el usuario');
-        }
-    });
+    console.log(this.translocoService.getActiveLang());
+            if(this.translocoService.getActiveLang() === 'en') {
+                const confirmation = this._fuseConfirmationService.open({
+                  title  : 'Delete configuration',
+                  message: 'Are you sure you want to delete the configuration?',
+                  actions: {
+                      confirm: {
+                          label: 'Delete',
+                      }
+                  },
+                });
+                confirmation.afterClosed().subscribe((result) => {
+                  // If the confirm button pressed...
+                  if ( result === 'confirmed' ) {  
+                    this.configService.deleteConfiguracion(idx).subscribe(data => {
+                      console.log(data);
+                      this.getList();
+                      this.eliminado = true;
+                    });
+                  }
+                  else {
+                    console.log('no se ha eliminado el usuario');
+                  }
+              });
+            }
+            else if(this.translocoService.getActiveLang() === 'es') {
+              const confirmation = this._fuseConfirmationService.open({
+                title  : 'Eliminar configuración',
+                message: '¿Estas seguro de que quieres eliminar la configuración?',
+                actions: {
+                    confirm: {
+                        label: 'Eliminar',
+                    },
+                },
+              });
+              confirmation.afterClosed().subscribe((result) => {
+                  // If the confirm button pressed...
+                  if ( result === 'confirmed' ) {  
+                    this.configService.deleteConfiguracion(idx).subscribe(data => {
+                      console.log(data);
+                      this.getList();
+                      this.eliminado = true;
+                    });
+                  }
+                  else {
+                    console.log('no se ha eliminado el usuario');
+                  }
+              });
+            }
+    
     
   }
 
