@@ -107,11 +107,6 @@ function agruparValoresPorColumna(data: any, tratamientoDatos: any) {
     return valoresPorColumnas;
 }
 
-function* mapToIndices(sf_enc) {
-	for (let element of sf_enc) {
-		yield element.indexOf(1);
-	}
-}
 
 async function codificar(data: any, tratamientoDatos: any) {
     console.log('Codificando')
@@ -130,7 +125,7 @@ async function codificar(data: any, tratamientoDatos: any) {
             let sf_enc = encode.transform(df[nombreColumna].values);
             valoresPorColumnasCodificados[nombreColumna] = sf_enc.map(element => element.indexOf(1));
 
-            // Guardar el diccionario de etiquetas
+            // Guardar el diccionario de etiquetas        public $labels en node_modules/danfojs/dist/danfojs-base/transformers/encoders/one.hot.encoder.d.ts
             datosCodificarDiccionario[nombreColumna] = encode.$labels;
         }
     }

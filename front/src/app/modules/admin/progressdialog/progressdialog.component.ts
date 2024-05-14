@@ -118,15 +118,7 @@ export class ProgressDialogComponent implements OnInit {
           const {data3, datosCodificarDiccionario} = this.mensajeRecibido
 
 		  this.progressService.changeProgress(80);
-		  this.progressService.changeProgress(81);
-		  this.progressService.changeProgress(82);
-		  this.progressService.changeProgress(83);
-		  this.progressService.changeProgress(84);
-		  this.progressService.changeProgress(85);
-		  this.progressService.changeProgress(86);
-		  this.progressService.changeProgress(87);
-		  this.progressService.changeProgress(88);
-		  this.progressService.changeProgress(89);
+
     // Comprueba si this.mensajeRecibido no es undefined
           this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx, this.nombre).subscribe((response) => {
             this.progressService.changeProgress(100);

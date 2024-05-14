@@ -96,7 +96,10 @@
         "alertas" : {
             "guardar" : "Se ha guardado correctamente la configuración!",
             "actualizar" : "Se ha actualizado correctamente la configuración!",
-            "fechas" : "La fecha 'Desde' no puede ser mayor a la fecha 'Hasta'"
+            "fechas" : "La fecha 'Desde' no puede ser mayor a la fecha 'Hasta'",
+            "userDelete" : "Se ha elimado correctamente el usuario!",
+            "userErr" : "No puedes editar/borrar tu propio usuario!",
+            "eliminar" : "Se ha eliminado correctamente la configuración!"
         },
         "tab12" : {
             "titleD" : "Deselecciona las columnas que no deseas",

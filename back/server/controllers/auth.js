@@ -26,10 +26,10 @@ const login = async( req , res = response ) => {
         const user = await userByUser_Email(email);
 
         if( user === null ){
-            res.status(401).json({
+            
+            return res.status(404).json({
                 msg: 'Email o contraseña incorrectos'
             });
-            return;
         }
 
         // Se obtiene la contraseña hasheada del usuario para comprobar
@@ -38,10 +38,9 @@ const login = async( req , res = response ) => {
         // Se comprueba si es la contrasena que nos pasan es la del usuario.
         const validPassword = bcrypt.compareSync(password, hash.User_Password);
         if( !validPassword ){
-            res.status(403).json({
+            return res.status(404).json({
                 msg: 'Email o contraseña incorrectos'
             });
-            return;
         }
         
         // Genera un token

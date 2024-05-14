@@ -96,7 +96,10 @@
         "alertas" : {
             "guardar" : "The configuration has been saved successfully!",
             "actualizar" : "The configuration has been updated successfully!",
-            "fechas" : "'From' date cannot be later than 'To' date"
+            "fechas" : "'From' date cannot be later than 'To' date",
+            "userDelete" : "The user has been successfully deleted!",
+            "userErr" : "You can't edit/delete your own user!",
+            "eliminar" : "The configuration has been successfully deleted!"
         },
         "tab12" : {
             "titleD" : "Deselect the columns you do not want",
