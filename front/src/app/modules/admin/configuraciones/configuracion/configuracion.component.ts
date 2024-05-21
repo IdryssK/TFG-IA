@@ -434,10 +434,11 @@ export class ConfiguracionComponent implements OnInit
 
     async cargarTabla() {
         await this.llamadasApi();
-        this.tabla1();
-        this.tabla2();
-        this.pestana(3);
-        this.tabla3();
+        console.log('Tengo la primera tabla la copio en la segunda', this.list)
+        await this.tabla1();
+        await this.tabla2();
+        await this.pestana(3);
+        await this.tabla3();
         this.isReload = false;
     }
     
@@ -451,7 +452,7 @@ export class ConfiguracionComponent implements OnInit
         let limite = this.primerForm.get('limit')?.value
         limite = limite === '' ? 100 : limite;
         
-        this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
+        await this.apiSmartUaService.getDataSmartUa(this.token, limite, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
         .toPromise().then((response) => {
            
             // console.log(response); 
@@ -516,7 +517,7 @@ export class ConfiguracionComponent implements OnInit
         console.log(this.columns);
     }
 
-    tabla1() {
+    async tabla1() {
         console.log('tabla1 ');
         // copiamos las columnas que no esten hide
         this.columns1 = [...this.administrarColumnas];
@@ -582,7 +583,7 @@ export class ConfiguracionComponent implements OnInit
             return null;
         }
     }
-    tabla2 (){
+    async tabla2 (){
         console.log('tabla2')
         
         
@@ -721,7 +722,7 @@ export class ConfiguracionComponent implements OnInit
         console.log(this.list3);
     }
 
-    pestana(tab: any) {
+    async pestana(tab: any) {
         if(tab === 3){
             this.tratamientoDatos.forEach((tratamientoDato) => {
                 let caracteristicas = this.administrarColumnas.find((caracteristicas) => caracteristicas.header === tratamientoDato.header);

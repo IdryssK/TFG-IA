@@ -77,8 +77,8 @@
         "tabs" : {
             "filtros" : "Filtros",
             "selectCaract" : "Selección de características",
-            "tratamientF" : "Procesamiento de fechas",
-            "tratamientD" : "Procesamiento de datos"
+            "tratamientF" : "Tratamiento de fechas",
+            "tratamientD" : "Tratamiento de datos"
         },
         "form" : {
             "datosInfo" : "Datos de información",

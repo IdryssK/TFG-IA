@@ -17,7 +17,7 @@ import { Observable, of, switchMap } from 'rxjs';
       next: ActivatedRouteSnapshot,
       state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       let rol:any;
-      this,this.userService.user$.subscribe((user: User) => {
+      this.userService.user$.subscribe((user: User) => {
         rol = user.User_Rol;
       });
       console.log(rol); // Asume que el rol del usuario está almacenado con la clave 'rol'

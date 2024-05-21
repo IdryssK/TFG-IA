@@ -108,33 +108,37 @@ export class ProgressDialogComponent implements OnInit {
       this.progressService.changeProgress(35);
       
 //---------------------------------------------------------------------------------------------------
+
+
+
       let data = { tiposFechas: this.tiposFechas, data1, tratamientoDatos: this.tratamientoDatos };
       this.workerService.postMessage(data);
+
       this.progressService.changeProgress(55);
+
+
       this.workerService.workerMessage.subscribe((message) => {
-        //   console.log('Received message from worker:', message);
 
-          this.mensajeRecibido = message;
-          const {data3, datosCodificarDiccionario} = this.mensajeRecibido
+        this.mensajeRecibido = message;
+        const {data3, datosCodificarDiccionario} = this.mensajeRecibido
 
-		  this.progressService.changeProgress(80);
+        this.progressService.changeProgress(80);
 
-    // Comprueba si this.mensajeRecibido no es undefined
-          this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx, this.nombre).subscribe((response) => {
-            this.progressService.changeProgress(100);
+        this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx, this.nombre).subscribe((response) => {
+          this.progressService.changeProgress(100);
+          if(this.progress === 100){
 
-			// console.log(this.progress)
-			if(this.progress === 100){
-
-				console.log('Dataset guardado correctamente')
-				setTimeout(() => {
-					this.success = true;
-				}, 1500); 
-			}
-          },(error) => {
-            console.error(error);
-          });
+            console.log('Dataset guardado correctamente')
+            setTimeout(() => {
+            this.success = true;
+            },1500); 
+          }
+        },
+        (error) => {
+          console.error(error);
         });
+
+      });
       // this.progressService.changeState('Guardando...');
       console.log(this.progress)
     

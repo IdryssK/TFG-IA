@@ -226,7 +226,8 @@ export class DatasetComponent implements OnInit{
     console.log(idx)
     this.datasetService.getDataset(parseInt(idx)).subscribe(dataset => {
       console.log(dataset)
-      const url = dataset.dataset.DS_Ruta.split('src')[1]; // Assumes that getDataset returns an object with a DS_Ruta property
+      // Se recoge la ruta del diccionario
+      const url = dataset.dataset.DS_Ruta.split('src')[1]; 
 
       if (!url) {
         console.error('URL no existe');
@@ -234,8 +235,10 @@ export class DatasetComponent implements OnInit{
       }
 
       this.http.get(url, { responseType: 'blob' }).subscribe((res: any) => {
-        const blob = new Blob([res], { type: 'text/csv' }); // Creates a blob with the data
-        saveAs(blob, `${dataset.dataset.DS_Ruta.split('/').pop()}`); // Uses the file-saver library to download the file
+        // Se crea un blob con los datos
+        const blob = new Blob([res], { type: 'text/csv' }); 
+        // Se descarga el archivo
+        saveAs(blob, `${dataset.dataset.DS_Ruta.split('/').pop()}`);
       });
     });
   }
@@ -243,7 +246,8 @@ export class DatasetComponent implements OnInit{
     console.log(idx)
     this.datasetService.getDataset(parseInt(idx)).subscribe(dataset => {
       console.log(dataset)
-      const url = dataset.dataset.DS_Ruta_Dic.split('src')[1]; // Use the full DS_Ruta_Dic property as the URL
+      // Se recoge la ruta del diccionario
+      const url = dataset.dataset.DS_Ruta_Dic.split('src')[1]; 
 
       if (!url) {
         console.error('URL no existe');
@@ -251,8 +255,10 @@ export class DatasetComponent implements OnInit{
       }
 
       this.http.get(url, { responseType: 'blob' }).subscribe((res: any) => {
-        const blob = new Blob([res], { type: 'application/json' }); // Creates a blob with the data
-        saveAs(blob, `${dataset.dataset.DS_Ruta_Dic.split('/').pop()}`); // Use DS_Ruta_Dic to generate the downloaded file name
+        // Se crea un blob con los datos
+        const blob = new Blob([res], { type: 'application/json' }); 
+        // Se descarga el archivo
+        saveAs(blob, `${dataset.dataset.DS_Ruta_Dic.split('/').pop()}`); 
       });
     });
   }

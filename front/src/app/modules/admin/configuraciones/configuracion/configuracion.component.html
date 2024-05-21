@@ -146,12 +146,12 @@
         <div class="flex flex-auto justify-between">
             <!-- Contenedor izquierdo -->
             <div id="leftContainer" [ngClass]="{'hidden': isHidden}" class="flex-auto w-1/2 border border-red"
-                style="height: 723px;">
+            style="height: 761px;">
                 <!-- Pestañas -->
                 <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index;" (selectedTabChange)="pestana($event.index)">
                     <!-- Filtros -->
                     <mat-tab label="{{'config.tabs.filtros' | transloco}} ">
-                        <div class="flex flex-col h-[639px] bg-card shadow rounded overflow-hidden">
+                        <div class="flex flex-col h-[664px] bg-card shadow rounded overflow-hidden">
                             <div>
                                 <div class="flex items-center bg-gray-50 dark:bg-gray-700 p-4 mb-4 border-b flex">
                                     <p class="text-lg font-medium">{{ 'config.form.datosInfo' | transloco }}</p>
@@ -225,7 +225,7 @@
                                 </fuse-alert>
                             </div>
 
-                            <div [ngClass]="isContentOpen ? 'max-h-[250px]' : 'max-h-[439px]'" class="overflow-y-auto" [formGroup]="filterForm">
+                            <div [ngClass]="isContentOpen ? 'max-h-[280px]' : 'max-h-[469px]'" class="overflow-y-auto" [formGroup]="filterForm">
                                 <div *ngFor="let input of inputs; let i = index" class="flex items-center px-8">
                                     <!-- TAG -->
                                     <mat-form-field [ngClass]="formFieldHelpers" class="flex-auto mr-2">
@@ -272,7 +272,7 @@
                         </div>
                     </mat-tab>
                     <mat-tab label="{{'config.tabs.selectCaract' | transloco}}">
-                        <div class="flex flex-col items-center h-[639px] bg-card rounded">
+                        <div class="flex flex-col items-center h-[664px] bg-card rounded">
                             <h3 class="mb-24 mt-6">{{ 'config.tab12.titleD' | transloco }}</h3>
                             <div class="flex flex-col items-center justify-center">
 
@@ -292,7 +292,7 @@
 
                     </mat-tab>
                     <mat-tab label="{{'config.tabs.tratamientF' | transloco}}">
-                        <div class="flex flex-col items-center h-[639px] bg-card rounded">
+                        <div class="flex flex-col items-center h-[664px] bg-card rounded">
                             <h3 class="mb-24 mt-6">{{ 'config.tab12.titleF' | transloco }}</h3>
                             <div class="flex flex-col items-center justify-center">
 
@@ -311,7 +311,7 @@
                     </mat-tab>
                     <mat-tab label="{{'config.tabs.tratamientD' | transloco}}">
                        
-                        <div class="h-[639px] rounded relative overflow-x-auto">
+                        <div class="h-[664px] rounded relative overflow-x-auto">
                             
                             <div class="mat-elevation-z8 h-[639px] bg-card rounded">
                                 <table mat-table [dataSource]="tratamientoDatos" class="w-full">
@@ -384,7 +384,7 @@
             </div>
             <!-- Contenedor derecho -->
             <div id="rightContainer" [ngClass]="{'w-full': isHidden}" class="flex-auto w-1/2 border border-grey"
-                style="height: 723px;">
+                style="height: 761px;">
                 <!-- Contenido derecho -->
 
                 <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="selectedTabIndex = $event.index">
@@ -392,9 +392,10 @@
                     <mat-tab label="{{'config.tabs.filtros' | transloco}}">
                         <div class="flex flex-col items-center justify-center h-full">
                             <div class="w-full  rounded">
-                                <mtx-grid class="h-[639px] rounded" [data]="list" #grid 
+                                <mtx-grid class="h-[664px] rounded" [data]="list" #grid 
                                     [columns]="columns"
                                     [columnMenuButtonColor]="'primary'"
+                                    [pageSize]="per_page"
                                     [pageSizeOptions]="per_page_options" 
                                     [noResultText]="'noResult' | transloco">
                                 </mtx-grid>
@@ -403,25 +404,28 @@
                     </mat-tab>
                     <mat-tab label="{{'config.tabs.selectCaract' | transloco}}">
 
-                        <mtx-grid class="h-[639px] rounded" [data]="list1" #grid 
+                        <mtx-grid class="h-[664px] rounded" [data]="list1" #grid 
                                     [columns]="columns1"
                                     [columnMenuButtonColor]="'primary'"
+                                    [pageSize]="per_page"
                                     [pageSizeOptions]="per_page_options" 
                                     [noResultText]="'noResult' | transloco">
                         </mtx-grid>
                     </mat-tab>
                     <mat-tab label="{{'config.tabs.tratamientF' | transloco}}">
-                        <mtx-grid class="h-[639px] rounded" [data]="list2" #grid 
+                        <mtx-grid class="h-[664px] rounded" [data]="list2" #grid 
                                     [columns]="columns2"
                                     [columnMenuButtonColor]="'primary'"
+                                    [pageSize]="per_page"
                                     [pageSizeOptions]="per_page_options" 
                                     [noResultText]="'noResult' | transloco">
                         </mtx-grid>
                     </mat-tab>
                     <mat-tab label="{{'config.tabs.tratamientD' | transloco}}">
-                        <mtx-grid class="h-[639px] rounded" [data]="list3" #grid 
+                        <mtx-grid class="h-[664px] rounded" [data]="list3" #grid 
                                     [columns]="columns3"
                                     [columnMenuButtonColor]="'primary'"
+                                    [pageSize]="per_page"
                                     [pageSizeOptions]="per_page_options" 
                                     [noResultText]="'noResult' | transloco">
                         </mtx-grid>
