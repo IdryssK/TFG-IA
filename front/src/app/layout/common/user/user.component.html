@@ -19,25 +19,25 @@
     #userActions="matMenu">
     <button mat-menu-item>
         <span class="flex flex-col leading-none">
-            <span>Signed in as</span>
-            <span class="mt-1.5 text-md font-medium">{{user.User_Email}}</span>
+            <span>{{'nav.signed' | transloco}}</span>
+            <span class="mt-1.5 text-md font-medium"><strong>{{user.User_Email}}</strong></span>
         </span>
     </button>
     <mat-divider class="my-2"></mat-divider>
     <button mat-menu-item>
         <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
-        <span>Profile</span>
+        <span>{{'nav.profil' | transloco}}</span>
     </button>
     <button mat-menu-item (click)="settingsDrawer.toggle()">
         <mat-icon [svgIcon]="'heroicons_outline:cog-8-tooth'"></mat-icon>
-        <span>Settings</span>
+        <span>{{'nav.settings' | transloco}}</span>
     </button>
     <mat-divider class="my-2"></mat-divider>
     <button
         mat-menu-item
         (click)="signOut()">
         <mat-icon [svgIcon]="'heroicons_outline:arrow-right-on-rectangle'"></mat-icon>
-        <span>Sign out</span>
+        <span>{{'nav.signout' | transloco}}</span>
     </button>
 </mat-menu>
 

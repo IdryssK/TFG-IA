@@ -11,6 +11,12 @@ import moment from 'moment';
 })
 export class DatasetsService {
 
+
+/*
+ Este servicio se encarga de gestionar los datasets. Pero se añadieron las diferentes funciones de la pestaña de tratamiento de datos debido a que se necesitaba pasarle la informacion al componente progressDialog.
+ De esta manera las funciones, tratarnulos, codificar y normalizar se puedan utilizar en cualquier componente.
+*/
+
   columnFunctions = {
     'epoch': (item) => moment.utc(item.time).valueOf(),
     'dia': (item) => moment.utc(item.time).date(),

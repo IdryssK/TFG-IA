@@ -842,31 +842,6 @@ export class ConfiguracionComponent implements OnInit
                     }
                 });
             }
-        //   const confirmation = this._fuseConfirmationService.open({
-        //         title  : 'Reset changes',
-        //         message: 'Are you sure you want to reset the changes? Unsaved changes will be lost.',
-        //         icon       : {
-        //             show : true,
-        //             name : 'heroicons_outline:exclamation-triangle',
-        //             color: 'warn',
-        //         },
-        //         actions: {
-        //             confirm: {
-        //                 label: 'Reset',
-        //             },
-        //         },
-        //     });
-        //     confirmation.afterClosed().subscribe((result) => {
-        //         // If the confirm button pressed...
-        //         if ( result === 'confirmed' ) {  
-        //             this.isReload = false;
-        //             this.primerForm.reset();
-        //             this.inputs = [];
-        //             if(this.idx !== 'nuevo'){
-        //                 this.editar(this.idx);
-        //             }
-        //         }
-        //     });
         }
     }
 
@@ -899,7 +874,7 @@ export class ConfiguracionComponent implements OnInit
             return filaProcesada;
         });
         return { datasetCol, datasetList: datosProcesados };
-}
+    }
 
     progress: number = 0;
 
@@ -914,83 +889,8 @@ export class ConfiguracionComponent implements OnInit
         const dialogRef = this.dialog.open(ProgressDialogComponent, {
             disableClose: true
         });
-        // this.workerService.postMessage('VENGA VA PORFAVOR');
-        
-        // this.workerService.workerMessage.subscribe((message) => {
-        //     console.log('Received message from worker:', message);
-        //   });
-
-        // await this.apiSmartUaService.getTotalDataCount(this.token, this.selectedValueByTag, this.primerForm.value.start, this.primerForm.value.end)
-        // .toPromise().then((response) => {
-        //     this.progressService.changeProgress(15);
-        //     this.count_value = response.result.values[0][1];
-        //     // this.cdr.detectChanges();
-        // });
-        // console.log(this.count_value);
-        
-        // const { datasetCol, datasetList } = await this.obtenerDatos();
-
-        // console.log(datasetList);
-
-        // const data1 = [...datasetList];
-        // console.log(data1);
-
-        // const data2 = data1.map(item => {
-        //     this.progressService.changeProgress(35);
-        //     const newItem = { ...item };
-        //     this.tiposFechas.forEach(column => {
-        //         if (column.hide === false) {
-        //             newItem[column.header] = this.getColumnValue(item, column.header);
-        //         }
-        //     });
-        //     return newItem;
-        // });
-        // console.log(data2);
-
-        // let datosNulos = this.tratarNulos(data2, this.tratamientoDatos);
-
-        // let [datosCodificar, datosCodificarDiccionario] = this.codificar(datosNulos, this.tratamientoDatos);
-
-        // let data3 = this.normalizar(datosCodificar, this.tratamientoDatos);
-
-        // console.log(data3);
-        // this.datasetService.saveDataset(data3, datosCodificarDiccionario , this.idx).subscribe((response) => {
-        //     console.log(response);
-        //     this.progressService.changeProgress(100); // Update progress to 100%
-        //         dialogRef.close();
-        //     },
-        //     (error) => {
-        //         console.error(error);
-        //     });
-
-        // // Use datosCodificarDiccionario as needed
-        // console.log(datosCodificarDiccionario);
     }
-    async work(){
-        // let result;
-        // console.log(this.tratamientoDatos);
-        // if(typeof Worker !== 'undefined') {
-        //     const worker = new Worker(new URL('./work.worker.ts', import.meta.url), { type: 'module' });  
-        //     worker.postMessage(this.tratamientoDatos);
-        //     worker.onmessage = ({ data }) => {
-        //         this.result = data.joder;
-        //         console.log('mira: ', this.result); 
-        //     };
-        //     worker.onerror = (error) => {
-        //         console.error('Error from worker:', error);
-        //     };
-        // } else {
-        //     console.log('Web Workers are not supported in this environment.');
-        // }
-        // if(result !== undefined){
-        //     return result;
-        // }
-        this.workerService.workerMessage.subscribe((message) => {
-            console.log('Received message from worker:', message);
-          });
-
-        this.workerService.postMessage('VENGA VA PORFAVOR');
-    }
+    
 }
 
 

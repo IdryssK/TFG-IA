@@ -1,5 +1,4 @@
 {
-    "hola" : "Hello",
     "user" : {
         "title" : "User list",
         "search-bar" : "Search a user...",
@@ -63,7 +62,11 @@
         "dataset" : "DATASETS",
         "entreno" : "TRAININGS",
         "algoritm" : "ALGORITHMS",
-        "user" : "USER MANAGEMENT"
+        "user" : "USER MANAGEMENT",
+        "signed" : "Signed in as",
+        "profil" : "Profile",
+        "settings" : "Settings",
+        "signout" : "Sign out"
     },
     "config" : {
         "botones" : {

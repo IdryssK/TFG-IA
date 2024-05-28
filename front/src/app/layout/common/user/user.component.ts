@@ -11,6 +11,7 @@ import { User } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { FuseConfig, FuseConfigService, Scheme, Theme, Themes } from '@fuse/services/config';
+import { translate, TranslocoModule, TranslocoService } from '@ngneat/transloco';
 
 @Component({
     selector       : 'user',
@@ -19,7 +20,7 @@ import { FuseConfig, FuseConfigService, Scheme, Theme, Themes } from '@fuse/serv
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs       : 'user',
     standalone     : true,
-    imports        : [MatButtonModule, NgFor, FuseDrawerComponent, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule],
+    imports        : [MatButtonModule, TranslocoModule, NgFor, FuseDrawerComponent, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule],
 })
 export class UserComponent implements OnInit, OnDestroy
 {

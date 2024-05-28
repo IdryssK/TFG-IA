@@ -1,5 +1,4 @@
 {
-    "hola" : "Hola",
     "user" : {
         "title" : "Lista de usuarios",
         "search-bar" : "Busca un usuario...",
@@ -63,7 +62,11 @@
         "dataset" : "DATASETS",
         "entreno" : "ENTRENAMIENTOS",
         "algoritm" : "ALGORITMOS",
-        "user" : "GESTION USUARIOS"
+        "user" : "GESTION USUARIOS",
+        "signed" : "Conectado como",
+        "profil" : "Perfil",
+        "settings" : "Ajustes",
+        "signout" : "Cerrar sesión"
     },
     "config" : {
         "botones" : {
