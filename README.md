@@ -22,7 +22,7 @@ _Que cosas necesitas para instalar el proyecto_
 
 1. Clonar el repositorio ```git clone https://github.com/IdryssK/TFG-IA.git```
 2. Iniciar MySQL en XAMPP.
-3. Abrir su aplicación de adminstración de bases de datos (_HeidiSQL, Navicat..._) y conectarse a nuestro localhost proporcionado por XAMPP.
+3. Abrir su aplicación de adminstración de bases de datos (_HeidiSQL, Navicat..._) y conectarse al localhost proporcionado por XAMPP.
 4. Crear una base de datos **tfg_ia**.
 5. Ejecutar el SQL **db.sql** (_back/bdd_) para la creación de las diferentes tablas y tener un usuario.
 6. Navegar a la carpeta del Back-End desde una termina: ```cd back/server```.
@@ -47,6 +47,10 @@ $ npm run dev
 $ cd front
 $ ng serve --open
 ```
+Usuario de prueba para acceder a la parte privada de la aplicación:
+
+* Email: user@ua.es
+* Contraseña: Idrai123
 ## Autores ✒️
 
 ### Product Owner's

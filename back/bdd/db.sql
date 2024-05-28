@@ -22,4 +22,4 @@ CREATE OR REPLACE TABLE dataset (
 	DS_Upd_When DATETIME
 );
 
-INSERT INTO `usuario` (`User_Idx`, `User_Email`, `User_Password`, `User_Rol`) VALUES (1, 'Nuevo@email.com', '$2a$10$uScKiTuBDp0T2jdpatwb7OJNtfl.IT6YTOj.W8J3nUBF5dt7y1B0a', 1);
+INSERT INTO `usuario` (`User_Idx`, `User_Email`, `User_Password`, `User_Rol`) VALUES (1, 'user@ua.es', '$2a$10$COxV2dOJKoKW30RR8a6U6.fhJSbjzQog8V1MF06Utnw5I9RJu89gS', 1);
