@@ -1,4 +1,4 @@
-# Título del Proyecto
+# IDRAI
 
 IDRAI es una herramienta desarrollada en el marco de la iniciativa Smart University de la Universidad de Alicante. Su objetivo principal es generar datasets a partir de los datos proporcionados por la OpenAPI de Smart University y prepararlos para su uso en algoritmos de inteligencia artificial.
 Esta herramienta esta desarollada con [Angular 17](https://v17.angular.io/docs) utilizando la plantilla [Fuse](https://angular-material.fusetheme.com/dashboards/project)
